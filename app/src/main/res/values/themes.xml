@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="AppThemeDay" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color for day mode. -->
+        <item name="colorPrimary">@color/theme_orange</item>
+        <!-- Accent color for day mode. -->
+        <item name="colorAccent">@color/turquoise</item>
+        <!-- Customize your day mode theme here. -->
+    </style>
+
+    <style name="AppThemeNight" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color for night mode. -->
+        <item name="colorPrimary">@color/grey</item>
+        <!-- Accent color for night mode. -->
+        <item name="colorAccent">@color/black</item>
+        <!-- Customize your night mode theme here. -->
+    </style>
+
+
+</resources>

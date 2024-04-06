@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- EditText to input new email -->
+    <EditText
+        android:id="@+id/reset_email_pop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your new email"
+        android:inputType="textEmailAddress"/>
+
+</LinearLayout>

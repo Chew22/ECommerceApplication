@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.TrackingActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <!-- StepView for order tracking -->
+    <com.shuhart.stepview.StepView
+        android:id="@+id/step_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_marginTop="16dp"
+        app:sv_animationType="Line"
+        app:sv_stepsNumber="4"
+        app:sv_doneStepMarkColor="@color/green"
+        app:sv_nextStepCircleEnabled="true"
+        app:sv_nextStepCircleColor="@color/grey"
+        app:sv_nextTextColor="@color/white"
+        app:sv_selectedCircleColor="@color/theme_orange"
+        app:sv_selectedTextColor="@color/white"
+        app:sv_nextStepLineColor="@color/grey"
+        app:sv_stepLineWidth="2dp"
+        app:sv_stepNumberTextSize="15sp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
