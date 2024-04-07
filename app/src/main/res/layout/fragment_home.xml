@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/AppThemeDay"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.HomeFragment"
     android:layout_marginTop="50dp">
@@ -25,7 +27,8 @@
             android:layout_height="220dp"
             app:iss_auto_cycle="true"
             app:iss_delay="0"
-            app:iss_period="1000" />
+            app:iss_period="1000"
+            android:layout_marginBottom="20dp"/>
 
 
 
@@ -42,9 +45,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:paddingTop="20dp">
+                android:background="@color/theme_orange">
 
                 <RelativeLayout
+                    android:layout_marginTop="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
@@ -55,6 +59,7 @@
                         android:layout_marginLeft="9dp"
                         android:fontFamily="@font/amethysta"
                         android:text="New Products"
+                        android:textColor="@color/white"
                         android:textSize="21sp"
                         android:textStyle="bold" />
 
@@ -63,7 +68,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/new_product_name"
                         android:layout_marginLeft="9dp"
-                        android:text="We provide best products." />
+                        android:text="We provide best products."
+                        android:textColor="@color/white"/>
 
                     <TextView
                         android:id="@+id/newProducts_see_all"
@@ -73,7 +79,7 @@
                         android:layout_marginRight="8dp"
                         android:fontFamily="@font/amethysta"
                         android:text="See All"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -132,15 +138,14 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:listitem="@layout/post_item" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         <ProgressBar
             android:id="@+id/progress_circular"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
-            android:layout_gravity="center" />
+            app:flow_horizontalAlign="center"/>
+
 
     </LinearLayout>
 

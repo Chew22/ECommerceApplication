@@ -5,8 +5,11 @@
         <!-- Primary brand color for day mode. -->
         <item name="colorPrimary">@color/theme_orange</item>
         <!-- Accent color for day mode. -->
-        <item name="colorAccent">@color/turquoise</item>
-        <!-- Customize your day mode theme here. -->
+        <item name="colorAccent">@color/green</item>
+        <!-- Background color for day mode. -->
+        <item name="android:windowBackground">@color/white</item>
+        <!-- Text color for day mode. -->
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="AppThemeNight" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -14,7 +17,10 @@
         <item name="colorPrimary">@color/grey</item>
         <!-- Accent color for night mode. -->
         <item name="colorAccent">@color/black</item>
-        <!-- Customize your night mode theme here. -->
+        <!-- Background color for night mode. -->
+        <item name="android:windowBackground">@color/grey_font</item>
+        <!-- Text color for night mode. -->
+        <item name="android:textColor">@color/white</item>
     </style>
 
 

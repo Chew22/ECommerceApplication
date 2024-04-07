@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="?android:attr/windowBackground"
     tools:context=".activities.OptionsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"/>
+        android:layout_height="wrap_content"/>
 
     <View
         android:layout_width="match_parent"
@@ -24,7 +24,6 @@
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:text="Settings"
-        android:textColor="@color/black"
         android:textSize="18sp"/>
 
     <View
@@ -42,18 +41,16 @@
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:text="Theme Mode"
-        android:textColor="@color/black"
         android:textSize="18sp"/>
 
     <!-- Day/Night Mode Toggle -->
-        <com.mahfa.dnswitch.DayNightSwitch
-            android:id="@+id/dayNight"
-            android:layout_width="60dp"
-            android:layout_height="30dp"
-            android:layout_margin="16dp"
-            android:padding="20dp"
-            android:textAlignment="textEnd"
-            android:textSize="18sp" />
+        <Switch
+            android:id="@+id/dayNightSwitch"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:checked="false"
+            android:layout_centerVertical="true"/>
+
 
     </LinearLayout>
 
@@ -68,7 +65,6 @@
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:text="Log Out"
-        android:textColor="@color/black"
         android:textSize="18sp"/>
 
     <View
@@ -82,7 +78,6 @@
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:text="Delete Account"
-        android:textColor="@color/black"
         android:textSize="18sp"/>
 
     <View
@@ -96,7 +91,6 @@
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:text="Update Email"
-        android:textColor="@color/black"
         android:textSize="18sp"/>
 
     <View

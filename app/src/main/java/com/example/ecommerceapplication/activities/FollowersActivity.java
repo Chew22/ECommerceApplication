@@ -28,7 +28,7 @@ public class FollowersActivity extends AppCompatActivity {
     String title; // Title of the activity (e.g., "followers", "following", "likes")
 
     List<String> idList; // List to store user IDs of followers, following, or likes
-
+   
     RecyclerView recyclerView; // RecyclerView to display the list of users
     UserAdapter userAdapter; // Adapter for the RecyclerView
     List<UserModel> userList; // List to store user data

@@ -25,9 +25,6 @@
             android:name=".activities.OrderStatusActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.Main_ChatActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.ChatActivity"
             android:exported="false" />
         <activity
