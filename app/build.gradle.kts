@@ -107,6 +107,8 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.rengwuxian.materialedittext:library:2.1.4")
     implementation("com.github.CanHub:Android-Image-Cropper:4.3.0")
+
+    // Add story
     implementation("com.github.shts:StoriesProgressView:3.0.0")
 
     // Day Night mode Switch

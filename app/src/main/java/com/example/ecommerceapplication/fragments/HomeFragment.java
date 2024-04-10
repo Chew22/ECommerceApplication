@@ -283,15 +283,20 @@ public class HomeFragment extends Fragment {
                 if (querySnapshot != null) {
                     // Get the current time
                     long timeCurrent = System.currentTimeMillis();
+
                     // Add an empty story for the current user
                     storyList.add(new StoryModel("", new Date(0), new Date(0), "", FirebaseAuth.getInstance().getCurrentUser().getUid()));
+
                     // Iterate through each document snapshot in the "Story" collection
                     for (DocumentSnapshot snapshot : querySnapshot.getDocuments()) {
+
                         // Retrieve the StoryModel object from the snapshot
                         StoryModel story = snapshot.toObject(StoryModel.class);
                         if (story != null) {
+
                             // Check if the current time is within the story duration
                             if (timeCurrent > story.getTimestartMillis() && timeCurrent < story.getTimeendMillis()) {
+
                                 // Increment the story count for the current user
                                 storyList.add(story);
                             }

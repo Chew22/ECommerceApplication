@@ -1,5 +1,4 @@
 package com.example.ecommerceapplication.activities;
-
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -11,6 +10,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
 import com.example.ecommerceapplication.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,18 +27,26 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
-/**
- * Activity for adding a story. Allows users to select an image from their device,
- * crop it to the desired aspect ratio, and publish it as a story.
- */
+
 public class AddStoryActivity extends AppCompatActivity {
 
     private Uri mImageUri;
-    String myUrl = "";
-    private StorageTask storageTask;
-    StorageReference storageReference;
+    private String myUrl = "";
+    private StorageTask<UploadTask.TaskSnapshot> storageTask;
+    private StorageReference storageReference;
 
-    private ActivityResultLauncher<Uri> cropImageLauncher;
+    private final ActivityResultLauncher<CropImageContractOptions> cropImageLauncher = registerForActivityResult(new CropImageContract(), result -> {
+        if (result.isSuccessful()) {
+            Uri uriContent = result.getUriContent();
+            mImageUri = uriContent;
+            // Publish the story after selecting and cropping the image
+            publishStory();
+        } else {
+            Exception exception = result.getError();
+            Toast.makeText(AddStoryActivity.this, "Error: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    });
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,62 +58,42 @@ public class AddStoryActivity extends AppCompatActivity {
 
         // Call startCrop() method to initiate cropping
         startCrop();
-
-//        cropImageLauncher = registerForActivityResult(new CropImageContract(), new ActivityResultCallback<CropImageContract.ActivityResult>() {
-//            @Override
-//            public void onActivityResult(CropImageContract.ActivityResult result) {
-//                if (result.isSuccessful()) {
-//                    // Use the returned uri.
-//                    mImageUri = result.getUriContent();
-//                    // Publish the story after selecting and cropping the image
-//                    publishStory();
-//                } else {
-//                    // An error occurred.
-//                    Toast.makeText(AddStoryActivity.this, "Something gone wrong!", Toast.LENGTH_SHORT).show();
-//                    startActivity(new Intent(AddStoryActivity.this, MainActivity.class));
-//                    finish();
-//                }
-//            }
-//        });
-
     }
 
+    // Method to start the cropping activity
     private void startCrop() {
         // Start picker to get image for cropping and then use the image in cropping activity.
         cropImageLauncher.launch(null);
     }
 
-
     // Publishes the story to the Firebase database after uploading the image to Firebase Storage.
-    private void publishStory(){
+    private void publishStory() {
         ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Posting");
         pd.show();
 
-        if (mImageUri != null){
-            StorageReference imageReference = storageReference.child(System.currentTimeMillis()
-            + "." + getFileExtension(mImageUri));
+        if (mImageUri != null) {
+            StorageReference imageReference = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(mImageUri));
 
             storageTask = imageReference.putFile(mImageUri);
             storageTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
-                public Task<Uri> then(@NonNull Task task) throws Exception {
-                    if (!task.isSuccessful()){
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
                         throw task.getException();
                     }
-                    return  imageReference.getDownloadUrl();
+                    return imageReference.getDownloadUrl();
                 }
             }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
                         myUrl = downloadUri.toString();
 
                         String myid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story")
-                                .child(myid);
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Story");
 
                         String storyid = reference.push().getKey();
                         long timeend = System.currentTimeMillis() + 86400000;
@@ -120,7 +109,7 @@ public class AddStoryActivity extends AppCompatActivity {
                         pd.dismiss();
 
                         finish();
-                    }else {
+                    } else {
                         Toast.makeText(AddStoryActivity.this, "Post Upload failed", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -130,7 +119,7 @@ public class AddStoryActivity extends AppCompatActivity {
                     Toast.makeText(AddStoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-        }else {
+        } else {
             Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
         }
     }
@@ -141,27 +130,9 @@ public class AddStoryActivity extends AppCompatActivity {
      * @param uri The URI of the file.
      * @return The file extension.
      */
-    private String getFileExtension(Uri uri){
+    private String getFileExtension(Uri uri) {
         ContentResolver contentResolver = getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return  mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
-
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && requestCode == RESULT_OK){
-//
-//            CropImage.ActivityResult result = CropImage.getActivityResult(date);
-//            mImageUri = result.getUri();
-//            // Publish the story after selecting and cropping the image
-//            publishStory();
-//        }else {
-//            Toast.makeText(this, "Something gone wrong!", Toast.LENGTH_SHORT).show();
-//            startActivity(new Intent(AddStoryActivity.this, MainActivity.class));
-//            finish();
-//        }
-//    }
 }

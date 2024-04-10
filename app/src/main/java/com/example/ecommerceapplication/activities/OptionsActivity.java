@@ -54,7 +54,6 @@ public class OptionsActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Options");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         // Initialize views
         TextView logout = findViewById(R.id.logout);
         TextView updateEmailBtn = findViewById(R.id.updateEmailMenu);
@@ -68,8 +67,13 @@ public class OptionsActivity extends AppCompatActivity {
         dayNightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Determine the mode based on the switch state
                 int mode = isChecked ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
+
+                // Save the selected mode to SharedPreferences
                 sharedPreferences.edit().putInt(THEME_KEY, mode).apply();
+
+                // Apply the selected mode as the default night mode for the app
                 AppCompatDelegate.setDefaultNightMode(mode);
                 recreate(); // Restart the activity to apply the new theme
             }

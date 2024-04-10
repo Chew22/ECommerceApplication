@@ -21,6 +21,11 @@
             android:layout_margin="5dp"
             android:id="@+id/recycler_view_story"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recycler_view"/>
+
         <com.denzcoskun.imageslider.ImageSlider
             android:id="@+id/image_slider"
             android:layout_width="match_parent"
@@ -29,8 +34,6 @@
             app:iss_delay="0"
             app:iss_period="1000"
             android:layout_marginBottom="20dp"/>
-
-
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

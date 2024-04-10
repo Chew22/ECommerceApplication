@@ -18,8 +18,10 @@ import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.models.ItemsModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.List;
+
 public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.OrderItemViewHolder> {
 
     private Context context;
@@ -41,35 +43,32 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
     @Override
     public void onBindViewHolder(@NonNull OrderItemViewHolder holder, int position) {
+        // Reset views
+        holder.product_name.setText("");
+        holder.product_price.setText("");
+        holder.total_quantity.setText("");
+        holder.total_price.setText("");
+        holder.product_image.setImageResource(0); // or set a placeholder image
 
-        String itemId = String.valueOf(itemIds.get(position));
-        // Retrieve item data from Firestore based on item ID
-        db.collection("Order")
-                .document(auth.getCurrentUser().getUid())
-                .collection("Items")
-                .document(itemId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        ItemsModel item = documentSnapshot.toObject(ItemsModel.class);
-                        if (item != null) {
-                            holder.product_name.setText("Product Name: " + item.getProductName());
-                            holder.product_price.setText("Product Price: " + item.getProductPrice());
-                            holder.total_quantity.setText("Total Quantity: " + item.getTotalQuantity());
-                            holder.total_price.setText("Total Price: " + item.getTotalPrice());
+        // Bind new data to views
+        ItemsModel item = itemIds.get(position);
+        holder.product_name.setText(item.getProductName());
+        holder.product_price.setText(item.getProductPrice());
+        holder.total_quantity.setText(item.getTotalQuantity());
+        holder.total_price.setText(String.valueOf(item.getTotalPrice()));
 
-                            Glide.with(context)
-                                    .load(item.getProductImage())
-                                    .placeholder(R.drawable.placeholder)
-                                    .into(holder.product_image);
-                        }
-                    }
-                })
-                .addOnFailureListener(e -> Log.e(TAG, "Error getting item document", e));
+        // Load image using Glide
+        Glide.with(context)
+                .load(item.getProductImage())
+                .placeholder(R.drawable.placeholder)
+                .into(holder.product_image);
     }
+
+
 
     @Override
     public int getItemCount() {
+        Log.d(TAG, "Item count: " + itemIds.size()); // Log the size of the list
         return itemIds.size();
     }
 

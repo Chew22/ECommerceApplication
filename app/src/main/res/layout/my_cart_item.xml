@@ -25,13 +25,25 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_margin="15dp"
-
             android:src="@drawable/placeholder"
-            android:id="@+id/product_image">
+            android:scaleType="centerCrop"
+            android:id="@+id/product_image"/>
 
-        </ImageView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="top|end">
 
-         <LinearLayout
+
+            <ImageView
+                android:id="@+id/delete"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/ic_close"
+                android:layout_gravity="top|end"/>
+
+            <LinearLayout
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:orientation="horizontal"
@@ -47,11 +59,6 @@
                  android:textSize="16sp"
                  android:textStyle="bold" />
 
-             <ImageView
-                 android:id="@+id/delete"
-                 android:layout_width="45dp"
-                 android:layout_height="45dp"
-                 android:src="@drawable/ic_delete" />
 
              <Button
                  android:id="@+id/minus_button"
@@ -84,7 +91,64 @@
 
          </LinearLayout>
 
+            </LinearLayout>
+
      </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/amethysta"
+                android:text="Product Name: "
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/product_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textEnd"
+                android:layout_weight="1"
+                android:fontFamily="@font/amethysta"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/amethysta"
+                android:text="Product Price: "
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/product_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textEnd"
+                android:layout_weight="1"
+                android:fontFamily="@font/amethysta"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -140,59 +204,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/amethysta"
-                android:text="Product Name: "
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/product_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="textEnd"
-                android:layout_weight="1"
-                android:fontFamily="@font/amethysta"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/amethysta"
-                android:text="Product Price: "
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/product_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="textEnd"
-                android:layout_weight="1"
-                android:fontFamily="@font/amethysta"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

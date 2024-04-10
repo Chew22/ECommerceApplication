@@ -27,18 +27,37 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:src="@drawable/placeholder"
+        android:scaleType="centerCrop"
         android:id="@+id/product_image">
     </ImageView>
 
     </LinearLayout>
 
     <LinearLayout
-        android:padding="7dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_weight="0.5"
+        android:layout_weight="0.6"
+        android:layout_marginRight="5dp"
         android:weightSum="4">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/product_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:fontFamily="@font/amethysta"
+                android:textAlignment="textEnd"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -73,7 +92,7 @@
                     android:textColor="@color/black"
                     android:fontFamily="@font/amethysta"
                     android:textSize="18sp"
-                    android:textAlignment="center"
+                    android:textAlignment="textEnd"
                     android:textStyle="bold" />
 
 
@@ -81,32 +100,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="2">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/amethysta"
-                android:text="Product Name: "
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/product_name"
-                android:layout_width="wrap_content"
-                android:layout_height="21dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/amethysta"
-                android:textAlignment="textEnd"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -119,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/amethysta"
-                android:text="Product Price: "
+                android:text="Price: "
                 android:textSize="16sp"
                 android:textStyle="bold" />
 

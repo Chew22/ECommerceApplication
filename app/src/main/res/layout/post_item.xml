@@ -47,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="5dp"
-                android:scaleType="center"
+                android:scaleType="centerCrop"
                 android:src="@drawable/logo"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"

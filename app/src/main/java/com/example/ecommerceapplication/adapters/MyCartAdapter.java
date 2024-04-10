@@ -4,9 +4,9 @@ This adapter is responsible for populating the RecyclerView with items in the us
 
 package com.example.ecommerceapplication.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.ecommerceapplication.R;
-import com.example.ecommerceapplication.activities.PaymentActivity;
 import com.example.ecommerceapplication.models.MyCartModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -108,26 +106,30 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
-                        .collection("User")
-                        .document(list.get(position).getDocumentId())
-                        .delete()
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                
-                                if (task.isSuccessful()){
-                                    list.remove(list.get(position));
-                                    calculateTotalAmountAndNotify();
-                                    Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
-                                }else{
-                                    Toast.makeText(context, "Error" + task.getException(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                // Build the confirmation dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Confirm Delete");
+                builder.setMessage("Are you sure you want to delete this item from the cart?");
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // User clicked the Delete button, proceed with deletion
+                        deleteCartItem(position);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // User clicked the Cancel button, dismiss the dialog
+                        dialog.dismiss();
+                    }
+                });
 
+                // Show the dialog
+                builder.create().show();
             }
         });
+
 
         // OnClickListener for the minus button
         holder.minusItem.setOnClickListener(new View.OnClickListener() {
@@ -195,6 +197,29 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
         });
 
     }
+
+    private void deleteCartItem(int position) {
+        firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
+                .collection("User")
+                .document(list.get(position).getDocumentId())
+                .delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // Item successfully deleted from Firestore
+                            // Remove item from the list and update the adapter
+                            list.remove(position);
+                            calculateTotalAmountAndNotify();
+                            Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Error occurred while deleting item
+                            Toast.makeText(context, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
 
     // Get item count
     @Override
