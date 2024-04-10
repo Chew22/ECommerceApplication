@@ -4,13 +4,15 @@
 
     <item
         android:id="@+id/menu_logout"
-        android:title="logout"
+        android:title="Logout"
         android:icon="@drawable/ic_baseline_loginout"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"
+        android:orderInCategory="1"/> />
     <item
         android:id="@+id/menu_my_cart"
         android:title="My Cart"
         android:icon="@drawable/menu_shopping"
-        app:showAsAction="always"/>
+        app:showAsAction="always"
+        android:orderInCategory="2"/>
 
 </menu>

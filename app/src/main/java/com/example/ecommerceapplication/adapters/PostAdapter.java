@@ -65,7 +65,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         PostModel post = list.get(position);
 
         // Load product image using Glide
-        Glide.with(context).load(post.getProductImages()).into(holder.post_image);
+        Glide.with(context).load(post.getProductImages()).centerCrop().into(holder.post_image);
         holder.product_name.setText(post.getProductName());
         holder.description.setText(post.getProductDescription());
         holder.price.setText(String.format("%.2f", post.getPrice()));

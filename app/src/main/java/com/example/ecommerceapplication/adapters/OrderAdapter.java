@@ -1,6 +1,9 @@
 package com.example.ecommerceapplication.adapters;
 
+import static androidx.fragment.app.FragmentManager.TAG;
+
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,21 +31,26 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     @Override
     public OrderAdapter.OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.order_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_order_status, parent, false);
         return new OrderViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        OrderModel order = list.get(position);
 
+
+
+        // Bind new data to views
+        OrderModel order = list.get(position);
         holder.order_placed_date.setText("Order Placed Date: " + order.getOrderDate());
-        holder.order_status.setText("Order Placed Date: " + order.getOrderStatus());
+        holder.order_status.setText("Order Status: " + order.getOrderStatus());
         holder.total_amount.setText("Total Amount: RM " + order.getOrderTotal());
     }
 
     @Override
     public int getItemCount() {
+
+        Log.d(TAG, "Item count: " + list.size()); // Log the size of the list
         return list.size();
     }
 

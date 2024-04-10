@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -56,6 +59,9 @@ import java.util.List;
    new products and user stories.
 */
 public class HomeFragment extends Fragment {
+
+    // Hide logout icon
+    private boolean isHomeFragmentActive = true;
 
     TextView newProductShowAll;
     LinearLayout linearLayout;
@@ -307,6 +313,18 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu, menu);
+        MenuItem logoutItem = menu.findItem(R.id.menu_logout);
+        if (isHomeFragmentActive) {
+            logoutItem.setVisible(false); // Hide logout icon in home fragment
+        } else {
+            logoutItem.setVisible(true); // Show logout icon in other fragments
+        }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 }

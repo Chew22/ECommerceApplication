@@ -6,10 +6,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activities.OrderStatusActivity">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/order_toolbar"
+            android:background="@color/theme_orange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="Order Detailed"/>
 
         <LinearLayout
             android:id="@+id/linearLayout2"
@@ -18,7 +27,7 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="20dp"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/order_toolbar">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -45,6 +54,16 @@
                     android:textStyle="bold"
                     tools:text="Order ID: NDK7329YEHDD293"
                     android:id="@+id/order_id"/>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Order Status: Order Placed"
+                    android:id="@+id/order_status"/>
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"

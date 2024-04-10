@@ -48,7 +48,11 @@ public class MainActivity extends AppCompatActivity {
         // Setting up the toolbar
         toolbar = findViewById(R.id.home_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // Hide the back button in the ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
+        }
 
         // Loading the HomeFragment by default
         homeFragment = new HomeFragment();

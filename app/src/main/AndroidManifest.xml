@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeDay">
         <activity
+            android:name=".activities.OrderListActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.TrackingActivity"
             android:exported="false" />
         <activity

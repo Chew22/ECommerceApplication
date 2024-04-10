@@ -1,9 +1,6 @@
 package com.example.ecommerceapplication.adapters;
 
-import static androidx.fragment.app.FragmentManager.TAG;
-
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.models.ItemsModel;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.List;
 
@@ -26,8 +20,6 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
     private Context context;
     private List<ItemsModel> itemIds;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
 
     public OrderItemAdapter(Context context, List<ItemsModel> itemIds) {
         this.context = context;
@@ -68,7 +60,6 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "Item count: " + itemIds.size()); // Log the size of the list
         return itemIds.size();
     }
 
