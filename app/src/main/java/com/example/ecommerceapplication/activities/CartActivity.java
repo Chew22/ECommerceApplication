@@ -20,6 +20,8 @@ import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.adapters.MyCartAdapter;
 import com.example.ecommerceapplication.models.MyCartModel;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -200,7 +202,8 @@ public class CartActivity extends AppCompatActivity {
         orderDetails.put("orderTotal", totalAmount);
 
         // Save order details under the user's ID in the Order collection
-        firestore.collection("Order").document(auth.getCurrentUser().getUid())
+        firestore.collection("Order")
+                .document(auth.getCurrentUser().getUid())
                 .collection("Orders") // Add subcollection "Orders"
                 .add(orderDetails) // Add the order details as a document
                 .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -208,40 +211,60 @@ public class CartActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentReference> task) {
                         if (task.isSuccessful()) {
                             // Get the ID of the newly created order document
-                            String orderId = task.getResult().getId();
+                            String orderId = task.getResult().getId(); // Retrieve the generated document ID
 
-                            // Loop through cart items and save them under "Items" in the order document
-                            for (MyCartModel cartItem : cartModelList) {
-                                // Create a HashMap to store item details
-                                HashMap<String, Object> orderItem = new HashMap<>();
-                                orderItem.put("productId", cartItem.getProductId());
-                                orderItem.put("productName", cartItem.getProductName());
-                                orderItem.put("productImage", cartItem.getProductImage());
-                                orderItem.put("productPrice", cartItem.getProductPrice());
-                                orderItem.put("totalQuantity", cartItem.getTotalQuantity());
-                                orderItem.put("totalPrice", cartItem.getTotalPrice());
+                            // Add the orderId to the order details HashMap
+                            orderDetails.put("orderId", orderId);
 
-                                // Save the item under "Items" in the order document
-                                firestore.collection("Order").document(auth.getCurrentUser().getUid())
-                                        .collection("Orders").document(orderId) // Reference the order document
-                                        .collection("Items") // Add subcollection "Items"
-                                        .add(orderItem) // Add the item details as a document
-                                        .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentReference> task) {
-                                                if (task.isSuccessful()) {
-                                                    // Cart item saved successfully
-                                                    Log.d(TAG, "Cart item saved to Order: " + task.getResult().getId());
-                                                    // Remove the item from the cart after it's been successfully saved to the Order collection
-                                                    removeCartItemFromFirestore(cartItem.getDocumentId());
-                                                } else {
-                                                    // Handle errors
-                                                    Log.d(TAG, "Error saving cart item to Order: ", task.getException());
-                                                }
+                            // Update the order document with the orderId
+                            task.getResult().update("orderId", orderId)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "Order ID added to order details: " + orderId);
+
+                                            // Loop through cart items and save them under "Items" in the order document
+                                            for (MyCartModel cartItem : cartModelList) {
+                                                // Create a HashMap to store item details
+                                                HashMap<String, Object> orderItem = new HashMap<>();
+                                                orderItem.put("productId", cartItem.getProductId());
+                                                orderItem.put("productName", cartItem.getProductName());
+                                                orderItem.put("productImage", cartItem.getProductImage());
+                                                orderItem.put("productPrice", cartItem.getProductPrice());
+                                                orderItem.put("totalQuantity", cartItem.getTotalQuantity());
+                                                orderItem.put("totalPrice", cartItem.getTotalPrice());
+
+                                                // Save the item under "Items" in the order document
+                                                firestore.collection("Order")
+                                                        .document(auth.getCurrentUser().getUid())
+                                                        .collection("Orders")
+                                                        .document(orderId) // Reference the newly created order document
+                                                        .collection("Items") // Add subcollection "Items"
+                                                        .add(orderItem) // Add the item details as a document
+                                                        .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    // Cart item saved successfully
+                                                                    Log.d(TAG, "Cart item saved to Order: " + task.getResult().getId());
+                                                                    // Remove the item from the cart after it's been successfully saved to the Order collection
+                                                                    removeCartItemFromFirestore(cartItem.getDocumentId());
+                                                                } else {
+                                                                    // Handle errors
+                                                                    Log.d(TAG, "Error saving cart item to Order: ", task.getException());
+                                                                }
+                                                            }
+                                                        });
                                             }
-                                        });
-
-                            }
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Handle failure to add orderId to order details
+                                            Log.e(TAG, "Failed to add Order ID to order details: ", e);
+                                        }
+                                    });
                         } else {
                             // Handle errors
                             Log.d(TAG, "Error saving order details: ", task.getException());
@@ -249,6 +272,9 @@ public class CartActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+
 
 
     // Method to remove cart item from Firestore

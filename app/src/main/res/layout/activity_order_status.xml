@@ -55,7 +55,7 @@
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    tools:text="Order ID: NDK7329YEHDD293" />
+                    android:text="Order ID: NDK7329YEHDD293" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/order_status"

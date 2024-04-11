@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class NewProductsModel implements Serializable {
 
+    String productId;
     String description;
     String name;
     String rating;
@@ -13,12 +14,21 @@ public class NewProductsModel implements Serializable {
     public NewProductsModel() {
     }
 
-    public NewProductsModel(String description, String name, String rating, double price, String img_url) {
+    public NewProductsModel(String productId, String description, String name, String rating, double price, String img_url) {
+        this.productId = productId;
         this.description = description;
         this.name = name;
         this.rating = rating;
         this.price = price;
         this.img_url = img_url;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getDescription() {

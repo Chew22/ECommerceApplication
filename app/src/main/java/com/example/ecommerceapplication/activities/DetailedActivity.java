@@ -34,7 +34,7 @@ public class DetailedActivity extends AppCompatActivity {
 
     // UI elements
     ImageView detailedImg;
-    TextView rating, name, description, price, quantity;
+    TextView rating, name, description, price, quantity, productId;
     RatingBar ratingBar;
     Button addToCart, buyNow;
     ImageView addItems, removeItems;
@@ -77,6 +77,7 @@ public class DetailedActivity extends AppCompatActivity {
 
         // Initialize UI elements
         detailedImg = findViewById(R.id.detailed_img);
+        productId = findViewById(R.id.productId);
         quantity = findViewById(R.id.quantity);
         name = findViewById(R.id.detailed_name);
         rating = findViewById(R.id.rating);
@@ -101,6 +102,7 @@ public class DetailedActivity extends AppCompatActivity {
             // New Products
             if (newProductsModel != null) {
                 Glide.with(getApplicationContext()).load(newProductsModel.getImg_url()).into(detailedImg); // Display image
+                productId.setText(newProductsModel.getProductId());
                 name.setText(newProductsModel.getName()); // Display name
                 rating.setText(newProductsModel.getRating()); // Diasply rating
                 description.setText(newProductsModel.getDescription()); // Display description
@@ -114,6 +116,7 @@ public class DetailedActivity extends AppCompatActivity {
             // Post Products
             if (postModel != null) {
                 Glide.with(getApplicationContext()).load(postModel.getProductImages()).into(detailedImg);
+                productId.setText(postModel.getProductId());
                 name.setText(postModel.getProductName());
                 rating.setText(postModel.getRating());
                 description.setText(postModel.getProductDescription());
@@ -193,8 +196,9 @@ public class DetailedActivity extends AppCompatActivity {
 
         // Create a HashMap to store cart item information
             final HashMap<String,Object> cartMap = new HashMap<>();
+            cartMap.put("productId",productId.getText().toString());
             cartMap.put("productName",name.getText().toString());
-        cartMap.put("productImage", newProductsModel != null ? newProductsModel.getImg_url() : postModel.getProductImages());
+            cartMap.put("productImage", newProductsModel != null ? newProductsModel.getImg_url() : postModel.getProductImages());
             cartMap.put("productPrice",price.getText().toString());
             cartMap.put("currentTime",saveCurrentTime);
             cartMap.put("currentDate",saveCurrentDate);
