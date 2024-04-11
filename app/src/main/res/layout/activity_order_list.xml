@@ -11,17 +11,18 @@
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/order_toolbar"
-            android:background="@color/theme_orange"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/theme_orange"
+            android:minHeight="?attr/actionBarSize"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="Order List"/>
+            app:title="Order List"
+            android:id="@+id/order_toolbar"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/order_rec"
+            android:id="@+id/order_list_rec"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"

@@ -18,7 +18,6 @@ import com.example.ecommerceapplication.models.OrderModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -34,8 +33,6 @@ public class OrderStatusActivity extends AppCompatActivity {
 
     private List<ItemsModel> orderItemList;
     private RecyclerView recyclerView;
-
-    private List<OrderModel> orderList;
 
     private FirebaseFirestore firestore;
     private FirebaseAuth auth;
@@ -56,14 +53,23 @@ public class OrderStatusActivity extends AppCompatActivity {
         // Initialize orderItemList
         orderItemList = new ArrayList<>();
 
-        // Fetch order items data from Firebase
-        fetchOrderItemData();
+        // Get the order model from intent
+        OrderModel order = (OrderModel) getIntent().getSerializableExtra("order_model");
+        if (order != null) {
+            // Fetch order items data from Firebase using the order ID
+            fetchOrderItemData(order.getOrderId());
+        } else {
+            Log.e(TAG, "No order model received");
+        }
+
         fetchOrderData();
     }
 
-    private void fetchOrderItemData() {
+    private void fetchOrderItemData(String orderId) {
         firestore.collection("Order")
                 .document(auth.getCurrentUser().getUid())
+                .collection("Orders")
+                .document(orderId)  // Use the order ID passed from OrderListActivity
                 .collection("Items")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -85,46 +91,35 @@ public class OrderStatusActivity extends AppCompatActivity {
                 });
     }
 
-    private void fetchOrderData() {
-        Log.d(TAG, "fetchOrderData: Start fetching order data");
 
+    private void fetchOrderData() {
         firestore.collection("Order")
                 .document(auth.getCurrentUser().getUid())
+                .collection("Orders")  // Reference the "Orders" subcollection
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document != null) {
-                                if (document.exists()) {
-                                    // Log the document data
-                                    Log.d(TAG, "Document data: " + document.getData());
+                            List<OrderModel> orderList = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // Log the document data
+                                Log.d(TAG, "Document ID: " + document.getId());
+                                Log.d(TAG, "Document data: " + document.getData());
 
-                                    // Convert the document to OrderModel (assuming you have an OrderModel class)
-                                    OrderModel order = document.toObject(OrderModel.class);
-                                    Log.d(TAG, "Order data: " + order.toString());
-
-                                    // Create the adapter and pass the order to it
-                                    List<OrderModel> orderList = new ArrayList<>();
-                                    orderList.add(order);
-                                    OrderAdapter adapter = new OrderAdapter(OrderStatusActivity.this, orderList);
-                                    recyclerView.setAdapter(adapter);
-                                    Log.d(TAG, "Adapter set with order data");
-                                } else {
-                                    Log.d(TAG, "No such document");
-                                }
-                            } else {
-                                Log.e(TAG, "Document is null");
+                                // Convert each document to OrderModel and add it to the list
+                                OrderModel order = document.toObject(OrderModel.class);
+                                orderList.add(order);
                             }
+
+                            // Create the adapter and pass the order list to it
+                            OrderAdapter adapter = new OrderAdapter(OrderStatusActivity.this, orderList);
+                            recyclerView.setAdapter(adapter);
                         } else {
-                            Log.e(TAG, "Error getting document: ", task.getException());
+                            Log.e(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
     }
-
-
-
 
 }

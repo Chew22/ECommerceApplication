@@ -2,6 +2,7 @@ package com.example.ecommerceapplication.models;
 
 public class MyCartModel {
 
+    String productId;
     String currentTime;
     String currentDate;
     String productName;
@@ -15,7 +16,8 @@ public class MyCartModel {
 
     }
 
-    public MyCartModel(String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, String productImage) {
+    public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, String productImage) {
+        this.productId = productId;
         this.currentTime = currentTime;
         this.currentDate = currentDate;
         this.productName = productName;
@@ -24,6 +26,14 @@ public class MyCartModel {
         this.totalPrice = totalPrice;
         this.documentId = documentId;
         this.productImage = productImage;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getProductImage() {

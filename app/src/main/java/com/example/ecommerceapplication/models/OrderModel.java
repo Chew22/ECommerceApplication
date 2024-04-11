@@ -1,6 +1,9 @@
 package com.example.ecommerceapplication.models;
 
-public class OrderModel {
+import java.io.Serializable;
+
+public class OrderModel implements Serializable {
+    private String orderId;
     private String orderDate;
     private String orderStatus;
     private String orderTime;
@@ -10,15 +13,22 @@ public class OrderModel {
     public OrderModel() {
     }
 
-    // Parameterized constructor
-    public OrderModel(String orderDate, String orderStatus, String orderTime, double orderTotal) {
+    public OrderModel(String orderId, String orderDate, String orderStatus, String orderTime, double orderTotal) {
+        this.orderId = orderId;
         this.orderDate = orderDate;
         this.orderStatus = orderStatus;
         this.orderTime = orderTime;
         this.orderTotal = orderTotal;
     }
 
-    // Getters and setters
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
     public String getOrderDate() {
         return orderDate;
     }

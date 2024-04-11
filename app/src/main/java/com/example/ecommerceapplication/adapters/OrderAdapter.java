@@ -1,7 +1,5 @@
 package com.example.ecommerceapplication.adapters;
 
-import static androidx.fragment.app.FragmentManager.TAG;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,8 +17,20 @@ import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
 
+    private static final String TAG = "OrderAdapter";
+
     private Context context;
     private List<OrderModel> list;
+
+    public interface OnOrderItemClickListener {
+        void onOrderItemClick(OrderModel order);
+    }
+
+    private OnOrderItemClickListener clickListener;
+
+    public void setOnOrderItemClickListener(OnOrderItemClickListener listener) {
+        this.clickListener = listener;
+    }
 
     public OrderAdapter(Context context, List<OrderModel> list) {
         this.context = context;
@@ -31,42 +41,49 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     @Override
     public OrderAdapter.OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_order_status, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.order_list_item, parent, false);
         return new OrderViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-
-
-
         // Bind new data to views
         OrderModel order = list.get(position);
-        holder.order_placed_date.setText("Order Placed Date: " + order.getOrderDate());
-        holder.order_status.setText("Order Status: " + order.getOrderStatus());
-        holder.total_amount.setText("Total Amount: RM " + order.getOrderTotal());
+        holder.order_placed_date.setText(order.getOrderDate());
+        holder.order_status.setText(order.getOrderStatus());
+        holder.total_amount.setText("RM " + order.getOrderTotal());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (clickListener != null) {
+                    clickListener.onOrderItemClick(order);
+                }
+            }
+        });
+
     }
+
 
     @Override
     public int getItemCount() {
-
         Log.d(TAG, "Item count: " + list.size()); // Log the size of the list
         return list.size();
     }
 
     static class OrderViewHolder extends RecyclerView.ViewHolder {
-        
+
         TextView order_placed_date;
         TextView order_status;
         TextView total_amount;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
-
             order_placed_date = itemView.findViewById(R.id.order_placed_date);
             order_status = itemView.findViewById(R.id.order_status);
             total_amount = itemView.findViewById(R.id.total_amount);
         }
-        
+
+
     }
 }

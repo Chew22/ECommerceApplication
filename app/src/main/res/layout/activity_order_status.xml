@@ -27,6 +27,8 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_toolbar">
 
             <LinearLayout
@@ -35,45 +37,44 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-<!--                <com.google.android.material.textview.MaterialTextView-->
-<!--                    android:id="@+id/seller"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textAllCaps="true"-->
-<!--                    android:textColor="@color/black"-->
-<!--                    android:textSize="16sp"-->
-<!--                    android:textStyle="bold"-->
-<!--                    tools:text="Farah Shop" />-->
+                <!--                <com.google.android.material.textview.MaterialTextView-->
+                <!--                    android:id="@+id/seller"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:textAllCaps="true"-->
+                <!--                    android:textColor="@color/black"-->
+                <!--                    android:textSize="16sp"-->
+                <!--                    android:textStyle="bold"-->
+                <!--                    tools:text="Farah Shop" />-->
 
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/order_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    tools:text="Order ID: NDK7329YEHDD293"
-                    android:id="@+id/order_id"/>
+                    tools:text="Order ID: NDK7329YEHDD293" />
 
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/order_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    tools:text="Order Status: Order Placed"
-                    android:id="@+id/order_status"/>
+                    tools:text="Order Status: Order Placed" />
 
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/order_placed_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAllCaps="true"
-                    android:textColor="@color/grey_font"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    tools:text="Order Placed Date: 22-10-2002"
-                    android:id="@+id/order_placed_date"/>
+                    tools:text="Order Placed Date: 22-10-2002" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -82,6 +83,7 @@
                     android:orientation="horizontal">
 
                     <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/total_amount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -89,8 +91,7 @@
                         android:textColor="@color/theme_orange"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        tools:text="Total Amount: RM 100"
-                        android:id="@+id/total_amount"/>
+                        tools:text="Total Amount: RM 100" />
 
                 </LinearLayout>
             </LinearLayout>

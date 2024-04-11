@@ -181,7 +181,6 @@ public class CartActivity extends AppCompatActivity {
                 });
     }
 
-    // Method to save cart items under the user's ID in the Order collection
     private void saveCartItemsToOrder() {
         // Define the order status
         final String orderStatus = "Order Placed";
@@ -202,25 +201,31 @@ public class CartActivity extends AppCompatActivity {
 
         // Save order details under the user's ID in the Order collection
         firestore.collection("Order").document(auth.getCurrentUser().getUid())
-                .set(orderDetails)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                .collection("Orders") // Add subcollection "Orders"
+                .add(orderDetails) // Add the order details as a document
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
                         if (task.isSuccessful()) {
-                            // Loop through cart items and save them under "Items" in the Order collection
+                            // Get the ID of the newly created order document
+                            String orderId = task.getResult().getId();
+
+                            // Loop through cart items and save them under "Items" in the order document
                             for (MyCartModel cartItem : cartModelList) {
                                 // Create a HashMap to store item details
                                 HashMap<String, Object> orderItem = new HashMap<>();
+                                orderItem.put("productId", cartItem.getProductId());
                                 orderItem.put("productName", cartItem.getProductName());
                                 orderItem.put("productImage", cartItem.getProductImage());
                                 orderItem.put("productPrice", cartItem.getProductPrice());
                                 orderItem.put("totalQuantity", cartItem.getTotalQuantity());
                                 orderItem.put("totalPrice", cartItem.getTotalPrice());
 
-                                // Save the item under "Items" in the Order collection
+                                // Save the item under "Items" in the order document
                                 firestore.collection("Order").document(auth.getCurrentUser().getUid())
-                                        .collection("Items")
-                                        .add(orderItem)
+                                        .collection("Orders").document(orderId) // Reference the order document
+                                        .collection("Items") // Add subcollection "Items"
+                                        .add(orderItem) // Add the item details as a document
                                         .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -244,6 +249,7 @@ public class CartActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
     // Method to remove cart item from Firestore
     private void removeCartItemFromFirestore(String documentId) {

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     app:cardCornerRadius="5dp"
     android:elevation="4dp"
     android:layout_margin="5dp">
@@ -52,8 +53,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:fontFamily="@font/amethysta"
                 android:textAlignment="textEnd"
+                tools:text="Product Name"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -78,7 +79,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:fontFamily="@font/amethysta"
                     android:text="Qty "
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -86,11 +86,10 @@
 
                 <TextView
                     android:id="@+id/total_quantity"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/amethysta"
                     android:textSize="18sp"
                     android:textAlignment="textEnd"
                     android:textStyle="bold" />
@@ -112,7 +111,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/amethysta"
                 android:text="Price: "
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -122,7 +120,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/amethysta"
                 android:textAlignment="textEnd"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -140,7 +137,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/amethysta"
                 android:text="Total Price: "
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -151,7 +147,6 @@
                 android:layout_height="wrap_content"
                 android:textAlignment="textEnd"
                 android:layout_weight="1"
-                android:fontFamily="@font/amethysta"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
