@@ -108,6 +108,18 @@ public class SearchFragment extends Fragment {
             }
         });
 
+        bestMatchTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Change the text color to indicate sorting is applied
+                priceTextView.setTextColor(getResources().getColor(R.color.black));
+                bestMatchTextView.setTextColor(getResources().getColor(R.color.theme_orange));
+
+
+                readposts();
+            }
+        });
+
         catShowAll.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -169,6 +181,12 @@ public class SearchFragment extends Fragment {
         search_bar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+
+                priceTextView.setTextColor(getResources().getColor(R.color.black));
+                bestMatchTextView.setTextColor(getResources().getColor(R.color.theme_orange));
+
+
                 final int DRAWABLE_RIGHT = 2;
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (event.getRawX() >= (search_bar.getRight() - search_bar.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
@@ -190,7 +208,7 @@ public class SearchFragment extends Fragment {
         mPosts.clear();
 
         // Construct a query to retrieve posts sorted by price
-        FirebaseFirestore.getInstance().collection("Products")
+        FirebaseFirestore.getInstance().collection("Posts")
                 .orderBy("price")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -224,8 +242,8 @@ public class SearchFragment extends Fragment {
         }
 
         // Construct a query to search for postnames in Firestore
-        FirebaseFirestore.getInstance().collection("Products")
-                .orderBy("name")
+        FirebaseFirestore.getInstance().collection("Posts")
+                .orderBy("productName")
                 .startAt(s)
                 .endAt(s + "\uf8ff")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -256,13 +274,10 @@ public class SearchFragment extends Fragment {
     }
 
 
-    /**
-     * Retrieves and displays post data from the Firebase Realtime Database.
-     * This method listens for changes in the "Currentpost" node and updates the post list accordingly.
-     */
+
     private void readposts(){
         // Get reference to the "posts" collection in Firestore
-        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("posts");
+        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Posts");
 
         // Add a snapshot listener to listen for changes in the data
         postsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {

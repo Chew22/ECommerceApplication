@@ -96,7 +96,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 //            mcontext.startActivity(intent);
 //        });
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.post_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailedActivity.class);

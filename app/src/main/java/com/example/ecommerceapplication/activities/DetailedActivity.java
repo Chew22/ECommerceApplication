@@ -2,6 +2,7 @@ package com.example.ecommerceapplication.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,6 +22,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -34,10 +36,10 @@ public class DetailedActivity extends AppCompatActivity {
 
     // UI elements
     ImageView detailedImg;
-    TextView rating, name, description, price, quantity, productId;
+    TextView rating, name, description, price, quantity, productId, username;
     RatingBar ratingBar;
-    Button addToCart, buyNow;
-    ImageView addItems, removeItems;
+    Button addToCart, buyNow, message;
+    ImageView addItems, removeItems, image_profile;
     Toolbar toolbar;
 
     // Variables to track quantity and total price
@@ -77,6 +79,8 @@ public class DetailedActivity extends AppCompatActivity {
 
         // Initialize UI elements
         detailedImg = findViewById(R.id.detailed_img);
+        image_profile = findViewById(R.id.image_profile);
+        username = findViewById(R.id.username);
         productId = findViewById(R.id.productId);
         quantity = findViewById(R.id.quantity);
         name = findViewById(R.id.detailed_name);
@@ -88,6 +92,7 @@ public class DetailedActivity extends AppCompatActivity {
         buyNow = findViewById(R.id.buy_now);
         addItems = findViewById(R.id.add_item);
         removeItems = findViewById(R.id.remove_item);
+        message = findViewById(R.id.btn_message);
 
         // Retrieve the ("detailed") from the intent and assigns it to the variable obj
         final Object obj = getIntent().getSerializableExtra("detailed");
@@ -95,8 +100,12 @@ public class DetailedActivity extends AppCompatActivity {
         // Check the type of product and assign it to the appropriate model
         if (obj instanceof NewProductsModel) {
             newProductsModel = (NewProductsModel) obj;
+            // Display seller info
+            displaySellerInfo(newProductsModel.getPublisher());
         } else if (obj instanceof PostModel) {
             postModel = (PostModel) obj;
+            // Display seller info
+            displaySellerInfo(postModel.getPublisher());
         }
 
             // New Products
@@ -144,6 +153,25 @@ public class DetailedActivity extends AppCompatActivity {
             }
         });
 
+            message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Check if the seller ID is available
+                String sellerId = "";
+                if (obj instanceof NewProductsModel) {
+                    sellerId = ((NewProductsModel) obj).getPublisher();
+                } else if (obj instanceof PostModel) {
+                    sellerId = ((PostModel) obj).getPublisher();
+                }
+
+                // Start the ChatActivity with the seller ID
+                Intent intent = new Intent(DetailedActivity.this, ChatActivity.class);
+                intent.putExtra("sellerId", sellerId);
+                startActivity(intent);
+            }
+        });
+
         // Set up the "Add to Cart" button click listener
             addToCart.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -180,6 +208,40 @@ public class DetailedActivity extends AppCompatActivity {
                     }
                 }
            });
+    }
+    // Method to fetch and display seller info
+    private void displaySellerInfo(String sellerId) {
+        Log.d("DetailedActivity", "Fetching seller information for seller ID: " + sellerId);
+        firestore.collection("CurrentUser").document(sellerId).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document != null) {
+                                if (document.exists()) {
+                                    String name = document.getString("username");
+
+                                    // Set seller info to TextViews
+                                    username.setText(name);
+                                    Log.d("DetailedActivity", "Seller information retrieved successfully. Seller name: " + name);
+                                } else {
+                                    // Seller document does not exist
+                                    Log.d("DetailedActivity", "Seller document does not exist for seller ID: " + sellerId);
+                                    Toast.makeText(DetailedActivity.this, "Seller information not found", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                // Document is null
+                                Log.d("DetailedActivity", "Seller document is null for seller ID: " + sellerId);
+                                Toast.makeText(DetailedActivity.this, "Seller information not found", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            // Error fetching seller info
+                            Log.e("DetailedActivity", "Failed to fetch seller information for seller ID: " + sellerId, task.getException());
+                            Toast.makeText(DetailedActivity.this, "Failed to fetch seller information", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     // Method to add the current item to the user's cart

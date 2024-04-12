@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class NewProductsModel implements Serializable {
 
+    String publisher;
     String productId;
     String description;
     String name;
@@ -14,13 +15,22 @@ public class NewProductsModel implements Serializable {
     public NewProductsModel() {
     }
 
-    public NewProductsModel(String productId, String description, String name, String rating, double price, String img_url) {
+    public NewProductsModel(String publisher, String productId, String description, String name, String rating, double price, String img_url) {
+        this.publisher = publisher;
         this.productId = productId;
         this.description = description;
         this.name = name;
         this.rating = rating;
         this.price = price;
         this.img_url = img_url;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
     }
 
     public String getProductId() {

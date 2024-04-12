@@ -25,10 +25,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.Query;
 
 import java.util.Arrays;
-/**
- * This class represents the ChatActivity in the application, where users can
- * exchange messages with each other in a chatroom.
- */
+
 public class ChatActivity extends AppCompatActivity {
 
     // Variables declaration
@@ -41,20 +38,19 @@ public class ChatActivity extends AppCompatActivity {
     TextView otherUsername;
     RecyclerView recyclerView;
 
-    /**
-     * This method is called when the activity is first created.
-     * It initializes the UI elements, retrieves necessary data, and sets up the chatroom.
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        // Get seller ID from intent
+        String sellerId = getIntent().getStringExtra("sellerId");
+
         // Get UserModel for the other user in the chat
         otherUser = AndroidUtil.getUserModelFromIntent(getIntent());
 
         // Generate unique chatroom ID based on user IDs
-        chatroomId = FirebaseUtil.getChatroomId(FirebaseUtil.currentUserId(), otherUser.getId());
+        chatroomId = FirebaseUtil.getChatroomId(FirebaseUtil.currentUserId(), sellerId);
 
         // Initialize UI elements
         messageInput = findViewById(R.id.chat_message_input);
@@ -64,7 +60,7 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.chat_recycler_view);
 
         // Set onClickListener for back button
-        backBtn.setOnClickListener((v)->{
+        backBtn.setOnClickListener((v) -> {
             finish();
         });
 
@@ -85,10 +81,6 @@ public class ChatActivity extends AppCompatActivity {
         getOrCreateChatroomModel();
     }
 
-    /**
-     * Sets up the RecyclerView to display chat messages.
-     * Retrieves chat messages from Firestore and displays them in reverse chronological order.
-     */
     void setupChatRecyclerView() {
         Query query = FirebaseUtil.getChatroomMessageReference(chatroomId)
                 .orderBy("timestamp", Query.Direction.DESCENDING);
@@ -113,11 +105,6 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Sends a message to the other user in the chat.
-     * Updates chatroom information and Firestore database accordingly.
-     * @param message The message to be sent
-     */
     void sendMessageToUser(String message) {
         chatroomModel.setLastMessageTimestamp(Timestamp.now());
         chatroomModel.setLastMessageSenderId(FirebaseUtil.currentUserId());
@@ -130,22 +117,19 @@ public class ChatActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if (task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             messageInput.setText("");
                         }
                     }
                 });
     }
 
-    /**
-     * Retrieves or creates the chatroom model from Firestore.
-     * If the chatroom does not exist, it creates a new one.
-     */
+
     void getOrCreateChatroomModel() {
         FirebaseUtil.getChatroomReference(chatroomId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
+            if (task.isSuccessful()) {
                 chatroomModel = task.getResult().toObject(ChatroomModel.class);
-                if (chatroomModel == null){
+                if (chatroomModel == null) {
                     // First Time Chat
                     chatroomModel = new ChatroomModel(
                             chatroomId,
@@ -153,9 +137,11 @@ public class ChatActivity extends AppCompatActivity {
                             Timestamp.now(),
                             ""
                     );
-                    FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
                 }
+                // Save or update chatroomModel in Firebase
+                FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
             }
         });
     }
+
 }
