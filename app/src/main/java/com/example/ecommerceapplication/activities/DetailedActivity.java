@@ -105,7 +105,7 @@ public class DetailedActivity extends AppCompatActivity {
         } else if (obj instanceof PostModel) {
             postModel = (PostModel) obj;
             // Display seller info
-            displaySellerInfo(postModel.getPublisher());
+            displaySellerInfo(postModel.getSellerID());
         }
 
             // New Products
@@ -129,7 +129,7 @@ public class DetailedActivity extends AppCompatActivity {
                 name.setText(postModel.getProductName());
                 rating.setText(postModel.getRating());
                 description.setText(postModel.getProductDescription());
-                price.setText(String.format("%.2f", postModel.getPrice())); // Display price
+                price.setText(String.format("%.2f", postModel.getPrice()));
                 float ratingValue = Float.parseFloat(postModel.getRating());
                 ratingBar.setRating(ratingValue);
 
@@ -162,7 +162,7 @@ public class DetailedActivity extends AppCompatActivity {
                 if (obj instanceof NewProductsModel) {
                     sellerId = ((NewProductsModel) obj).getPublisher();
                 } else if (obj instanceof PostModel) {
-                    sellerId = ((PostModel) obj).getPublisher();
+                    sellerId = ((PostModel) obj).getSellerID();
                 }
 
                 // Start the ChatActivity with the seller ID

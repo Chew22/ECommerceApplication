@@ -25,8 +25,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Product Detailed" />
 
-    <ImageView
-        android:id="@+id/detailed_img"
+        <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/imageRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:scaleType="centerCrop"

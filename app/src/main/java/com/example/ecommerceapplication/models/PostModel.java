@@ -6,21 +6,23 @@ import java.util.List;
 public class PostModel implements Serializable {
 
     List<Integer> colors;
-    double offerPercentage;
+    Double offerPercentage;
     double price;
     String productCategory;
     String productDescription;
     String productId;
-    String productImages;
+    List<String> productImages;
     String productName;
+    String sellerID;
+    String sellerName;
+    String shopName;
     List<String> sizes;
-    String publisher;
     String rating;
 
     public PostModel() {
     }
 
-    public PostModel(List<Integer> colors, double offerPercentage, double price, String productCategory, String productDescription, String productId, String productImages, String productName, List<String> sizes, String publisher, String rating) {
+    public PostModel(List<Integer> colors, Double offerPercentage, double price, String productCategory, String productDescription, String productId, List<String> productImages, String productName, String sellerID, String sellerName, String shopName, List<String> sizes, String rating) {
         this.colors = colors;
         this.offerPercentage = offerPercentage;
         this.price = price;
@@ -29,9 +31,43 @@ public class PostModel implements Serializable {
         this.productId = productId;
         this.productImages = productImages;
         this.productName = productName;
+        this.sellerID = sellerID;
+        this.sellerName = sellerName;
+        this.shopName = shopName;
         this.sizes = sizes;
-        this.publisher = publisher;
         this.rating = rating;
+    }
+
+    public List<String> getProductImages() {
+        return productImages;
+    }
+
+    public void setProductImages(List<String> productImages) {
+        this.productImages = productImages;
+    }
+
+    public String getSellerID() {
+        return sellerID;
+    }
+
+    public void setSellerID(String sellerID) {
+        this.sellerID = sellerID;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
     }
 
     public List<Integer> getColors() {
@@ -42,11 +78,11 @@ public class PostModel implements Serializable {
         this.colors = colors;
     }
 
-    public double getOfferPercentage() {
+    public Double getOfferPercentage() {
         return offerPercentage;
     }
 
-    public void setOfferPercentage(double offerPercentage) {
+    public void setOfferPercentage(Double offerPercentage) {
         this.offerPercentage = offerPercentage;
     }
 
@@ -82,14 +118,6 @@ public class PostModel implements Serializable {
         this.productId = productId;
     }
 
-    public String getProductImages() {
-        return productImages;
-    }
-
-    public void setProductImages(String productImages) {
-        this.productImages = productImages;
-    }
-
     public String getProductName() {
         return productName;
     }
@@ -104,14 +132,6 @@ public class PostModel implements Serializable {
 
     public void setSizes(List<String> sizes) {
         this.sizes = sizes;
-    }
-
-    public String getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
     }
 
     public String getRating() {

@@ -357,7 +357,7 @@ public class ProfileFragment extends Fragment {
 
     private void getNrPosts() {
         // Get reference to the "Posts" collection in Firestore
-        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Posts");
+        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Products");
 
         // Listen for changes in the "Posts" collection
         postsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -383,7 +383,7 @@ public class ProfileFragment extends Fragment {
 
     private void myFotos() {
         // Get reference to the "Posts" collection in Firestore
-        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Posts");
+        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Products");
 
         // Query the posts where the publisher is equal to the profileid
         Query query = postsRef.whereEqualTo("publisher", profileid);
@@ -456,7 +456,7 @@ public class ProfileFragment extends Fragment {
                         // Get the post ID from the document
                         String postId = document.getId();
                         // Retrieve the corresponding post from the "Posts" collection
-                        FirebaseFirestore.getInstance().collection("Posts").document(postId)
+                        FirebaseFirestore.getInstance().collection("Products").document(postId)
                                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {

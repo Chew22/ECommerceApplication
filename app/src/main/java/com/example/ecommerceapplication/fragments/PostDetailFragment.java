@@ -62,7 +62,7 @@ public class PostDetailFragment extends Fragment {
         postList.clear();
 
         // Get reference to the specific document in the "Posts" collection in Firestore
-        DocumentReference postRef = FirebaseFirestore.getInstance().collection("Posts").document(postid);
+        DocumentReference postRef = FirebaseFirestore.getInstance().collection("Products").document(postid);
 
         // Get the document snapshot asynchronously
         postRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

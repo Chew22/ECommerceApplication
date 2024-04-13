@@ -64,7 +64,7 @@ public class PostActivity extends AppCompatActivity {
         // Fetch data based on the selected productCategory
         if(productCategory == null || productCategory.isEmpty()) {
             // All documents from the "ShowAll" collection
-            firestore.collection("Posts")
+            firestore.collection("Products")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -85,7 +85,7 @@ public class PostActivity extends AppCompatActivity {
         // Query Firestore based on the productCategory
         if(productCategory != null && productCategory.equalsIgnoreCase("Handmade Crafts")){
             // Query documents where "productCategory" field matches the 'antique''
-            firestore.collection("Posts").whereEqualTo("productCategory", "Handmade Crafts")
+            firestore.collection("Products").whereEqualTo("productCategory", "Handmade Crafts")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -103,7 +103,7 @@ public class PostActivity extends AppCompatActivity {
                     });
         }   if(productCategory != null && productCategory.equalsIgnoreCase("Artwork")){
 
-            firestore.collection("Posts").whereEqualTo("productCategory", "Artwork")
+            firestore.collection("Products").whereEqualTo("productCategory", "Artwork")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -121,7 +121,7 @@ public class PostActivity extends AppCompatActivity {
                     });
         }   if(productCategory != null && productCategory.equalsIgnoreCase("Fashion and Accessories")){
 
-            firestore.collection("Posts").whereEqualTo("productCategory", "Fashion and Accessories")
+            firestore.collection("Products").whereEqualTo("productCategory", "Fashion and Accessories")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -139,7 +139,7 @@ public class PostActivity extends AppCompatActivity {
                     });
         }   if(productCategory != null && productCategory.equalsIgnoreCase("Home Decor")){
 
-            firestore.collection("Posts").whereEqualTo("productCategory", "Home Decor")
+            firestore.collection("Products").whereEqualTo("productCategory", "Home Decor")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -157,7 +157,7 @@ public class PostActivity extends AppCompatActivity {
                     });
         }   if(productCategory != null && productCategory.equalsIgnoreCase("Gifts and Souvenirs")){
 
-            firestore.collection("Posts").whereEqualTo("productCategory", "Gifts and Souvenirs")
+            firestore.collection("Products").whereEqualTo("productCategory", "Gifts and Souvenirs")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -175,7 +175,7 @@ public class PostActivity extends AppCompatActivity {
                     });
         }   if(productCategory != null && productCategory.equalsIgnoreCase("Food and Beverages")) {
 
-            firestore.collection("Posts").whereEqualTo("productCategory", "Food and Beverages")
+            firestore.collection("Products").whereEqualTo("productCategory", "Food and Beverages")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -193,7 +193,7 @@ public class PostActivity extends AppCompatActivity {
                     });
         }if(productCategory != null && productCategory.equalsIgnoreCase("Personal Care Products")) {
 
-            firestore.collection("Posts").whereEqualTo("productCategory", "Personal Care Products")
+            firestore.collection("Products").whereEqualTo("productCategory", "Personal Care Products")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override

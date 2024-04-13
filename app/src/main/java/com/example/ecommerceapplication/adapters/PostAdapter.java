@@ -4,8 +4,6 @@ This adapter is responsible for populating the RecyclerView with popular product
 
 package com.example.ecommerceapplication.adapters;
 
-import static androidx.fragment.app.FragmentManager.TAG;
-
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -19,24 +17,30 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.activities.CommentsActivity;
 import com.example.ecommerceapplication.activities.DetailedActivity;
 import com.example.ecommerceapplication.activities.FollowersActivity;
 import com.example.ecommerceapplication.fragments.ProfileFragment;
 import com.example.ecommerceapplication.models.PostModel;
-import com.example.ecommerceapplication.models.UserModel;
+import com.example.ecommerceapplication.models.SellerModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
+
+    public static final String TAG = "PostAdapter";
 
     private Context context;
     private List<PostModel> list;
@@ -64,8 +68,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         PostModel post = list.get(position);
 
-        // Load product image using Glide
-        Glide.with(context).load(post.getProductImages()).centerCrop().into(holder.post_image);
+        Log.d("PostAdapter", "Images: " + post.getProductImages());
+
+        // Set up RecyclerView for image slider
+        if (post.getProductImages() != null && !post.getProductImages().isEmpty()) {
+            List<SlideModel> imageList = new ArrayList<>();
+            for (String imageUrl : post.getProductImages()) {
+                imageList.add(new SlideModel(imageUrl, "", ScaleTypes.CENTER_CROP));
+            }
+
+            holder.imageSlider.setImageList(imageList, ScaleTypes.CENTER_CROP);
+        }
+
         holder.product_name.setText(post.getProductName());
         holder.description.setText(post.getProductDescription());
         holder.price.setText(String.format("%.2f", post.getPrice()));
@@ -77,26 +91,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             holder.description.setText(post.getProductDescription());
         }
 
-        publisherInfo(holder.image_profile, holder.username, post.getPublisher());
+        publisherInfo(holder.image_profile, holder.shopName, post.getSellerID());
         isLiked(post.getProductId(), holder.like);
         nrLikes(holder.likes, post.getProductId());
         getComments(post.getProductId(), holder.comments);
         isSaved(post.getProductId(), holder.save);
 
-        // These listeners navigate to different activities
         holder.image_profile.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProfileFragment.class);
-            intent.putExtra("userid", post.getPublisher());
+            intent.putExtra("userid", post.getSellerID());
             context.startActivity(intent);
         });
 
-//        holder.itemView.setOnClickListener(v -> {
-//            Intent intent = new Intent(mcontext, DetailedActivity.class);
-//            intent.putExtra("postid", post.getProductId());
-//            mcontext.startActivity(intent);
-//        });
-
-        holder.post_image.setOnClickListener(new View.OnClickListener() {
+        holder.imageSlider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailedActivity.class);
@@ -119,7 +126,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             ImageView likeIcon = (ImageView) v;
             if (likeIcon.getTag().equals("like")) {
                 likePost(post.getProductId(), likeIcon);
-                addNotifications(post.getPublisher(), post.getProductId());
+                addNotifications(post.getSellerID(), post.getProductId());
             } else {
                 unlikePost(post.getProductId(), likeIcon);
             }
@@ -128,7 +135,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.comment.setOnClickListener(v -> {
             Intent intent = new Intent(context, CommentsActivity.class);
             intent.putExtra("postid", post.getProductId());
-            intent.putExtra("publisherid", post.getPublisher());
+            intent.putExtra("publisherid", post.getSellerID());
             context.startActivity(intent);
         });
 
@@ -149,33 +156,35 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     // View holder class
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView image_profile, post_image, like, comment, save;
-        TextView username, likes, product_name, description, comments, price;
+        ImageView image_profile, like, comment, save;
+        TextView shopName, likes, product_name, description, comments, price;
+        ImageSlider imageSlider;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             image_profile = itemView.findViewById(R.id.image_profile);
-            post_image = itemView.findViewById(R.id.post_image);
             like = itemView.findViewById(R.id.like);
             comment = itemView.findViewById(R.id.comment);
             save = itemView.findViewById(R.id.save);
-            username = itemView.findViewById(R.id.username);
+            shopName = itemView.findViewById(R.id.username);
             likes = itemView.findViewById(R.id.likes);
             product_name = itemView.findViewById(R.id.product_name);
             description = itemView.findViewById(R.id.description);
             comments = itemView.findViewById(R.id.comments);
             price = itemView.findViewById(R.id.all_price);
+            imageSlider = itemView.findViewById(R.id.imageSlider);
         }
     }
 
     // Retrieve and display publisher information
     private void publisherInfo(ImageView image_profile, TextView username, String userid) {
-        db.collection("CurrentUser").document(userid).get()
+        db.collection("seller").document(userid).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        UserModel user = documentSnapshot.toObject(UserModel.class);
-                        Glide.with(context).load(user.getProfileImg()).into(image_profile);
-                        username.setText(user.getUsername());
+                        SellerModel user = documentSnapshot.toObject(SellerModel.class);
+                        Glide.with(context).load(user.getImagePath()).into(image_profile);
+                        username.setText(user.getShopName());
+
                     }
                 }).addOnFailureListener(e -> Log.e("PostAdapter", "Error getting user info: " + e.getMessage()));
     }

@@ -208,7 +208,7 @@ public class SearchFragment extends Fragment {
         mPosts.clear();
 
         // Construct a query to retrieve posts sorted by price
-        FirebaseFirestore.getInstance().collection("Posts")
+        FirebaseFirestore.getInstance().collection("Products")
                 .orderBy("price")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -242,7 +242,7 @@ public class SearchFragment extends Fragment {
         }
 
         // Construct a query to search for postnames in Firestore
-        FirebaseFirestore.getInstance().collection("Posts")
+        FirebaseFirestore.getInstance().collection("Products")
                 .orderBy("productName")
                 .startAt(s)
                 .endAt(s + "\uf8ff")
@@ -277,7 +277,7 @@ public class SearchFragment extends Fragment {
 
     private void readposts(){
         // Get reference to the "posts" collection in Firestore
-        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Posts");
+        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Products");
 
         // Add a snapshot listener to listen for changes in the data
         postsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {

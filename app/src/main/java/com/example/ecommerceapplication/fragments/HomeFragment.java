@@ -180,7 +180,7 @@ public class HomeFragment extends Fragment {
         postLists = new ArrayList<>();
         postAdapter = new PostAdapter(getContext(), postLists);
         postRecyclerview.setAdapter(postAdapter);
-        db.collection("Posts")
+        db.collection("Products")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -241,7 +241,7 @@ public class HomeFragment extends Fragment {
     // Method to retrieve and display posts from the database
     private void readPosts(){
         // Reference to the "Posts" node in the Firebase Realtime Database
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Products");
         // Adding a ValueEventListener to fetch data from the "Posts" node
         reference.addValueEventListener(new ValueEventListener() {
             @Override
