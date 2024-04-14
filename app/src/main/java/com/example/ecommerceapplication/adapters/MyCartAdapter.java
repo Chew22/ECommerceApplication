@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,9 +87,12 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
     }
 
 
+
     // Bind data to the views
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+        MyCartModel cartModel = list.get(position);
 
         holder.date.setText(list.get(position).getCurrentDate());
         holder.time.setText(list.get(position).getCurrentTime());
@@ -97,11 +101,9 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
         holder.totalPrice.setText( "RM " + String.format("%.2f", (list.get(position).getTotalPrice())));
         holder.totalQuantity.setText(String.valueOf(list.get(position).getTotalQuantity()));
 
-        // Load product image using Glide
-        String imageUrl = list.get(position).getProductImage();
-        Glide.with(context)
-                .load(imageUrl)
-                .into(holder.image);
+       Glide.with(context)
+                    .load(cartModel.getFirstProductImage())
+                    .into(holder.image);
 
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override

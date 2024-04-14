@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.activities.DetailedActivity;
+import com.example.ecommerceapplication.models.MyCartModel;
 import com.example.ecommerceapplication.models.NewProductsModel;
 
 import java.util.List;
@@ -41,9 +42,13 @@ public class NewProductsAdapter extends RecyclerView.Adapter<NewProductsAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        // Loading product image using Glide
-        Glide.with(context).load(list.get(position).getImg_url()).into(holder.newImg);
-        holder.newName.setText(list.get(position).getName());
+        NewProductsModel productModel = list.get(position);
+
+        Glide.with(context)
+                .load(productModel.getFirstProductImage())
+                .into(holder.newImg);
+
+        holder.newName.setText(list.get(position).getProductName());
         holder.newPrice.setText(String.format("%.2f", list.get(position).getPrice()));
 
         // Handling item click to navigate to detailed activity

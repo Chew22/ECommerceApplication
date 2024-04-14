@@ -18,6 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppThemeDay">
+
         <activity
             android:name=".activities.OrderListActivity"
             android:exported="false" />

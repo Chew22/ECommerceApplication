@@ -14,7 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.bumptech.glide.Glide;
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.models.NewProductsModel;
 import com.example.ecommerceapplication.models.PostModel;
@@ -26,8 +28,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Activity to display detailed information about a product and add it to the cart or proceed to payment.
@@ -35,7 +39,7 @@ import java.util.HashMap;
 public class DetailedActivity extends AppCompatActivity {
 
     // UI elements
-    ImageView detailedImg;
+    ImageSlider detailedImageSlider;
     TextView rating, name, description, price, quantity, productId, username;
     RatingBar ratingBar;
     Button addToCart, buyNow, message;
@@ -53,6 +57,9 @@ public class DetailedActivity extends AppCompatActivity {
     // Firebase authentication and Firestore instance
     FirebaseAuth auth;
     FirebaseFirestore firestore;
+
+    // Declare imageUrls at the class level
+    List<String> imageUrls = new ArrayList<>();
 
 
     @Override
@@ -78,7 +85,7 @@ public class DetailedActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         // Initialize UI elements
-        detailedImg = findViewById(R.id.detailed_img);
+        detailedImageSlider = findViewById(R.id.detailedImageSlider);
         image_profile = findViewById(R.id.image_profile);
         username = findViewById(R.id.username);
         productId = findViewById(R.id.productId);
@@ -100,41 +107,42 @@ public class DetailedActivity extends AppCompatActivity {
         // Check the type of product and assign it to the appropriate model
         if (obj instanceof NewProductsModel) {
             newProductsModel = (NewProductsModel) obj;
-            // Display seller info
-            displaySellerInfo(newProductsModel.getPublisher());
+            imageUrls = newProductsModel.getProductImages();
+            displaySellerInfo(newProductsModel.getSellerID());
         } else if (obj instanceof PostModel) {
             postModel = (PostModel) obj;
-            // Display seller info
+            imageUrls = postModel.getProductImages();
             displaySellerInfo(postModel.getSellerID());
         }
 
-            // New Products
-            if (newProductsModel != null) {
-                Glide.with(getApplicationContext()).load(newProductsModel.getImg_url()).into(detailedImg); // Display image
-                productId.setText(newProductsModel.getProductId());
-                name.setText(newProductsModel.getName()); // Display name
-                rating.setText(newProductsModel.getRating()); // Diasply rating
-                description.setText(newProductsModel.getDescription()); // Display description
-                price.setText(String.format("%.2f", newProductsModel.getPrice())); // Display price
-                float ratingValue = Float.parseFloat(newProductsModel.getRating());
-                ratingBar.setRating(ratingValue);
+        List<SlideModel> slideModels = new ArrayList<>();
+        for (String imageUrl : imageUrls) {
+            slideModels.add(new SlideModel(imageUrl, "", ScaleTypes.CENTER_CROP));
+        }
 
-                totalPrice = newProductsModel.getPrice() * totalQuantity;
-            }
+        if (newProductsModel != null) {
+            productId.setText(newProductsModel.getProductId());
+            name.setText(newProductsModel.getProductName());
+            rating.setText(newProductsModel.getRating() != null ? newProductsModel.getRating() : "0"); // Check for null rating
+            description.setText(newProductsModel.getProductDescription());
+            price.setText(String.format("%.2f", newProductsModel.getPrice()));
+            float ratingValue = Float.parseFloat(newProductsModel.getRating() != null ? newProductsModel.getRating() : "0"); // Check for null rating
+            ratingBar.setRating(ratingValue);
 
-            // Post Products
-            if (postModel != null) {
-                Glide.with(getApplicationContext()).load(postModel.getProductImages()).into(detailedImg);
-                productId.setText(postModel.getProductId());
-                name.setText(postModel.getProductName());
-                rating.setText(postModel.getRating());
-                description.setText(postModel.getProductDescription());
-                price.setText(String.format("%.2f", postModel.getPrice()));
-                float ratingValue = Float.parseFloat(postModel.getRating());
-                ratingBar.setRating(ratingValue);
+            totalPrice = newProductsModel.getPrice() * totalQuantity;
+        }
 
-                totalPrice = postModel.getPrice() * totalQuantity;
-            }
+        if (postModel != null) {
+            productId.setText(postModel.getProductId());
+            name.setText(postModel.getProductName());
+            rating.setText(postModel.getRating() != null ? postModel.getRating() : "0"); // Check for null rating
+            description.setText(postModel.getProductDescription());
+            price.setText(String.format("%.2f", postModel.getPrice()));
+            float ratingValue = Float.parseFloat(postModel.getRating() != null ? postModel.getRating() : "0"); // Check for null rating
+            ratingBar.setRating(ratingValue);
+
+            totalPrice = postModel.getPrice() * totalQuantity;
+        }
 
 
         // Set up click listeners for buy now buttons
@@ -160,7 +168,7 @@ public class DetailedActivity extends AppCompatActivity {
                 // Check if the seller ID is available
                 String sellerId = "";
                 if (obj instanceof NewProductsModel) {
-                    sellerId = ((NewProductsModel) obj).getPublisher();
+                    sellerId = ((NewProductsModel) obj).getSellerID();
                 } else if (obj instanceof PostModel) {
                     sellerId = ((PostModel) obj).getSellerID();
                 }
@@ -212,16 +220,14 @@ public class DetailedActivity extends AppCompatActivity {
     // Method to fetch and display seller info
     private void displaySellerInfo(String sellerId) {
         Log.d("DetailedActivity", "Fetching seller information for seller ID: " + sellerId);
-        firestore.collection("CurrentUser").document(sellerId).get()
+        firestore.collection("seller").document(sellerId).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
-                            if (document != null) {
                                 if (document.exists()) {
-                                    String name = document.getString("username");
-
+                                    String name = document.getString("shopName");
                                     // Set seller info to TextViews
                                     username.setText(name);
                                     Log.d("DetailedActivity", "Seller information retrieved successfully. Seller name: " + name);
@@ -230,15 +236,7 @@ public class DetailedActivity extends AppCompatActivity {
                                     Log.d("DetailedActivity", "Seller document does not exist for seller ID: " + sellerId);
                                     Toast.makeText(DetailedActivity.this, "Seller information not found", Toast.LENGTH_SHORT).show();
                                 }
-                            } else {
-                                // Document is null
-                                Log.d("DetailedActivity", "Seller document is null for seller ID: " + sellerId);
-                                Toast.makeText(DetailedActivity.this, "Seller information not found", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            // Error fetching seller info
-                            Log.e("DetailedActivity", "Failed to fetch seller information for seller ID: " + sellerId, task.getException());
-                            Toast.makeText(DetailedActivity.this, "Failed to fetch seller information", Toast.LENGTH_SHORT).show();
+
                         }
                     }
                 });
@@ -260,7 +258,7 @@ public class DetailedActivity extends AppCompatActivity {
             final HashMap<String,Object> cartMap = new HashMap<>();
             cartMap.put("productId",productId.getText().toString());
             cartMap.put("productName",name.getText().toString());
-            cartMap.put("productImage", newProductsModel != null ? newProductsModel.getImg_url() : postModel.getProductImages());
+            cartMap.put("productImage", newProductsModel != null ? newProductsModel.getProductImages() : postModel.getProductImages());
             cartMap.put("productPrice",price.getText().toString());
             cartMap.put("currentTime",saveCurrentTime);
             cartMap.put("currentDate",saveCurrentDate);

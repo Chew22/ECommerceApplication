@@ -17,7 +17,7 @@ public class PostModel implements Serializable {
     String sellerName;
     String shopName;
     List<String> sizes;
-    String rating;
+    String rating = null;
 
     public PostModel() {
     }

@@ -1,10 +1,6 @@
 package com.example.ecommerceapplication.fragments;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +27,7 @@ import com.example.ecommerceapplication.activities.OptionsActivity;
 import com.example.ecommerceapplication.activities.OrderListActivity;
 import com.example.ecommerceapplication.adapters.MyFotoAdapter;
 import com.example.ecommerceapplication.models.PostModel;
+import com.example.ecommerceapplication.models.SellerModel;
 import com.example.ecommerceapplication.models.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -56,6 +53,8 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
+    private static final String TAG = "ProfileFragment";
+
     ImageView image_profile, options;
     TextView posts, followers, following, bio, username, name;
     Button edit_profile, order_status;
@@ -79,6 +78,21 @@ public class ProfileFragment extends Fragment {
 
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            profileid = arguments.getString("profileid");
+            String userType = arguments.getString("type", "CurrentUser");
+            getArguments().putString("type", userType); // Not necessary to put back into arguments
+        } else {
+            Log.e(TAG, "Arguments bundle is null");
+        }
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -88,9 +102,6 @@ public class ProfileFragment extends Fragment {
 
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
-
-        SharedPreferences prefs = getContext().getSharedPreferences("PREPS", Context.MODE_PRIVATE);
-        profileid = prefs.getString("profileid", "none");
 
         image_profile = view.findViewById(R.id.image_profile);
         options = view.findViewById(R.id.options);
@@ -124,7 +135,6 @@ public class ProfileFragment extends Fragment {
         recyclerView.setVisibility(View.VISIBLE);
         recyclerView_saves.setVisibility(View.GONE);
 
-        userInfo();
         getFollowers();
         getNrPosts();
         myFotos();
@@ -272,7 +282,7 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    private void userInfo() {
+    private void fetchCurrentUser() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference userRef = db.collection("CurrentUser").document(firebaseUser.getUid());
 
@@ -285,25 +295,55 @@ public class ProfileFragment extends Fragment {
 
                 if (documentSnapshot.exists()) {
                     UserModel user = documentSnapshot.toObject(UserModel.class);
-
-                    // Update UI with user information
-                    Glide.with(getContext()).load(user.getProfileImg()).into(image_profile);
-                    username.setText(user.getUsername());
-                    name.setText(user.getUsername());
-                    bio.setText(user.getBio());
+                    if (user != null) {
+                        Glide.with(getContext()).load(user.getProfileImg()).into(image_profile);
+                        username.setText(user.getUsername());
+                        name.setText(user.getUsername());
+                        bio.setText(user.getBio());
+                    }
                 } else {
-                    // Handle case where document does not exist
                     Toast.makeText(getContext(), "User not found", Toast.LENGTH_SHORT).show();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                // Handle error
                 Toast.makeText(getContext(), "Failed to retrieve user information: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    private void fetchOtherUser(String profileid) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userRef = db.collection("seller").document(profileid);
+
+        userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (getContext() == null) {
+                    return;
+                }
+
+                if (documentSnapshot.exists()) {
+                    SellerModel seller = documentSnapshot.toObject(SellerModel.class);
+                    if (seller != null) {
+                        Glide.with(getContext()).load(seller.getImagePath()).into(image_profile);
+                        name.setText(seller.getShopName());
+                        bio.setText(seller.getAddress());
+                        username.setText(seller.getEmail());
+                    }
+                } else {
+                    Toast.makeText(getContext(), "User not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), "Failed to retrieve user information: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
 
     private void checkFollow(){

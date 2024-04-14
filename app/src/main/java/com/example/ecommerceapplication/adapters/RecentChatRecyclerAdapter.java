@@ -2,6 +2,7 @@ package com.example.ecommerceapplication.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
  */
 public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatroomModel, RecentChatRecyclerAdapter.ChatroomModelViewHolder> {
 
+    private static final String TAG = "RecentChatRecyclerAdapter";
     // Context reference for handling UI operations
     Context context;
 
@@ -48,36 +50,40 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
      */
     @Override
     protected void onBindViewHolder(@NonNull ChatroomModelViewHolder holder, int position, @NonNull ChatroomModel model) {
-        FirebaseUtil.getOtherUserFromChatroom(model.getUserIds())
-                .get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-                        boolean lastMessageSentByMe = model.getLastMessageSenderId().equals(FirebaseUtil.currentUserId());
+        if (model.getUserIds() != null) {
+            FirebaseUtil.getOtherUserFromChatroom(model.getUserIds())
+                    .get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            boolean lastMessageSentByMe = model.getLastMessageSenderId().equals(FirebaseUtil.currentUserId());
 
-                        UserModel otherUserModel = task.getResult().toObject(UserModel.class);
-                        holder.usernameText.setText(otherUserModel.getUsername());
-                        if (lastMessageSentByMe) {
-                            holder.lastMessageText.setText("You: " + model.getLastMessage());
-                        } else {
-                            holder.lastMessageText.setText(model.getLastMessage());
+                            UserModel otherUserModel = task.getResult().toObject(UserModel.class);
+                            holder.usernameText.setText(otherUserModel.getUsername());
+                            if (lastMessageSentByMe) {
+                                holder.lastMessageText.setText("You: " + model.getLastMessage());
+                            } else {
+                                holder.lastMessageText.setText(model.getLastMessage());
+                            }
+                            holder.lastMessageTime.setText(FirebaseUtil.timestampToString(model.getLastMessageTimestamp()));
+
+                            if (otherUserModel.getProfileImg() != null && !otherUserModel.getProfileImg().isEmpty()) {
+                                Glide.with(context)
+                                        .load(otherUserModel.getProfileImg())
+                                        .placeholder(R.drawable.placeholder)
+                                        .into(holder.profilePic);
+                            }
+
+                            holder.itemView.setOnClickListener(v -> {
+                                // Navigate to chat activity
+                                Intent intent = new Intent(context, ChatActivity.class);
+                                AndroidUtil.passUserModelAsIntent(intent, otherUserModel);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intent);
+                            });
                         }
-                        holder.lastMessageTime.setText(FirebaseUtil.timestampToString(model.getLastMessageTimestamp()));
-
-                        if (otherUserModel.getProfileImg() != null && !otherUserModel.getProfileImg().isEmpty()) {
-                            Glide.with(context)
-                                    .load(otherUserModel.getProfileImg())
-                                    .placeholder(R.drawable.placeholder)
-                                    .into(holder.profilePic);
-                        }
-
-                        holder.itemView.setOnClickListener(v -> {
-                            // Navigate to chat activity
-                            Intent intent = new Intent(context, ChatActivity.class);
-                            AndroidUtil.passUserModelAsIntent(intent, otherUserModel);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(intent);
-                        });
-                    }
-                });
+                    });
+        }else {
+            Log.e(TAG, "Model or user IDs are null");
+        }
     }
 
     /**

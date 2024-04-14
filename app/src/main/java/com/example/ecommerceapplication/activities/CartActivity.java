@@ -106,7 +106,7 @@ public class CartActivity extends AppCompatActivity {
             @Override
             public void onTotalAmountChanged(double totalAmount) {
                 // Update the total amount TextView
-                overAllAmount.setText("Total Amount: RM " + String.format("%.2f",totalAmount));
+                overAllAmount.setText("Total Amount: RM " + String.format("%.2f", totalAmount));
 
                 // Save the updated total amount
                 CartActivity.this.totalAmount = totalAmount;
@@ -127,22 +127,27 @@ public class CartActivity extends AppCompatActivity {
                                 MyCartModel myCartModel = doc.toObject(MyCartModel.class);
                                 // Set the document ID for the MyCartModel
                                 myCartModel.setDocumentId(documentId);
+
+                                // Get the first image URL from the MyCartModel
+                                String imageUrl = myCartModel.getFirstProductImage();
+                                // You can now use this imageUrl to display the image in your RecyclerView or wherever you need it
+
                                 // Add the MyCartModel to the cartModelList
                                 cartModelList.add(myCartModel);
+
                                 // Add the price of the current item to the total amount
                                 totalAmount += myCartModel.getTotalPrice();
                             }
                             // Notify the adapter of data changes
                             cartAdapter.notifyDataSetChanged();
                             // Update the total amount TextView
-                            overAllAmount.setText("Total Amount: RM " + String.format("%.2f",totalAmount));
-
+                            overAllAmount.setText("Total Amount: RM " + String.format("%.2f", totalAmount));
                         }
                     }
                 });
     }
 
-    // Method to save cart items to Order collection in Firestore
+        // Method to save cart items to Order collection in Firestore
     private void saveOrderToFirestore() {
         // Check if the Order collection exists
         firestore.collection("Order").document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

@@ -6,6 +6,7 @@ package com.example.ecommerceapplication.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -98,12 +101,34 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         isSaved(post.getProductId(), holder.save);
 
         holder.image_profile.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ProfileFragment.class);
-            intent.putExtra("userid", post.getSellerID());
-            context.startActivity(intent);
+            String sellerId = post.getSellerID();
+
+            ProfileFragment profileFragment = new ProfileFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("profileid", sellerId); // Pass the profileid to the fragment
+            bundle.putString("type", "profileid"); // Pass the type to fetch seller info
+            profileFragment.setArguments(bundle);
+
+            FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, profileFragment); // Replace fragment_container with your actual container ID
+            transaction.addToBackStack(null);  // Add transaction to back stack, so user can navigate back
+            transaction.commit();
         });
 
+
+
         holder.imageSlider.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DetailedActivity.class);
+                intent.putExtra("detailed", post);
+                context.startActivity(intent);
+
+            }
+        });
+
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailedActivity.class);
@@ -175,6 +200,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             imageSlider = itemView.findViewById(R.id.imageSlider);
         }
     }
+
 
     // Retrieve and display publisher information
     private void publisherInfo(ImageView image_profile, TextView username, String userid) {

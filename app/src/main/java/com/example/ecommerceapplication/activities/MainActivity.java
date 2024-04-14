@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import com.example.ecommerceapplication.fragments.ProfileFragment;
 import com.example.ecommerceapplication.fragments.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -82,14 +84,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Bottom navigation item selection listener
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             // Handle each bottom navigation item separately
             if (item.getItemId() == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
-            }  else if (item.getItemId() == R.id.nav_chat) {
+            } else if (item.getItemId() == R.id.nav_chat) {
                 selectedFragment = new ChatFragment();
             } else if (item.getItemId() == R.id.nav_search) {
                 selectedFragment = new SearchFragment();
@@ -98,20 +99,32 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Navigation", "Notification fragment selected");
             } else if (item.getItemId() == R.id.nav_profile) {
                 // Saving the current user's profile ID to SharedPreferences
-                SharedPreferences.Editor editor = getSharedPreferences("PREPS", MODE_PRIVATE).edit();
-                editor.putString("profileid", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                editor.apply();
-                selectedFragment = new ProfileFragment();
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null) {
+                    String profileId = currentUser.getUid();
+                    if (profileId != null && !profileId.isEmpty()) {
+                        SharedPreferences.Editor editor = getSharedPreferences("PREPS", MODE_PRIVATE).edit();
+                        editor.putString("profileid", profileId);
+                        editor.apply();
+                        selectedFragment = new ProfileFragment();
+                    } else {
+                        Log.e("ProfileFragment", "Profile ID is null or empty");
+                        Toast.makeText(MainActivity.this, "Profile ID is not available", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Log.e("ProfileFragment", "User is not authenticated");
+                    Toast.makeText(MainActivity.this, "User is not authenticated", Toast.LENGTH_SHORT).show();
+                }
             }
+
             // Load the selected fragment into the activity
             if (selectedFragment != null){
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
             }
             return true;
         }
-
-
     };
+
 
     // Method to load a fragment into the activity
     private void loadFragment(Fragment homeFragment) {

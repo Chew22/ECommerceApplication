@@ -1,5 +1,7 @@
 package com.example.ecommerceapplication.models;
 
+import java.util.ArrayList;
+
 public class MyCartModel {
 
     String productId;
@@ -10,13 +12,13 @@ public class MyCartModel {
     String totalQuantity;
     double totalPrice;
     String documentId;
-    String productImage;
+    ArrayList<String> productImage;
 
     public MyCartModel(){
 
     }
 
-    public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, String productImage) {
+    public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, ArrayList<String> productImage) {
         this.productId = productId;
         this.currentTime = currentTime;
         this.currentDate = currentDate;
@@ -36,11 +38,18 @@ public class MyCartModel {
         this.productId = productId;
     }
 
-    public String getProductImage() {
+    public String getFirstProductImage() {
+        if (productImage != null && !productImage.isEmpty()) {
+            return productImage.get(0); // Return the first image URL
+        }
+        return null;
+    }
+
+    public ArrayList<String> getProductImage() {
         return productImage;
     }
 
-    public void setProductImage(String productImage) {
+    public void setProductImage(ArrayList<String> productImage) {
         this.productImage = productImage;
     }
 
