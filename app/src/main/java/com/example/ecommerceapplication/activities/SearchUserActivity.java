@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.adapters.SearchUserRecyclerAdapter;
-import com.example.ecommerceapplication.models.UserModel;
+import com.example.ecommerceapplication.models.SellerModel;
 import com.example.ecommerceapplication.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.Query;
@@ -51,10 +51,10 @@ public class SearchUserActivity extends AppCompatActivity {
     private void setupSearchRecyclerView(String searchTerm) {
 
         Query query = FirebaseUtil.allUserCollectionReference()
-                .whereGreaterThanOrEqualTo("username", searchTerm);
+                .whereGreaterThanOrEqualTo("shopName", searchTerm);
 
-        FirestoreRecyclerOptions<UserModel> options = new FirestoreRecyclerOptions.Builder<UserModel>()
-                .setQuery(query, UserModel.class).build();
+        FirestoreRecyclerOptions<SellerModel> options = new FirestoreRecyclerOptions.Builder<SellerModel>()
+                .setQuery(query, SellerModel.class).build();
 
         adapter = new SearchUserRecyclerAdapter(options, getApplicationContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

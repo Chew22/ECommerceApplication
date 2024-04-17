@@ -15,8 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -49,6 +48,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private List<PostModel> list;
     private FirebaseFirestore db;
     private FirebaseUser firebaseUser;
+
 
     public PostAdapter(Context context, List<PostModel> list) {
         this.context = context;
@@ -100,19 +100,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         getComments(post.getProductId(), holder.comments);
         isSaved(post.getProductId(), holder.save);
 
-        holder.image_profile.setOnClickListener(v -> {
-            String sellerId = post.getSellerID();
 
+        holder.image_profile.setOnClickListener(v -> {
+            // Navigate to the seller profile
             ProfileFragment profileFragment = new ProfileFragment();
             Bundle bundle = new Bundle();
-            bundle.putString("profileid", sellerId); // Pass the profileid to the fragment
-            bundle.putString("type", "profileid"); // Pass the type to fetch seller info
+            bundle.putString("sellerId", post.getSellerID());
             profileFragment.setArguments(bundle);
 
-            FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, profileFragment); // Replace fragment_container with your actual container ID
-            transaction.addToBackStack(null);  // Add transaction to back stack, so user can navigate back
-            transaction.commit();
+            // Use the context to access getSupportFragmentManager
+            ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, profileFragment)
+                    .addToBackStack(null)
+                    .commit();
         });
 
 

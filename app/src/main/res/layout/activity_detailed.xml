@@ -26,15 +26,15 @@
         app:title="Product Detailed" />
 
         <com.denzcoskun.imageslider.ImageSlider
-        android:id="@+id/detailedImageSlider"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/placeholder"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/detailed_toolbar" />
+            android:id="@+id/detailedImageSlider"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/detailed_toolbar" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardview"
@@ -103,11 +103,12 @@
                     android:textColor="@color/black"
                     android:fontFamily="@font/amethysta"/>
 
-                <ImageView
+                <ImageButton
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginLeft="15dp"
                     android:src="@drawable/copy"
+                    android:id="@+id/copy"
                     android:layout_toEndOf="@+id/detailed_name" />
 
                 <TextView
@@ -166,8 +167,8 @@
 
                 <ImageView
                     android:id="@+id/remove_item"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:padding="3dp"
                     android:layout_marginLeft="7dp"
                     android:src="@drawable/iconminus" />
@@ -176,14 +177,15 @@
                     android:id="@+id/quantity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingHorizontal="10dp"
                     android:text="1"
                     android:textSize="25sp"
                     android:textStyle="bold" />
 
                 <ImageView
                     android:id="@+id/add_item"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:padding="3dp"
                     android:layout_marginRight="7dp"
                     android:src="@drawable/plusicon" />

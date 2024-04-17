@@ -1,10 +1,14 @@
 package com.example.ecommerceapplication.activities;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -44,6 +48,7 @@ public class DetailedActivity extends AppCompatActivity {
     RatingBar ratingBar;
     Button addToCart, buyNow, message;
     ImageView addItems, removeItems, image_profile;
+    ImageButton copy;
     Toolbar toolbar;
 
     // Variables to track quantity and total price
@@ -100,6 +105,7 @@ public class DetailedActivity extends AppCompatActivity {
         addItems = findViewById(R.id.add_item);
         removeItems = findViewById(R.id.remove_item);
         message = findViewById(R.id.btn_message);
+        copy = findViewById(R.id.copy);
 
         // Retrieve the ("detailed") from the intent and assigns it to the variable obj
         final Object obj = getIntent().getSerializableExtra("detailed");
@@ -115,10 +121,18 @@ public class DetailedActivity extends AppCompatActivity {
             displaySellerInfo(postModel.getSellerID());
         }
 
+        // Log image URLs
+        Log.d("DetailedActivity", "Image URLs: " + imageUrls.toString());
+
+        // Create SlideModel list
         List<SlideModel> slideModels = new ArrayList<>();
         for (String imageUrl : imageUrls) {
             slideModels.add(new SlideModel(imageUrl, "", ScaleTypes.CENTER_CROP));
         }
+
+        // Set image list to ImageSlider
+        detailedImageSlider.setImageList(slideModels, ScaleTypes.CENTER_CROP);
+
 
         if (newProductsModel != null) {
             productId.setText(newProductsModel.getProductId());
@@ -144,6 +158,26 @@ public class DetailedActivity extends AppCompatActivity {
             totalPrice = postModel.getPrice() * totalQuantity;
         }
 
+        // Set OnClickListener for copy ImageButton
+        copy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get the product name from TextView
+                String productName = name.getText().toString();
+
+                // Get the clipboard manager
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
+                // Create a ClipData object to store the product name
+                ClipData clip = ClipData.newPlainText("Product Name", productName);
+
+                // Set the ClipData to clipboard
+                clipboard.setPrimaryClip(clip);
+
+                // Show a toast message to indicate the product name has been copied
+                Toast.makeText(DetailedActivity.this, "Product name copied to clipboard", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Set up click listeners for buy now buttons
         buyNow.setOnClickListener(new View.OnClickListener() {
@@ -161,7 +195,7 @@ public class DetailedActivity extends AppCompatActivity {
             }
         });
 
-            message.setOnClickListener(new View.OnClickListener() {
+        message.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -177,8 +211,27 @@ public class DetailedActivity extends AppCompatActivity {
                 Intent intent = new Intent(DetailedActivity.this, ChatActivity.class);
                 intent.putExtra("sellerId", sellerId);
                 startActivity(intent);
+
             }
         });
+
+        image_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String sellerId = "";
+                if (obj instanceof NewProductsModel) {
+                    sellerId = ((NewProductsModel) obj).getSellerID();
+                } else if (obj instanceof PostModel) {
+                    sellerId = ((PostModel) obj).getSellerID();
+                }
+
+                // Start the ProfileActivity with the seller ID
+                Intent intent = new Intent(DetailedActivity.this, ProfileActivity.class);
+                intent.putExtra("sellerId", sellerId);
+                startActivity(intent);
+            }
+        });
+
 
         // Set up the "Add to Cart" button click listener
             addToCart.setOnClickListener(new View.OnClickListener() {

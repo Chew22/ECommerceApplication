@@ -1,5 +1,11 @@
 package com.example.ecommerceapplication.utils;
 
+import static com.example.ecommerceapplication.adapters.PostAdapter.TAG;
+
+import android.util.Log;
+
+import com.example.ecommerceapplication.models.SellerModel;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -47,6 +53,7 @@ public class FirebaseUtil {
         return FirebaseFirestore.getInstance().collection("CurrentUser");
     }
 
+
     /**
      * Retrieves the Firestore document reference for a specific chatroom.
      * @param chatroomId The ID of the chatroom.
@@ -79,6 +86,12 @@ public class FirebaseUtil {
         }
     }
 
+    public static DocumentReference getSellerReference(String sellerId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        return db.collection("seller").document(sellerId);
+    }
+
+
     /**
      * Retrieves the Firestore collection reference for all chatrooms.
      * @return Collection reference for all chatrooms.
@@ -93,12 +106,17 @@ public class FirebaseUtil {
      * @return Document reference for the other user in the chatroom.
      */
     public static DocumentReference getOtherUserFromChatroom(List<String> userIds) {
-        if (userIds.get(0).equals(FirebaseUtil.currentUserId())) {
-            // Return the second user ID
-            return allUserCollectionReference().document(userIds.get(1));
+        if (userIds != null && userIds.size() >= 2) {
+            if (userIds.get(0).equals(FirebaseUtil.currentUserId())) {
+                // Return the second user ID
+                return allUserCollectionReference().document(userIds.get(1));
+            } else {
+                // Not the current user, return the first user
+                return allUserCollectionReference().document(userIds.get(0));
+            }
         } else {
-            // Not the current user, return the first user
-            return allUserCollectionReference().document(userIds.get(0));
+            Log.e(TAG, "Invalid userIds list: " + userIds);
+            return null;
         }
     }
 
@@ -109,5 +127,19 @@ public class FirebaseUtil {
      */
     public static String timestampToString(Timestamp timestamp) {
         return new SimpleDateFormat("HH:MM").format(timestamp.toDate());
+    }
+
+    public static Task<String> getSellerDocumentId(SellerModel model) {
+        return FirebaseFirestore.getInstance()
+                .collection("seller")
+                .whereEqualTo("email", model.getEmail()) // Assuming 'email' is a unique field to identify sellers
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful() && !task.getResult().getDocuments().isEmpty()) {
+                        return task.getResult().getDocuments().get(0).getId();
+                    } else {
+                        return null;
+                    }
+                });
     }
 }

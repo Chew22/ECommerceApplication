@@ -1,5 +1,7 @@
 package com.example.ecommerceapplication.adapters;
 
+import static com.example.ecommerceapplication.utils.FirebaseUtil.getSellerDocumentId;
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -14,39 +16,39 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.activities.ChatActivity;
-import com.example.ecommerceapplication.models.UserModel;
+import com.example.ecommerceapplication.models.SellerModel;
 import com.example.ecommerceapplication.utils.AndroidUtil;
 import com.example.ecommerceapplication.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 
-public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserModel, SearchUserRecyclerAdapter.UserModelViewHolder> {
+public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<SellerModel, SearchUserRecyclerAdapter.UserModelViewHolder> {
 
     Context context;
 
-    public SearchUserRecyclerAdapter(@NonNull FirestoreRecyclerOptions<UserModel> options, Context context) {
+    public SearchUserRecyclerAdapter(@NonNull FirestoreRecyclerOptions<SellerModel> options, Context context) {
         super(options);
         this.context = context;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull UserModelViewHolder holder, int position, @NonNull UserModel model) {
+    protected void onBindViewHolder(@NonNull UserModelViewHolder holder, int position, @NonNull SellerModel model) {
 
-        holder.phoneText.setText(model.getPhone());
+        holder.address.setText(model.getAddress());
         String currentUserId = FirebaseUtil.currentUserId();
-        if (currentUserId != null && currentUserId.equals(model.getId())) {
-            holder.usernameText.setText(model.getUsername() + "(Me)");
+        if (currentUserId != null && currentUserId.equals(getSellerDocumentId(model))) {
+            holder.shopName.setText(model.getShopName() + "(Me)");
         } else {
-            holder.usernameText.setText(model.getUsername());
+            holder.shopName.setText(model.getShopName());
         }
 
         // Load profileImg using Glide
-        if (model.getProfileImg() != null && !model.getProfileImg().isEmpty()) {
+        if (model.getImagePath() != null && !model.getImagePath().isEmpty()) {
             Glide.with(context)
-                    .load(model.getProfileImg())
+                    .load(model.getImagePath())
                     .placeholder(R.drawable.placeholder)
-                    .into(holder.profilePic);
+                    .into(holder.imagePath);
         }
 
         holder.itemView.setOnClickListener(v -> {
@@ -67,15 +69,15 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
     }
 
     public class UserModelViewHolder extends RecyclerView.ViewHolder {
-        TextView usernameText;
-        TextView phoneText;
-        ImageView profilePic;
+        TextView shopName;
+        TextView address;
+        ImageView imagePath;
 
         public UserModelViewHolder(@NonNull View itemView){
             super(itemView);
-            usernameText = itemView.findViewById(R.id.user_name_text);
-            phoneText = itemView.findViewById(R.id.phone_text);
-            profilePic = itemView.findViewById(R.id.profile_pic_image_view);
+            shopName = itemView.findViewById(R.id.shopName);
+            address = itemView.findViewById(R.id.address);
+            imagePath = itemView.findViewById(R.id.imagePath);
 
         }
 

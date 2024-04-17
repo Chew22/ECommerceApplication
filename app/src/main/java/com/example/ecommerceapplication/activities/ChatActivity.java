@@ -3,6 +3,7 @@ package com.example.ecommerceapplication.activities;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,12 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.adapters.ChatRecyclerAdapter;
 import com.example.ecommerceapplication.models.ChatMessageModel;
 import com.example.ecommerceapplication.models.ChatroomModel;
-import com.example.ecommerceapplication.models.UserModel;
-import com.example.ecommerceapplication.utils.AndroidUtil;
+import com.example.ecommerceapplication.models.SellerModel;
 import com.example.ecommerceapplication.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,44 +29,59 @@ import java.util.Arrays;
 
 public class ChatActivity extends AppCompatActivity {
 
+    public static final String TAG = "ChatActivity";
+
     // Variables declaration
     String chatroomId;
     ChatroomModel chatroomModel;
     ChatRecyclerAdapter adapter;
-    UserModel otherUser;
+    SellerModel seller;
     EditText messageInput;
     ImageButton sendMessageBtn, backBtn;
-    TextView otherUsername;
+    TextView shopName;
     RecyclerView recyclerView;
+    ImageView profile_pic_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Get seller ID from intent
-        String sellerId = getIntent().getStringExtra("sellerId");
-
-        // Get UserModel for the other user in the chat
-        otherUser = AndroidUtil.getUserModelFromIntent(getIntent());
-
-        // Generate unique chatroom ID based on user IDs
-        chatroomId = FirebaseUtil.getChatroomId(FirebaseUtil.currentUserId(), sellerId);
-
         // Initialize UI elements
         messageInput = findViewById(R.id.chat_message_input);
         sendMessageBtn = findViewById(R.id.message_send_btn);
         backBtn = findViewById(R.id.back_btn);
-        otherUsername = findViewById(R.id.other_username);
+        shopName = findViewById(R.id.shopName);
         recyclerView = findViewById(R.id.chat_recycler_view);
+        profile_pic_layout = findViewById(R.id.profile_pic_layout);
+
+
+        // Get seller ID from intent
+        String sellerId = getIntent().getStringExtra("sellerId");
+
+        // Retrieve shop name and profile image of the seller
+        FirebaseUtil.getSellerReference(sellerId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                seller = task.getResult().toObject(SellerModel.class);
+                if (seller != null) {
+                    // Set shop name to TextView
+                    shopName.setText(seller.getShopName()); // Assuming you have a getShopName() method in SellerModel
+
+                    // Load profile image using Glide or any other image loading library
+                    Glide.with(this)
+                            .load(seller.getImagePath())
+                            .into(profile_pic_layout);
+                }
+            }
+        });
+
+        // Generate unique chatroom ID based on user IDs
+        chatroomId = FirebaseUtil.getChatroomId(FirebaseUtil.currentUserId(), sellerId);
 
         // Set onClickListener for back button
         backBtn.setOnClickListener((v) -> {
             finish();
         });
-
-        // Set the username of the other user in the chat
-        otherUsername.setText(otherUser.getUsername());
 
         // Set onClickListener for send button to send messages
         sendMessageBtn.setOnClickListener(v -> {
@@ -77,9 +93,26 @@ public class ChatActivity extends AppCompatActivity {
         // Setup RecyclerView to display chat messages
         setupChatRecyclerView();
 
-        // Retrieve or create chatroom model from Firestore
-        getOrCreateChatroomModel();
+        FirebaseUtil.getChatroomReference(chatroomId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                chatroomModel = task.getResult().toObject(ChatroomModel.class);
+                if (chatroomModel == null) {
+                    // First Time Chat
+                    chatroomModel = new ChatroomModel(
+                            chatroomId,
+                            Arrays.asList(FirebaseUtil.currentUserId(), sellerId),
+                            Timestamp.now(),
+                            ""
+                    );
+                }
+                // Save or update chatroomModel in Firebase
+                FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
+            }
+        });
     }
+
+
+
 
     void setupChatRecyclerView() {
         Query query = FirebaseUtil.getChatroomMessageReference(chatroomId)
@@ -124,24 +157,5 @@ public class ChatActivity extends AppCompatActivity {
                 });
     }
 
-
-    void getOrCreateChatroomModel() {
-        FirebaseUtil.getChatroomReference(chatroomId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                chatroomModel = task.getResult().toObject(ChatroomModel.class);
-                if (chatroomModel == null) {
-                    // First Time Chat
-                    chatroomModel = new ChatroomModel(
-                            chatroomId,
-                            Arrays.asList(FirebaseUtil.currentUserId(), otherUser.getId()),
-                            Timestamp.now(),
-                            ""
-                    );
-                }
-                // Save or update chatroomModel in Firebase
-                FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
-            }
-        });
-    }
 
 }

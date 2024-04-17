@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.activities.ChatActivity;
 import com.example.ecommerceapplication.models.ChatroomModel;
-import com.example.ecommerceapplication.models.UserModel;
+import com.example.ecommerceapplication.models.SellerModel;
 import com.example.ecommerceapplication.utils.AndroidUtil;
 import com.example.ecommerceapplication.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -42,6 +42,8 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
         this.context = context;
     }
 
+
+
     /**
      * Binds chatroom data to the ViewHolder.
      * @param holder The ViewHolder to bind the data to.
@@ -51,13 +53,17 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
     @Override
     protected void onBindViewHolder(@NonNull ChatroomModelViewHolder holder, int position, @NonNull ChatroomModel model) {
         if (model.getUserIds() != null) {
+
+            Log.e(TAG, "Model: " + model.toString());
+            Log.e(TAG, "Position: " + position);
+
             FirebaseUtil.getOtherUserFromChatroom(model.getUserIds())
                     .get().addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             boolean lastMessageSentByMe = model.getLastMessageSenderId().equals(FirebaseUtil.currentUserId());
 
-                            UserModel otherUserModel = task.getResult().toObject(UserModel.class);
-                            holder.usernameText.setText(otherUserModel.getUsername());
+                            SellerModel otherUserModel = task.getResult().toObject(SellerModel.class);
+                            holder.usernameText.setText(otherUserModel.getShopName());
                             if (lastMessageSentByMe) {
                                 holder.lastMessageText.setText("You: " + model.getLastMessage());
                             } else {
@@ -65,9 +71,9 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
                             }
                             holder.lastMessageTime.setText(FirebaseUtil.timestampToString(model.getLastMessageTimestamp()));
 
-                            if (otherUserModel.getProfileImg() != null && !otherUserModel.getProfileImg().isEmpty()) {
+                            if (otherUserModel.getImagePath() != null && !otherUserModel.getImagePath().isEmpty()) {
                                 Glide.with(context)
-                                        .load(otherUserModel.getProfileImg())
+                                        .load(otherUserModel.getImagePath())
                                         .placeholder(R.drawable.placeholder)
                                         .into(holder.profilePic);
                             }
