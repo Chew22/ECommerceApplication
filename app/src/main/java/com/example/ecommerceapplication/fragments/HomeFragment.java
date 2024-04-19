@@ -127,9 +127,11 @@ public class HomeFragment extends Fragment {
         ImageSlider imageSlider = view.findViewById(R.id.image_slider);
         List<SlideModel> slideModels = new ArrayList<>();
         // Adding slides to the image slider
-        slideModels.add(new SlideModel(R.drawable.banner1,"Hari Raya Discount ", ScaleTypes.CENTER_CROP));
+        slideModels.add(new SlideModel(R.drawable.banner1,"Ben's Cookies On Sales", ScaleTypes.CENTER_CROP));
         slideModels.add(new SlideModel(R.drawable.banner2,"Discount On Homebake Cookies", ScaleTypes.CENTER_CROP));
         slideModels.add(new SlideModel(R.drawable.banner3,"Discount On Cupcakes", ScaleTypes.CENTER_CROP));
+        slideModels.add(new SlideModel(R.drawable.banner4,"Labour Day Discount", ScaleTypes.CENTER_CROP));
+        slideModels.add(new SlideModel(R.drawable.banner5,"Big Sales", ScaleTypes.CENTER_CROP));
         imageSlider.setImageList(slideModels);
 
         progressDialog.setTitle("Welcome To ShopLoca ECommerce Application");

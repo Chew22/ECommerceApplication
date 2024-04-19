@@ -10,5 +10,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="default_web_client_id">825237982266-rfvdtt7e13h5isvgikmp87kmnoh0agmg.apps.googleusercontent.com</string>
 
+    <string name="following_button_text">Following</string>
+    <string name="follow_button_text">Follow</string>
+
+
 
 </resources>

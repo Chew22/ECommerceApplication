@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.ecommerceapplication.R;
+import com.example.ecommerceapplication.activities.ChatActivity;
 import com.example.ecommerceapplication.activities.EditProfileActivity;
 import com.example.ecommerceapplication.activities.FollowersActivity;
 import com.example.ecommerceapplication.activities.OptionsActivity;
@@ -60,7 +61,8 @@ public class ProfileFragment extends Fragment {
 
     ImageView image_profile, options;
     TextView posts, followers, following, bio, username, name;
-    Button edit_profile, order_status;
+    Button edit_profile, order_status, followButton;
+    Button messageButton;
 
     private List<String> mySaves;
 
@@ -111,6 +113,7 @@ public class ProfileFragment extends Fragment {
         posts = view.findViewById(R.id.posts);
         followers = view.findViewById(R.id.followers);
         following = view.findViewById(R.id.following);
+        followButton = view.findViewById(R.id.follow_button);
         bio = view.findViewById(R.id.bio);
         username = view.findViewById(R.id.username);
         name = view.findViewById(R.id.name);
@@ -118,6 +121,7 @@ public class ProfileFragment extends Fragment {
         my_fotos = view.findViewById(R.id.my_fotos);
         saved_fotos = view.findViewById(R.id.saved_fotos);
         order_status = view.findViewById(R.id.order_status);
+        messageButton = view.findViewById(R.id.message_button);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -145,14 +149,38 @@ public class ProfileFragment extends Fragment {
         myFotos();
         mysaves();
 
-
-
-        if (profileid.equals(firebaseUser.getUid())){
+        // Check if the profile belongs to the current user
+        if (profileid.equals(firebaseUser.getUid())) {
+            // Profile belongs to the current user
             edit_profile.setText("Edit Profile");
-        }else {
+            order_status.setVisibility(View.VISIBLE);
+            followButton.setVisibility(View.GONE);
+            messageButton.setVisibility(View.GONE);
+            my_fotos.setVisibility(View.GONE);
+            Log.d(TAG, "Profile belongs to the current user. Setting text to 'Edit Profile' and making order_status button visible.");
+        } else {
             checkFollow();
+            order_status.setVisibility(View.GONE);
             saved_fotos.setVisibility(View.GONE);
+            Log.d(TAG, "Profile does not belong to the current user. Hiding order_status button and saved_fotos button.");
         }
+
+        followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Check the text of the follow button to determine the action
+                String buttonText = followButton.getText().toString();
+                if (buttonText.equals(getString(R.string.follow_button_text))) {
+                    // User wants to follow
+                    followUser();
+                } else if (buttonText.equals(getString(R.string.following_button_text))) {
+                    // User wants to unfollow
+                    unfollowUser();
+                }
+            }
+        });
+
+
 
         order_status.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,58 +193,9 @@ public class ProfileFragment extends Fragment {
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String btn = edit_profile.getText().toString();
 
-                if (btn.equals("Edit Profile")){
-                    startActivity(new Intent(getContext(), EditProfileActivity.class));
+                startActivity(new Intent(getContext(), EditProfileActivity.class));
 
-                } else if (btn.equals("Follow")) {
-
-                    DocumentReference followingRef = firestore.collection("Follow").document(firebaseUser.getUid()).collection("following").document(profileid);
-                    DocumentReference followerRef = firestore.collection("Follow").document(profileid).collection("followers").document(firebaseUser.getUid());
-
-                    // Set the follow status to true
-                    followingRef.set(new Object())
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    // Update UI and add notification
-                                    edit_profile.setText("following");
-                                    addNotification();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    // Handle error
-                                    Toast.makeText(getContext(), "Failed to follow user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                    followerRef.set(new Object());
-                } else if (btn.equals("following")) {
-
-                    DocumentReference followingRef = firestore.collection("Follow").document(firebaseUser.getUid()).collection("following").document(profileid);
-                    DocumentReference followerRef = firestore.collection("Follow").document(profileid).collection("followers").document(firebaseUser.getUid());
-
-                    followingRef.delete()
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    // Update UI
-                                    edit_profile.setText("Follow");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    // Handle error
-                                    Toast.makeText(getContext(), "Failed to unfollow user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                    followerRef.delete();
-                }
             }
         });
 
@@ -256,9 +235,75 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        messageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start the ChatActivity with the seller ID
+                Intent intent = new Intent(getContext(), ChatActivity.class);
+                intent.putExtra("sellerId", profileid); // Assuming profileid is the seller's ID
+                startActivity(intent);
+            }
+        });
+
         // Inflate the layout for this fragment
         return view;
     }
+
+    private void followUser() {
+        // Get reference to the "Follow" collection in Firestore
+        DocumentReference followingRef = firestore.collection("Follow").document(firebaseUser.getUid()).collection("following").document(profileid);
+        DocumentReference followerRef = firestore.collection("Follow").document(profileid).collection("followers").document(firebaseUser.getUid());
+
+        // Create a HashMap to store follow status
+        HashMap<String, Object> followData = new HashMap<>();
+        followData.put("followed", true); // You can add more properties if needed
+
+        // Set the follow status in Firestore
+        followingRef.set(followData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Update UI and add notification
+                        followButton.setText(R.string.following_button_text);
+                        addNotification();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle error
+                        Toast.makeText(getContext(), "Failed to follow user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        followerRef.set(followData);
+    }
+
+    private void unfollowUser() {
+        // Get reference to the "Follow" collection in Firestore
+        DocumentReference followingRef = firestore.collection("Follow").document(firebaseUser.getUid()).collection("following").document(profileid);
+        DocumentReference followerRef = firestore.collection("Follow").document(profileid).collection("followers").document(firebaseUser.getUid());
+
+        // Delete the follow status from Firestore
+        followingRef.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Update UI
+                        followButton.setText(R.string.follow_button_text);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle error
+                        Toast.makeText(getContext(), "Failed to unfollow user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        followerRef.delete();
+    }
+
 
     private void addNotification(){
         // Get reference to the "notifications" collection in Firestore
@@ -358,9 +403,6 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-
-
-
     private void checkFollow(){
         // Get reference to the "Follow" collection in Firestore
         DocumentReference followRef = FirebaseFirestore.getInstance().collection("Follow")
@@ -371,9 +413,11 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException error) {
                 if (snapshot != null && snapshot.exists()) {
-                    edit_profile.setText("following");
+                    // User is already following the profile
+                    edit_profile.setText(R.string.following_button_text);
                 } else {
-                    edit_profile.setText("follow");
+                    // User is not following the profile
+                    edit_profile.setText(R.string.follow_button_text);
                 }
             }
         });
@@ -412,7 +456,7 @@ public class ProfileFragment extends Fragment {
 
     private void getNrPosts() {
         // Get reference to the "Posts" collection in Firestore
-        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Posts");
+        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Products");
 
         // Listen for changes in the "Posts" collection
         postsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -423,7 +467,7 @@ public class ProfileFragment extends Fragment {
                     // Iterate through each document in the snapshot
                     for (DocumentSnapshot document : snapshot.getDocuments()) {
                         // Get the data of the document and check if the publisher matches the profileid
-                        String publisher = document.getString("publisher");
+                        String publisher = document.getString("sellerID");
                         if (publisher != null && publisher.equals(profileid)) {
                             count++;
                         }
@@ -438,10 +482,10 @@ public class ProfileFragment extends Fragment {
 
     private void myFotos() {
         // Get reference to the "Posts" collection in Firestore
-        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Posts");
+        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Products");
 
         // Query the posts where the publisher is equal to the profileid
-        Query query = postsRef.whereEqualTo("publisher", profileid);
+        Query query = postsRef.whereEqualTo("sellerID", profileid);
 
         // Listen for changes in the query results
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -472,7 +516,7 @@ public class ProfileFragment extends Fragment {
 
         // Get reference to the "Saves" collection in Firestore
         CollectionReference savesRef = FirebaseFirestore.getInstance().collection("Saves")
-                .document(firebaseUser.getUid()).collection("Products");
+                .document(firebaseUser.getUid()).collection("SavedPosts");
 
         // Query all documents in the "Saves" collection under the user's ID
         savesRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

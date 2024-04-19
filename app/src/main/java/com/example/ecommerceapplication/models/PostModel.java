@@ -40,6 +40,13 @@ public class PostModel implements Serializable {
         this.rating = rating;
     }
 
+    public String getFirstProductImage() {
+        if (productImages != null && !productImages.isEmpty()) {
+            return productImages.get(0); // Return the first image URL
+        }
+        return null;
+    }
+
     // Getter and Setter for timestamp
     public long getTimestamp() {
         return timestamp;

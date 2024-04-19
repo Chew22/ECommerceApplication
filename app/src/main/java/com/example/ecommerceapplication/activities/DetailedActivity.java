@@ -183,15 +183,23 @@ public class DetailedActivity extends AppCompatActivity {
         buyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Start PaymentActivity with the selected product
-                Intent intent = new Intent(DetailedActivity.this , AddressActivity.class);
-                if (newProductsModel != null){
-                    intent.putExtra("item", newProductsModel);
+
+                // Start PaymentActivity with the updated total amount
+                Intent intent = new Intent(DetailedActivity.this, PaymentActivity.class);
+                double productPrice = 0.0; // Initialize product price variable
+                if (newProductsModel != null) {
+                    // Get the price of the current product
+                    productPrice = newProductsModel.getPrice();
                 }
-                if (postModel != null){
-                    intent.putExtra("item", postModel);
+                if (postModel != null) {
+                    // Get the price of the current product
+                    productPrice = postModel.getPrice();
                 }
+                // Pass the price to PaymentActivity
+                intent.putExtra("totalAmount", productPrice);
                 startActivity(intent);
+
+
             }
         });
 

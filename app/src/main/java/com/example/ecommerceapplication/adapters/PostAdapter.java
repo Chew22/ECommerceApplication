@@ -150,12 +150,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.like.setOnClickListener(v -> {
             ImageView likeIcon = (ImageView) v;
             if (likeIcon.getTag().equals("like")) {
-                likePost(post.getProductId(), likeIcon);
+                likePost(post.getProductId(), likeIcon, holder.likes);
                 addNotifications(post.getSellerID(), post.getProductId());
             } else {
-                unlikePost(post.getProductId(), likeIcon);
+                unlikePost(post.getProductId(), likeIcon, holder.likes);
             }
         });
+
 
         holder.comment.setOnClickListener(v -> {
             Intent intent = new Intent(context, CommentsActivity.class);
@@ -323,7 +324,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     // Like a post
-    private void likePost(String postid, ImageView likeIcon) {
+    private void likePost(String postid, ImageView likeIcon, TextView likesText) {
         Map<String, Object> likeData = new HashMap<>();
         likeData.put("timestamp", FieldValue.serverTimestamp());
 
@@ -334,12 +335,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     // Update the icon to the liked icon
                     likeIcon.setImageResource(R.drawable.ic_liked);
                     likeIcon.setTag("liked");
+
+                    // Update the number of likes
+                    nrLikes(likesText, postid);
                 })
                 .addOnFailureListener(e -> Log.e("PostAdapter", "Error liking post: " + e.getMessage()));
     }
 
     // Unlike a post
-    private void unlikePost(String postid, ImageView likeIcon) {
+    private void unlikePost(String postid, ImageView likeIcon, TextView likesText) {
         db.collection("Likes").document(postid).collection("Likes").document(firebaseUser.getUid())
                 .delete()
                 .addOnSuccessListener(aVoid -> {
@@ -347,8 +351,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     // Update the icon to the unliked icon
                     likeIcon.setImageResource(R.drawable.ic_like);
                     likeIcon.setTag("like");
+
+                    // Update the number of likes
+                    nrLikes(likesText, postid);
                 })
                 .addOnFailureListener(e -> Log.e("PostAdapter", "Error unliking post: " + e.getMessage()));
     }
+
 
 }
