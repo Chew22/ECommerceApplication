@@ -1,6 +1,8 @@
 package com.example.ecommerceapplication.activities;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.ecommerceapplication.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
@@ -24,20 +27,39 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     EditText edtEmail;
     ProgressBar progressBar;
     String strEmail;
+    private TextInputLayout txtLayoutEmail;
+    private EditText edtForgotPasswordEmail;
 
     // Firebase
     FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
+
         //Initializaton
         btnBack = findViewById(R.id.btnForgotPasswordBack);
         btnReset = findViewById(R.id.btnReset);
         edtEmail = findViewById(R.id.edtForgotPasswordEmail);
         progressBar = findViewById(R.id.forgetPasswordProgressbar);
+
+        txtLayoutEmail = findViewById(R.id.txtLayoutEmail);
+        edtForgotPasswordEmail = findViewById(R.id.edtForgotPasswordEmail);
+
+        edtForgotPasswordEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    txtLayoutEmail.setHintTextColor(ColorStateList.valueOf(Color.BLACK));
+                } else {
+                    // You can set the hint color back to its original color when focus is lost,
+                    // or leave it as black if desired
+                }
+            }
+        });
 
         mAuth = FirebaseAuth.getInstance();
 

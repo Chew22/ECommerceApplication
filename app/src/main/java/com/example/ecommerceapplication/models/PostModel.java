@@ -6,6 +6,7 @@ import java.util.List;
 public class PostModel implements Serializable {
 
     List<Integer> colors;
+    private long timestamp;
     Double offerPercentage;
     double price;
     String productCategory;
@@ -22,8 +23,9 @@ public class PostModel implements Serializable {
     public PostModel() {
     }
 
-    public PostModel(List<Integer> colors, Double offerPercentage, double price, String productCategory, String productDescription, String productId, List<String> productImages, String productName, String sellerID, String sellerName, String shopName, List<String> sizes, String rating) {
+    public PostModel(List<Integer> colors, int timestamp, Double offerPercentage, double price, String productCategory, String productDescription, String productId, List<String> productImages, String productName, String sellerID, String sellerName, String shopName, List<String> sizes, String rating) {
         this.colors = colors;
+        this.timestamp = timestamp;
         this.offerPercentage = offerPercentage;
         this.price = price;
         this.productCategory = productCategory;
@@ -36,6 +38,15 @@ public class PostModel implements Serializable {
         this.shopName = shopName;
         this.sizes = sizes;
         this.rating = rating;
+    }
+
+    // Getter and Setter for timestamp
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public List<String> getProductImages() {

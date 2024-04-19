@@ -50,7 +50,7 @@ public class FirebaseUtil {
      * @return Collection reference for all users.
      */
     public static CollectionReference allUserCollectionReference() {
-        return FirebaseFirestore.getInstance().collection("CurrentUser");
+        return FirebaseFirestore.getInstance().collection("seller");
     }
 
 

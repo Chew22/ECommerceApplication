@@ -54,9 +54,6 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
     protected void onBindViewHolder(@NonNull ChatroomModelViewHolder holder, int position, @NonNull ChatroomModel model) {
         if (model.getUserIds() != null) {
 
-            Log.e(TAG, "Model: " + model.toString());
-            Log.e(TAG, "Position: " + position);
-
             FirebaseUtil.getOtherUserFromChatroom(model.getUserIds())
                     .get().addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {

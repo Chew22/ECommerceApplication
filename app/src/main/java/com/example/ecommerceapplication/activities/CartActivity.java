@@ -85,6 +85,8 @@ public class CartActivity extends AppCompatActivity {
                 Intent intent = new Intent(CartActivity.this, PaymentActivity.class);
                 intent.putExtra("totalAmount", totalAmount);
                 startActivity(intent);
+
+
             }
         });
 
@@ -250,6 +252,7 @@ public class CartActivity extends AppCompatActivity {
                                                             @Override
                                                             public void onComplete(@NonNull Task<DocumentReference> task) {
                                                                 if (task.isSuccessful()) {
+
                                                                     // Cart item saved successfully
                                                                     Log.d(TAG, "Cart item saved to Order: " + task.getResult().getId());
                                                                     // Remove the item from the cart after it's been successfully saved to the Order collection

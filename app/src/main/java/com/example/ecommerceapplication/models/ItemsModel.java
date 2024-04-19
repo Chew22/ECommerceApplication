@@ -1,9 +1,11 @@
 package com.example.ecommerceapplication.models;
 
+import java.util.ArrayList;
+
 public class ItemsModel {
     private String itemId;
     private String productName;
-    private String productImage;
+    private ArrayList<String> productImage;
     private String productPrice;
     private String totalQuantity;
     private double totalPrice;
@@ -11,13 +13,30 @@ public class ItemsModel {
     public ItemsModel() {
     }
 
-    public ItemsModel(String itemId, String productName, String productImage, String productPrice, String totalQuantity, double totalPrice) {
+    public ItemsModel(String itemId, String productName, ArrayList<String> productImage, String productPrice, String totalQuantity, double totalPrice) {
         this.itemId = itemId;
         this.productName = productName;
         this.productImage = productImage;
         this.productPrice = productPrice;
         this.totalQuantity = totalQuantity;
         this.totalPrice = totalPrice;
+    }
+
+    // Method to get the first image URL
+    public String getFirstProductImage() {
+        if (productImage != null && !productImage.isEmpty()) {
+            return productImage.get(0); // Return the first image URL
+        } else {
+            return null; // Or handle the case when there are no images
+        }
+    }
+
+    public ArrayList<String> getProductImage() {
+        return productImage;
+    }
+
+    public void setProductImage(ArrayList<String> productImage) {
+        this.productImage = productImage;
     }
 
     public String getItemId() {
@@ -34,14 +53,6 @@ public class ItemsModel {
 
     public void setProductName(String productName) {
         this.productName = productName;
-    }
-
-    public String getProductImage() {
-        return productImage;
-    }
-
-    public void setProductImage(String productImage) {
-        this.productImage = productImage;
     }
 
     public String getProductPrice() {

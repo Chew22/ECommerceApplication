@@ -15,7 +15,6 @@ import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.models.ItemsModel;
 
 import java.util.List;
-
 public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.OrderItemViewHolder> {
 
     private Context context;
@@ -35,28 +34,26 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
     @Override
     public void onBindViewHolder(@NonNull OrderItemViewHolder holder, int position) {
-        // Reset views
-        holder.product_name.setText("");
-        holder.product_price.setText("");
-        holder.total_quantity.setText("");
-        holder.total_price.setText("");
-        holder.product_image.setImageResource(0); // or set a placeholder image
-
-        // Bind new data to views
         ItemsModel item = itemIds.get(position);
+
+        // Set product name, price, quantity, and total price
         holder.product_name.setText(item.getProductName());
         holder.product_price.setText(item.getProductPrice());
         holder.total_quantity.setText(item.getTotalQuantity());
         holder.total_price.setText(String.valueOf(item.getTotalPrice()));
 
-        // Load image using Glide
-        Glide.with(context)
-                .load(item.getProductImage())
-                .placeholder(R.drawable.placeholder)
-                .into(holder.product_image);
+        // Load the first image using Glide
+        if (item.getProductImage() != null && !item.getProductImage().isEmpty()) {
+            String firstImageUrl = item.getProductImage().get(0); // Get the first image URL
+            Glide.with(context)
+                    .load(firstImageUrl)
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.product_image);
+        } else {
+            // Handle the case when there are no images
+            holder.product_image.setImageResource(R.drawable.placeholder); // or set a placeholder image
+        }
     }
-
-
 
     @Override
     public int getItemCount() {

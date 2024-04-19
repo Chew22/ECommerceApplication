@@ -1,6 +1,7 @@
 package com.example.ecommerceapplication.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -57,13 +58,26 @@ public class OrderStatusActivity extends AppCompatActivity {
         orderItemList = new ArrayList<>();
 
         // Get the order model from intent
-        OrderModel order = (OrderModel) getIntent().getSerializableExtra("order_model");
-
+        Intent intent = getIntent();
+        OrderModel order = (OrderModel) intent.getSerializableExtra("order_model");
+        if (order != null) {
+            Log.d(TAG, "Order model received from: " + intent.getComponent().getClassName());
+        } else {
+            Log.d(TAG, "No order model received from intent.");
+        }
         // Find TextViews in the layout
         TextView orderIdTextView = findViewById(R.id.order_id);
         TextView orderStatusTextView = findViewById(R.id.order_status);
         TextView orderPlacedDateTextView = findViewById(R.id.order_placed_date);
         TextView totalAmountTextView = findViewById(R.id.total_amount);
+
+
+        // Log the order details
+        Log.d("OrderStatusActivity", "Order ID: " + order.getOrderId());
+        Log.d("OrderStatusActivity", "Order Status: " + order.getOrderStatus());
+        Log.d("OrderStatusActivity", "Order Placed Date: " + order.getOrderDate());
+        Log.d("OrderStatusActivity", "Total Amount: RM " + order.getOrderTotal());
+
 
         // Set order details in TextViews
         orderIdTextView.setText("Order ID: " + order.getOrderId());

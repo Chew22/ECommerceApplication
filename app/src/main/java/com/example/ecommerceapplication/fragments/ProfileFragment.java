@@ -26,7 +26,7 @@ import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.activities.EditProfileActivity;
 import com.example.ecommerceapplication.activities.FollowersActivity;
 import com.example.ecommerceapplication.activities.OptionsActivity;
-import com.example.ecommerceapplication.activities.OrderStatusActivity;
+import com.example.ecommerceapplication.activities.OrderListActivity;
 import com.example.ecommerceapplication.adapters.MyFotoAdapter;
 import com.example.ecommerceapplication.adapters.PostAdapter;
 import com.example.ecommerceapplication.models.PostModel;
@@ -157,7 +157,7 @@ public class ProfileFragment extends Fragment {
         order_status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), OrderStatusActivity.class);
+                Intent intent = new Intent(getContext(), OrderListActivity.class);
                 startActivity(intent);
             }
         });

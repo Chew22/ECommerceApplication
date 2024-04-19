@@ -151,6 +151,28 @@ public class SearchFragment extends Fragment {
                     }
                 });
 
+
+        catRecyclerview.addOnItemTouchListener(new RecyclerTouchListener(getContext(), catRecyclerview, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                // Get the clicked category
+                String categoryName = categoryModelList.get(position).getName();
+
+                // Log the selected category name
+                Log.d("SearchFragment", "Selected Category: " + categoryName);
+
+                // Call method to retrieve posts by category
+                readPostsByCategory(categoryName);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+
+
+
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -269,6 +291,36 @@ public class SearchFragment extends Fragment {
 
                         // Notify the adapter about the data change
                         PostAdapter.notifyDataSetChanged();
+                    }
+                });
+    }
+
+
+    private void readPostsByCategory(String categoryName) {
+        CollectionReference postsRef = FirebaseFirestore.getInstance().collection("Products");
+
+        postsRef.whereEqualTo("productCategory", categoryName)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException e) {
+                        Log.d("SearchFragment", "Querying posts for category: " + categoryName);
+
+                        if (e != null) {
+                            Log.e("SearchFragment", "readPostsByCategory onEvent: Error querying posts", e);
+                            return;
+                        }
+
+                        mPosts.clear();
+
+                        if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                PostModel post = document.toObject(PostModel.class);
+                                long timestamp = document.getLong("timestamp");
+                                post.setTimestamp(timestamp);  // Set the timestamp to the PostModel object
+                                mPosts.add(post);
+                            }
+                            PostAdapter.notifyDataSetChanged();
+                        }
                     }
                 });
     }
