@@ -56,7 +56,7 @@ public class NotificationFragment extends Fragment {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         notificationList.clear();
 
-        CollectionReference notificationRef = FirebaseFirestore.getInstance().collection("Notifications").document(firebaseUser.getUid()).collection("Notifications");
+        CollectionReference notificationRef = FirebaseFirestore.getInstance().collection("Notifications").document(firebaseUser.getUid()).collection("notifications");
         notificationRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException e) {

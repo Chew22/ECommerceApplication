@@ -242,42 +242,43 @@ public class DetailedActivity extends AppCompatActivity {
 
 
         // Set up the "Add to Cart" button click listener
-            addToCart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    addToCart();
-                }
-            });
+        addToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addToCart();
+            }
+        });
 
         // Set click listeners for adding and removing items
-            addItems.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v){
-                    if (totalQuantity < 100){
-                        totalQuantity++;
-                        quantity.setText(String.valueOf(totalQuantity));
-                    }
+        addItems.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (totalQuantity < 100) {
+                    totalQuantity++;
+                    quantity.setText(String.valueOf(totalQuantity));
                 }
-            });
-             removeItems.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    if (totalQuantity > 1) {
-                        totalQuantity--;
-                        quantity.setText(String.valueOf(totalQuantity));
-                        if (newProductsModel != null) {
-                            totalPrice = newProductsModel.getPrice() * totalQuantity;
-                        }
-                        if (postModel != null) {
-                            totalPrice = postModel.getPrice() * totalQuantity;
-                        }
-                    }else {
-                        // Handle the case where the minimum quantity is reached
-                        Toast.makeText(DetailedActivity.this, "Minimum quantity reached", Toast.LENGTH_SHORT).show();
+            }
+        });
+        removeItems.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (totalQuantity > 1) {
+                    totalQuantity--;
+                    quantity.setText(String.valueOf(totalQuantity));
+                    if (newProductsModel != null) {
+                        totalPrice = newProductsModel.getPrice() * totalQuantity;
                     }
+                    if (postModel != null) {
+                        totalPrice = postModel.getPrice() * totalQuantity;
+                    }
+                } else {
+                    // Handle the case where the minimum quantity is reached
+                    Toast.makeText(DetailedActivity.this, "Minimum quantity reached", Toast.LENGTH_SHORT).show();
                 }
-           });
+            }
+        });
     }
+
     // Method to fetch and display seller info
     private void displaySellerInfo(String sellerId) {
         Log.d("DetailedActivity", "Fetching seller information for seller ID: " + sellerId);
@@ -287,16 +288,16 @@ public class DetailedActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    String name = document.getString("shopName");
-                                    // Set seller info to TextViews
-                                    username.setText(name);
-                                    Log.d("DetailedActivity", "Seller information retrieved successfully. Seller name: " + name);
-                                } else {
-                                    // Seller document does not exist
-                                    Log.d("DetailedActivity", "Seller document does not exist for seller ID: " + sellerId);
-                                    Toast.makeText(DetailedActivity.this, "Seller information not found", Toast.LENGTH_SHORT).show();
-                                }
+                            if (document.exists()) {
+                                String name = document.getString("shopName");
+                                // Set seller info to TextViews
+                                username.setText(name);
+                                Log.d("DetailedActivity", "Seller information retrieved successfully. Seller name: " + name);
+                            } else {
+                                // Seller document does not exist
+                                Log.d("DetailedActivity", "Seller document does not exist for seller ID: " + sellerId);
+                                Toast.makeText(DetailedActivity.this, "Seller information not found", Toast.LENGTH_SHORT).show();
+                            }
 
                         }
                     }
@@ -305,43 +306,50 @@ public class DetailedActivity extends AppCompatActivity {
 
     // Method to add the current item to the user's cart
     private void addToCart() {
+        // Get the seller ID from the appropriate model
+        String sellerId = "";
+        if (newProductsModel != null) {
+            sellerId = newProductsModel.getSellerID();
+        } else if (postModel != null) {
+            sellerId = postModel.getSellerID();
+        }
 
         // Get the current date and time
-            String saveCurrentTime, saveCurrentDate;
-            Calendar calForDate = Calendar.getInstance();
-            SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
-            saveCurrentDate = currentDate.format(calForDate.getTime());
-            SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
-            saveCurrentTime = currentTime.format(calForDate.getTime());
-
+        String saveCurrentTime, saveCurrentDate;
+        Calendar calForDate = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
+        saveCurrentDate = currentDate.format(calForDate.getTime());
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
+        saveCurrentTime = currentTime.format(calForDate.getTime());
 
         // Create a HashMap to store cart item information
-            final HashMap<String,Object> cartMap = new HashMap<>();
-            cartMap.put("productId",productId.getText().toString());
-            cartMap.put("productName",name.getText().toString());
-            cartMap.put("productImage", newProductsModel != null ? newProductsModel.getProductImages() : postModel.getProductImages());
-            cartMap.put("productPrice",price.getText().toString());
-            cartMap.put("currentTime",saveCurrentTime);
-            cartMap.put("currentDate",saveCurrentDate);
-            cartMap.put("totalQuantity",quantity.getText().toString());
-            cartMap.put("totalPrice",totalPrice);
+        final HashMap<String, Object> cartMap = new HashMap<>();
+        cartMap.put("productId", productId.getText().toString());
+        cartMap.put("productName", name.getText().toString());
+        cartMap.put("productImage", newProductsModel != null ? newProductsModel.getProductImages() : postModel.getProductImages());
+        cartMap.put("productPrice", price.getText().toString());
+        cartMap.put("currentTime", saveCurrentTime);
+        cartMap.put("currentDate", saveCurrentDate);
+        cartMap.put("totalQuantity", quantity.getText().toString());
+        cartMap.put("totalPrice", totalPrice);
+        cartMap.put("sellerID", sellerId);
 
         // Add the cart item to Firestore
-            firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
-                    .collection("User").add(cartMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentReference> task) {
-                            if (task.isSuccessful()) {
-                                // Show a toast message indicating success
-                                Toast.makeText(DetailedActivity.this, "Added To Cart", Toast.LENGTH_SHORT).show();
-                                // Finish the activity
-                                finish();
-                            } else {
-                                // Show a toast message if there's an error
-                                Toast.makeText(DetailedActivity.this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
-                            }
+        firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
+                .collection("User").add(cartMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        if (task.isSuccessful()) {
+                            // Show a toast message indicating success
+                            Toast.makeText(DetailedActivity.this, "Added To Cart", Toast.LENGTH_SHORT).show();
+                            // Finish the activity
+                            finish();
+                        } else {
+                            // Show a toast message if there's an error
+                            Toast.makeText(DetailedActivity.this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
                         }
-                    });
-
-        }
+                    }
+                });
     }
+
+}

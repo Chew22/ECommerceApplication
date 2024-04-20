@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.interfaces.ItemClickListener;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.activities.CommentsActivity;
@@ -117,16 +118,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
 
 
-        holder.imageSlider.setOnClickListener(new View.OnClickListener() {
+        holder.imageSlider.setItemClickListener(new ItemClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onItemSelected(int i) {
                 Intent intent = new Intent(context, DetailedActivity.class);
                 intent.putExtra("detailed", post);
                 context.startActivity(intent);
+            }
+
+            @Override
+            public void doubleClick(int i) {
 
             }
         });
-
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,10 +169,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             context.startActivity(intent);
         });
 
+        holder.comments.setOnClickListener(v -> {
+            Intent intent = new Intent(context, CommentsActivity.class);
+            intent.putExtra("postid", post.getProductId());
+            intent.putExtra("publisherid", post.getSellerID());
+            context.startActivity(intent);
+        });
+
         holder.likes.setOnClickListener(v -> {
             Intent intent = new Intent(context, FollowersActivity.class);
             intent.putExtra("id", post.getProductId());
-            intent.putExtra("title", "likes");
+            intent.putExtra("title", "Likes");
             context.startActivity(intent);
         });
     }

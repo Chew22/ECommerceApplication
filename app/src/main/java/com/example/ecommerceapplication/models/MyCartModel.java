@@ -13,6 +13,7 @@ public class MyCartModel {
     double totalPrice;
     String documentId;
     ArrayList<String> productImage;
+    String sellerID;
 
     public MyCartModel(){
 
@@ -28,6 +29,14 @@ public class MyCartModel {
         this.totalPrice = totalPrice;
         this.documentId = documentId;
         this.productImage = productImage;
+    }
+
+    public String getSellerID() {
+        return sellerID;
+    }
+
+    public void setSellerID(String sellerID) {
+        this.sellerID = sellerID;
     }
 
     public String getProductId() {
@@ -112,4 +121,6 @@ public class MyCartModel {
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
+
+
 }

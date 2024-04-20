@@ -57,7 +57,7 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
-    private static final String TAG = "SellerProfileActivity";
+    private static final String TAG = "ProfileFragment";
 
     ImageView image_profile, options;
     TextView posts, followers, following, bio, username, name;
@@ -154,6 +154,7 @@ public class ProfileFragment extends Fragment {
             // Profile belongs to the current user
             edit_profile.setText("Edit Profile");
             order_status.setVisibility(View.VISIBLE);
+            saved_fotos.setVisibility(View.VISIBLE);
             followButton.setVisibility(View.GONE);
             messageButton.setVisibility(View.GONE);
             my_fotos.setVisibility(View.GONE);
@@ -230,7 +231,17 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), FollowersActivity.class);
                 intent.putExtra("id", profileid);
-                intent.putExtra("title", "following");
+                intent.putExtra("title", "Followers");
+                startActivity(intent);
+            }
+        });
+
+        following.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), FollowersActivity.class);
+                intent.putExtra("id", profileid);
+                intent.putExtra("title", "Following");
                 startActivity(intent);
             }
         });
@@ -514,28 +525,35 @@ public class ProfileFragment extends Fragment {
     private void mysaves() {
         mySaves = new ArrayList<>();
 
-        // Get reference to the "Saves" collection in Firestore
-        CollectionReference savesRef = FirebaseFirestore.getInstance().collection("Saves")
-                .document(firebaseUser.getUid()).collection("SavedPosts");
+        // Check if the profileid is the current user's ID
+        if (profileid.equals(firebaseUser.getUid())) {
+            // Get reference to the "Saves" collection in Firestore for the current user
+            CollectionReference savesRef = FirebaseFirestore.getInstance().collection("Saves")
+                    .document(firebaseUser.getUid()).collection("SavedPosts");
 
-        // Query all documents in the "Saves" collection under the user's ID
-        savesRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        // Add the document ID (post ID) to mySaves list
-                        mySaves.add(document.getId());
+            // Query all documents in the "Saves" collection under the user's ID
+            savesRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            // Add the document ID (post ID) to mySaves list
+                            mySaves.add(document.getId());
+                        }
+                        // Once all saves are retrieved, call readSaves()
+                        readSaves();
+                    } else {
+                        // Handle errors
+                        Log.e("mysaves", "Error getting saved posts", task.getException());
                     }
-                    // Once all saves are retrieved, call readSaves()
-                    readSaves();
-                } else {
-                    // Handle errors
-                    Log.e("mysaves", "Error getting saved posts", task.getException());
                 }
-            }
-        });
+            });
+        } else {
+            // If it's not the current user's profile, hide the saved_fotos button
+            saved_fotos.setVisibility(View.GONE);
+        }
     }
+
 
 
     private void readSaves() {
@@ -555,22 +573,33 @@ public class ProfileFragment extends Fragment {
                         // Get the post ID from the document
                         String postId = document.getId();
 
-                        FirebaseFirestore.getInstance().collection("Products").document(postId)
-                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        FirebaseFirestore.getInstance().collection("Products")
+                                .whereEqualTo("productId", postId)
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        // Check if the document exists and convert it to a PostModel object
-                                        if (documentSnapshot.exists()) {
-                                            PostModel post = documentSnapshot.toObject(PostModel.class);
-                                            // Add the post to the list if it's not null
-                                            if (post != null) {
-                                                postList_saves.add(post);
-                                                // Notify the adapter about the data change
-                                                myFotoAdapter_saves.notifyDataSetChanged();
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        // Check if there are any documents matching the query
+                                        if (!queryDocumentSnapshots.isEmpty()) {
+                                            // Loop through the documents
+                                            for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                                                // Retrieve the data from the document
+                                                // You can convert it to a custom object or use getField to access individual fields
+                                                String productId = documentSnapshot.getString("productID");
+                                                // Do something with the data
                                             }
+                                        } else {
+                                            // No documents found
                                         }
                                     }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // Handle any errors
+                                    }
                                 });
+
                     }
                 } else {
                     // Handle errors

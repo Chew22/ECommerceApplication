@@ -149,7 +149,7 @@ public class CartActivity extends AppCompatActivity {
                 });
     }
 
-        // Method to save cart items to Order collection in Firestore
+    // Method to save cart items to Order collection in Firestore
     private void saveOrderToFirestore() {
         // Check if the Order collection exists
         firestore.collection("Order").document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -211,7 +211,7 @@ public class CartActivity extends AppCompatActivity {
         // Save order details under the user's ID in the Order collection
         firestore.collection("Order")
                 .document(auth.getCurrentUser().getUid())
-                .collection("Orders") // Add subcollection "Orders"
+                .collection("Orders")
                 .add(orderDetails) // Add the order details as a document
                 .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
@@ -240,6 +240,7 @@ public class CartActivity extends AppCompatActivity {
                                                 orderItem.put("productPrice", cartItem.getProductPrice());
                                                 orderItem.put("totalQuantity", cartItem.getTotalQuantity());
                                                 orderItem.put("totalPrice", cartItem.getTotalPrice());
+                                                orderItem.put("sellerID", cartItem.getSellerID());
 
                                                 // Save the item under "Items" in the order document
                                                 firestore.collection("Order")
@@ -280,8 +281,6 @@ public class CartActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
 
 
 

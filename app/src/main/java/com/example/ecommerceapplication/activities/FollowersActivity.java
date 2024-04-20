@@ -2,6 +2,7 @@ package com.example.ecommerceapplication.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -13,16 +14,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.adapters.UserAdapter;
 import com.example.ecommerceapplication.models.UserModel;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FollowersActivity extends AppCompatActivity {
+
+    private static final String TAG = "FollowersActivity";
 
     String id; // User ID for which followers, following, or likes are being retrieved
     String title; // Title of the activity (e.g., "followers", "following", "likes")
@@ -67,13 +74,13 @@ public class FollowersActivity extends AppCompatActivity {
 
         // Depending on the title, fetch followers, following, or likes
         switch (title){
-            case "likes":
+            case "Likes":
                 getLikes();
                 break;
-            case "following":
+            case "Following":
                 getFollowing();
                 break;
-            case "followers":
+            case "Followers":
                 getFollowers();
                 break;
         }
@@ -81,87 +88,98 @@ public class FollowersActivity extends AppCompatActivity {
 
     // Method to retrieve liked posts
     private void getLikes() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Likes")
-                .child(id);
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                idList.clear();
-                //  Populates the idList with the keys
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    idList.add(snapshot.getKey());
-                }
-                // Keys are used to retrieve the details of the users
-                showUsers();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference likesRef = db.collection("Likes").document(id).collection("Likes");
 
-            }
-        });
-    }
-
-    // Method to retrieve users that the current user is following
-    private void getFollowing() {
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
-                    .child(id).child("following");
-            reference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        likesRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
                     idList.clear();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        idList.add(snapshot.getKey());
+                    // Iterate through each document in the query result
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        // Add the document ID (post ID) to idList
+                        idList.add(document.getId());
                     }
+                    // Once all liked posts are retrieved, you can show the users who liked the posts
                     showUsers();
+                } else {
+                    // Handle errors
+                    Log.e(TAG, "Error getting liked posts: ", task.getException());
                 }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
-
-    // Method to retrieve followers of the current user
-    private void getFollowers() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
-                .child(id).child("followers");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                idList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    idList.add(snapshot.getKey());
-                }
-                showUsers();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
 
-    // Method to display the list of users
-    private void showUsers(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("CurrentUser");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    UserModel user = snapshot.getValue(UserModel.class);
-                    for (String id : idList){
-                        if(user.getId().equals(id))
-                            userList.add(user);
 
+    private void getFollowing() {
+        FirebaseFirestore.getInstance().collection("Follow")
+                .document(id)
+                .collection("following")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        idList.clear();
+                        for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
+                            idList.add(snapshot.getId());
+                        }
+                        showUsers();
                     }
-                }
-                userAdapter.notifyDataSetChanged();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle failure
+                    }
+                });
     }
+
+    private void getFollowers() {
+        FirebaseFirestore.getInstance().collection("Follow")
+                .document(id)
+                .collection("followers")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        idList.clear();
+                        for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
+                            idList.add(snapshot.getId());
+                        }
+                        showUsers();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle failure
+                    }
+                });
+    }
+
+    private void showUsers() {
+        FirebaseFirestore.getInstance().collection("CurrentUser")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        userList.clear();
+                        for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
+                            UserModel user = snapshot.toObject(UserModel.class);
+                            if (user != null && idList.contains(user.getId())) {
+                                userList.add(user);
+                            }
+                        }
+                        userAdapter.notifyDataSetChanged();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle failure
+                    }
+                });
+    }
+
 }
