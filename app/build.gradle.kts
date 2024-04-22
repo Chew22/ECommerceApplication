@@ -117,6 +117,8 @@ dependencies {
     // StepView
     implementation ("com.github.shuhart:stepview:1.5.1")
 
+    // Flex Box
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
 
 
     // Order

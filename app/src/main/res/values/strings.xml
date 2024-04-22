@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ShopLoca</string>
+    <string name="app">ShopLoca</string>
 
     <string name="first_slide">Choose Your Products</string>
     <string name="second_slide">Fast Delivery</string>
@@ -13,6 +13,16 @@
     <string name="following_button_text">Following</string>
     <string name="follow_button_text">Follow</string>
 
+    <string name="color_option_1">Red</string>
+    <string name="color_option_2">Orange</string>
+    <string name="color_option_3">Green</string>
+    <string name="color_option_4">Yellow</string>
+    <string name="color_option_5">Navy Blue</string>
+    <string name="color_option_6">Light Blue</string>
+    <string name="color_option_7">Pink</string>
+    <string name="color_option_8">Purple</string>
+    <string name="color_option_9">Black</string>
+    <string name="color_option_10">White</string>
 
 
 </resources>

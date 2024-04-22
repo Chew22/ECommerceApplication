@@ -1,13 +1,16 @@
 package com.example.ecommerceapplication.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PostModel implements Serializable {
 
     List<Integer> colors;
-    private long timestamp;
+    List<String> sizes;
+    String rating = null;
     Double offerPercentage;
+    private long timestamp;
     double price;
     String productCategory;
     String productDescription;
@@ -17,8 +20,7 @@ public class PostModel implements Serializable {
     String sellerID;
     String sellerName;
     String shopName;
-    List<String> sizes;
-    String rating = null;
+
 
     public PostModel() {
     }
@@ -88,21 +90,6 @@ public class PostModel implements Serializable {
         this.shopName = shopName;
     }
 
-    public List<Integer> getColors() {
-        return colors;
-    }
-
-    public void setColors(List<Integer> colors) {
-        this.colors = colors;
-    }
-
-    public Double getOfferPercentage() {
-        return offerPercentage;
-    }
-
-    public void setOfferPercentage(Double offerPercentage) {
-        this.offerPercentage = offerPercentage;
-    }
 
     public double getPrice() {
         return price;
@@ -145,7 +132,7 @@ public class PostModel implements Serializable {
     }
 
     public List<String> getSizes() {
-        return sizes;
+        return sizes != null ? sizes : new ArrayList<>(); // Returns empty list if null
     }
 
     public void setSizes(List<String> sizes) {
@@ -158,5 +145,21 @@ public class PostModel implements Serializable {
 
     public void setRating(String rating) {
         this.rating = rating;
+    }
+
+    public List<Integer> getColors() {
+        return colors != null ? colors : new ArrayList<>(); // Returns empty list if null
+    }
+
+    public void setColors(List<Integer> colors) {
+        this.colors = colors;
+    }
+
+    public Double getOfferPercentage() {
+        return offerPercentage;
+    }
+
+    public void setOfferPercentage(Double offerPercentage) {
+        this.offerPercentage = offerPercentage;
     }
 }

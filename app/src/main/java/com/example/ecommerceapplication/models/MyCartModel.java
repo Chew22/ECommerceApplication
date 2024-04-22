@@ -1,6 +1,7 @@
 package com.example.ecommerceapplication.models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MyCartModel {
 
@@ -14,9 +15,30 @@ public class MyCartModel {
     String documentId;
     ArrayList<String> productImage;
     String sellerID;
+    List<Integer> colors;
+    List<String> sizes;
+    String rating = null;
+    Double offerPercentage;
 
     public MyCartModel(){
 
+    }
+
+    public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, ArrayList<String> productImage, String sellerID, List<Integer> colors, List<String> sizes, String rating, Double offerPercentage) {
+        this.productId = productId;
+        this.currentTime = currentTime;
+        this.currentDate = currentDate;
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.totalQuantity = totalQuantity;
+        this.totalPrice = totalPrice;
+        this.documentId = documentId;
+        this.productImage = productImage;
+        this.sellerID = sellerID;
+        this.colors = colors;
+        this.sizes = sizes;
+        this.rating = rating;
+        this.offerPercentage = offerPercentage;
     }
 
     public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, ArrayList<String> productImage) {
@@ -29,6 +51,39 @@ public class MyCartModel {
         this.totalPrice = totalPrice;
         this.documentId = documentId;
         this.productImage = productImage;
+    }
+
+
+    public List<String> getSizes() {
+        return sizes != null ? sizes : new ArrayList<>(); // Returns empty list if null
+    }
+
+    public void setSizes(List<String> sizes) {
+        this.sizes = sizes;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public List<Integer> getColors() {
+        return colors != null ? colors : new ArrayList<>(); // Returns empty list if null
+    }
+
+    public void setColors(List<Integer> colors) {
+        this.colors = colors;
+    }
+
+    public Double getOfferPercentage() {
+        return offerPercentage;
+    }
+
+    public void setOfferPercentage(Double offerPercentage) {
+        this.offerPercentage = offerPercentage;
     }
 
     public String getSellerID() {
@@ -61,6 +116,7 @@ public class MyCartModel {
     public void setProductImage(ArrayList<String> productImage) {
         this.productImage = productImage;
     }
+
 
     public String getDocumentId() {
         return documentId;

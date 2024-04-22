@@ -7,14 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".activities.DetailedActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/detailed"
-        app:layout_constraintBottom_toTopOf="@+id/bottom">
-
-
+    <!-- Toolbar at the top -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/detailed_toolbar"
         android:layout_width="match_parent"
@@ -25,16 +18,28 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Product Detailed" />
 
+    <!-- Scrollable content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/detailed_toolbar"
+        app:layout_constraintBottom_toTopOf="@+id/bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Content within the scrollable area -->
         <com.denzcoskun.imageslider.ImageSlider
             android:id="@+id/detailedImageSlider"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="350dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/placeholder"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detailed_toolbar" />
+            android:src="@drawable/placeholder" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardview"
@@ -53,16 +58,14 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -192,8 +195,164 @@
                     android:src="@drawable/iconminus" />
 
 
+
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/tvSizesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="8dp"
+                android:text="Sizes Available:"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Hidden by default -->
+            <RadioGroup
+                android:id="@+id/edSizes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <RadioButton
+                    android:id="@+id/rbSizeSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="S" />
+
+                <RadioButton
+                    android:id="@+id/rbSizeMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="M" />
+
+                <RadioButton
+                    android:id="@+id/rbSizeLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="L" />
+
+                <RadioButton
+                    android:id="@+id/rbSizeXLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="XL" />
+
+                <RadioButton
+                    android:id="@+id/rbSizeOthers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Other" />
+                <!-- Add more RadioButton items here for additional sizes -->
+
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvColorsTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Colors Available:"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal"
+                    android:id="@+id/layoutSelectedColors"
+                    android:visibility="visible">
+
+                    <!-- Example checkbox for color option -->
+                    <Button
+                        android:id="@+id/colorOption1"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:background="@color/color_option_1"
+                        android:tag="Red"
+                        android:onClick="onColorOptionSelected" />
+
+                    <Button
+                        android:id="@+id/colorOption2"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:background="@color/color_option_2"
+                        android:tag="Orange"
+                        android:onClick="onColorOptionSelected" />
+
+                    <Button
+                        android:id="@+id/colorOption3"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:background="@color/color_option_3"
+                        android:tag="Green"
+                        android:onClick="onColorOptionSelected" />
+
+
+                    <Button
+                        android:id="@+id/colorOption5"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:background="@color/color_option_5"
+                        android:tag="Navy Blue"
+                        android:onClick="onColorOptionSelected" />
+
+                    <Button
+                        android:id="@+id/colorOption6"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:background="@color/color_option_6"
+                        android:tag="Light Blue"
+                        android:onClick="onColorOptionSelected" />
+
+                    <Button
+                        android:id="@+id/colorOption7"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:background="@color/color_option_7"
+                        android:tag="Pink"
+                        android:onClick="onColorOptionSelected" />
+
+                    <Button
+                        android:id="@+id/colorOption8"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:background="@color/color_option_8"
+                        android:tag="Purple"
+                        android:onClick="onColorOptionSelected" />
+
+                    <Button
+                        android:id="@+id/colorOption10"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:background="@color/color_option_10"
+                        android:onClick="onColorOptionSelected"
+                        android:tag="White/Others" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -262,6 +421,8 @@
     </androidx.cardview.widget.CardView>
 
     </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:layout_width="0dp"

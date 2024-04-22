@@ -4,13 +4,20 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Activity to display detailed information about a product and add it to the cart or proceed to payment.
@@ -44,12 +52,15 @@ public class DetailedActivity extends AppCompatActivity {
 
     // UI elements
     ImageSlider detailedImageSlider;
-    TextView rating, name, description, price, quantity, productId, username;
+    TextView rating, name, description, price, quantity, productId, username, tvColorsTitle, tvSizesTitle;
     RatingBar ratingBar;
-    Button addToCart, buyNow, message;
+    Button addToCart, buyNow, message, lastSelectedButton;
     ImageView addItems, removeItems, image_profile;
     ImageButton copy;
     Toolbar toolbar;
+    RadioGroup radioGroupSizes;
+    LinearLayout layoutSelectedColors;
+
 
     // Variables to track quantity and total price
     int totalQuantity = 1;
@@ -90,6 +101,12 @@ public class DetailedActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         // Initialize UI elements
+        radioGroupSizes = findViewById(R.id.edSizes);
+        tvSizesTitle = findViewById(R.id.tvSizesTitle);
+        layoutSelectedColors = findViewById(R.id.layoutSelectedColors);
+        tvColorsTitle = findViewById(R.id.tvColorsTitle);
+        lastSelectedButton = null;
+
         detailedImageSlider = findViewById(R.id.detailedImageSlider);
         image_profile = findViewById(R.id.image_profile);
         username = findViewById(R.id.username);
@@ -119,6 +136,9 @@ public class DetailedActivity extends AppCompatActivity {
             postModel = (PostModel) obj;
             imageUrls = postModel.getProductImages();
             displaySellerInfo(postModel.getSellerID());
+
+            // Update layout with colors and sizes for PostModel
+            updateLayout(postModel); // This initializes the colors and sizes UI
         }
 
         // Log image URLs
@@ -304,6 +324,52 @@ public class DetailedActivity extends AppCompatActivity {
                 });
     }
 
+    public void updateLayout(PostModel postModel) {
+        // Handling nullable sizes
+        if (postModel.getSizes() == null || postModel.getSizes().isEmpty()) {
+            radioGroupSizes.setVisibility(View.GONE);
+            tvSizesTitle.setVisibility(View.GONE); // Hide the title
+        } else {
+            radioGroupSizes.setVisibility(View.VISIBLE);
+            tvSizesTitle.setVisibility(View.VISIBLE); // Show the title
+            radioGroupSizes.removeAllViews(); // Clear existing radio buttons
+            for (String size : postModel.getSizes()) {
+                RadioButton radioButton = new RadioButton(this);
+                radioButton.setText(size);
+                radioGroupSizes.addView(radioButton);
+            }
+        }
+
+        // Handling nullable colors
+        if (postModel.getColors() == null || postModel.getColors().isEmpty()) {
+            layoutSelectedColors.setVisibility(View.GONE);
+            tvColorsTitle.setVisibility(View.GONE); // Hide the title
+        } else {
+            layoutSelectedColors.setVisibility(View.VISIBLE);
+            tvColorsTitle.setVisibility(View.VISIBLE); // Show the title
+            Log.d("ColorLayout", "tvColorsTitle visibility: " + tvColorsTitle.getVisibility());
+
+            layoutSelectedColors.removeAllViews(); // Clear existing views
+            for (Integer color : postModel.getColors()) {
+                if (color != null) { // Check if color is not null
+                    Button colorButton = new Button(this);
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(40, 40);
+                    colorButton.setLayoutParams(params);
+                    colorButton.setBackgroundColor(color); // Assuming color is an integer color value
+                    colorButton.setOnClickListener(view -> {
+                        // Handle color selection
+                        onColorOptionSelected(view);
+                    });
+                    layoutSelectedColors.addView(colorButton);
+                } else {
+                    Log.w("DetailedActivity", "Encountered a null color in postModel.getColors()");
+                }
+            }
+        }
+
+    }
+
+
     // Method to add the current item to the user's cart
     private void addToCart() {
         // Get the seller ID from the appropriate model
@@ -351,5 +417,35 @@ public class DetailedActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+    // Variable to store the original background color
+    private Map<Button, Integer> buttonOriginalColors = new HashMap<>();
+
+    public void onColorOptionSelected(View view) {
+            // If there's a previously selected button, reset its background
+            if (lastSelectedButton != null && lastSelectedButton != view) {
+                // Restore the original background color from the map
+                if (buttonOriginalColors.containsKey(lastSelectedButton)) {
+                    lastSelectedButton.setBackgroundColor(buttonOriginalColors.get(lastSelectedButton));
+                }
+            }
+
+            // Store the current button as the last selected
+            lastSelectedButton = (Button) view;
+
+            // If the button is not in the map, add its original color
+            if (!buttonOriginalColors.containsKey(lastSelectedButton)) {
+                ColorDrawable bgDrawable = (ColorDrawable) view.getBackground();
+                buttonOriginalColors.put(lastSelectedButton, bgDrawable.getColor());
+            }
+
+            // Add a border to the selected button
+            GradientDrawable borderDrawable = new GradientDrawable();
+            borderDrawable.setStroke(3, Color.BLACK); // Border width and color
+            borderDrawable.setColor(buttonOriginalColors.get(lastSelectedButton)); // Keep the original color with border
+            lastSelectedButton.setBackground(borderDrawable);
+        }
+
 
 }
