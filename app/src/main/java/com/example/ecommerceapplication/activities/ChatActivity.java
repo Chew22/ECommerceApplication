@@ -42,6 +42,8 @@ public class ChatActivity extends AppCompatActivity {
     TextView shopName;
     RecyclerView recyclerView;
     ImageView profile_pic_layout;
+    // Flag to indicate if the chatroom is ready
+    private boolean isChatroomInitialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,22 +86,17 @@ public class ChatActivity extends AppCompatActivity {
             finish();
         });
 
-        // Set onClickListener for send button to send messages
-        sendMessageBtn.setOnClickListener(v -> {
-            String message = messageInput.getText().toString().trim();
-            if (!message.isEmpty())
-                sendMessageToUser(message);
-        });
 
         // Setup RecyclerView to display chat messages
         setupChatRecyclerView();
 
+        // Retrieve chatroom information and set flag when done
         FirebaseUtil.getChatroomReference(chatroomId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 ChatroomModel chatroom = task.getResult().toObject(ChatroomModel.class);
+
                 if (chatroom == null) {
-                    Log.w(TAG, "Chatroom with ID " + chatroomId + " does not exist");
-                } else {
+                    // If chatroom does not exist, create a new one
                     chatroomModel = new ChatroomModel(
                             chatroomId,
                             Arrays.asList(FirebaseUtil.currentUserId(), sellerId),
@@ -107,16 +104,53 @@ public class ChatActivity extends AppCompatActivity {
                             ""
                     );
                     FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
+                } else {
+                    chatroomModel = chatroom; // If chatroom exists, use the existing one
                 }
+
+                isChatroomInitialized = true; // Set the flag to true once chatroom is initialized
             } else {
-                Log.e(TAG, "Failed to retrieve chatroom data" + chatroomId);
+                Log.e(TAG, "Failed to retrieve chatroom data for ID: " + chatroomId);
             }
         });
 
+        // Send message button with check for initialization
+        sendMessageBtn.setOnClickListener(v -> {
+            if (isChatroomInitialized) {
+                String message = messageInput.getText().toString().trim();
+                if (!message.isEmpty()) {
+                    sendMessageToUser(message);
+                }
+            } else {
+                Log.e(TAG, "Chatroom is not initialized, cannot send message");
+                // Optionally, inform the user to wait or try again later
+            }
+        });
     }
 
 
+    void sendMessageToUser(String message) {
+        if (chatroomModel != null) {
+            chatroomModel.setLastMessageTimestamp(Timestamp.now());
+            chatroomModel.setLastMessageSenderId(FirebaseUtil.currentUserId());
+            chatroomModel.setLastMessage(message);
 
+            FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
+
+            ChatMessageModel chatMessageModel = new ChatMessageModel(message, FirebaseUtil.currentUserId(), Timestamp.now());
+            FirebaseUtil.getChatroomMessageReference(chatroomId).add(chatMessageModel)
+                    .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                            if (task.isSuccessful()) {
+                                messageInput.setText(""); // Clear input after successful send
+                            }
+                        }
+                    });
+        } else {
+            Log.e(TAG, "chatroomModel is null, unable to send message");
+        }
+    }
 
     void setupChatRecyclerView() {
         Query query = FirebaseUtil.getChatroomMessageReference(chatroomId)
@@ -141,25 +175,5 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
-
-    void sendMessageToUser(String message) {
-        chatroomModel.setLastMessageTimestamp(Timestamp.now());
-        chatroomModel.setLastMessageSenderId(FirebaseUtil.currentUserId());
-        chatroomModel.setLastMessage(message);
-
-        FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
-
-        ChatMessageModel chatMessageModel = new ChatMessageModel(message, FirebaseUtil.currentUserId(), Timestamp.now());
-        FirebaseUtil.getChatroomMessageReference(chatroomId).add(chatMessageModel)
-                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if (task.isSuccessful()) {
-                            messageInput.setText("");
-                        }
-                    }
-                });
-    }
-
 
 }
