@@ -24,7 +24,7 @@ public class ChatFragment extends Fragment {
     // Chat Page
     ImageButton searchButton;
 
-    RecyclerView recyclerView;
+    RecyclerView recycler_view_chat;
     RecentChatRecyclerAdapter adapter;
 
     @Override
@@ -32,7 +32,7 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
-        recyclerView = view.findViewById(R.id.recycler_view);
+        recycler_view_chat = view.findViewById(R.id.recycler_view_chat);
         setupRecyclerView();
 
         searchButton = view.findViewById(R.id.main_search_btn);
@@ -54,8 +54,8 @@ public class ChatFragment extends Fragment {
                 .setQuery(query, ChatroomModel.class).build();
 
         adapter = new RecentChatRecyclerAdapter(options, getContext());
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
+        recycler_view_chat.setLayoutManager(new LinearLayoutManager(getContext()));
+        recycler_view_chat.setAdapter(adapter);
         adapter.startListening();
 
     }

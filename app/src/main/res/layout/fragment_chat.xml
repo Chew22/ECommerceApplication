@@ -41,11 +41,12 @@
     </RelativeLayout>
 
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:id="@+id/recycler_view"
+        android:id="@+id/recycler_view_chat"
         android:layout_below="@id/toolbar"/>
 
 </RelativeLayout>

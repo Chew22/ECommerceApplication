@@ -12,19 +12,20 @@
     <LinearLayout
         android:id="@+id/home_layout"
         android:layout_width="match_parent"
+        android:gravity="center"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:id="@+id/recycler_view_story"/>
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="5dp"-->
+<!--            android:id="@+id/recycler_view_story"/>-->
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/recycler_view"/>
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/recycler_view"/>-->
 
         <com.denzcoskun.imageslider.ImageSlider
             android:id="@+id/image_slider"
@@ -146,8 +147,7 @@
         <ProgressBar
             android:id="@+id/progress_circular"
             android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            app:flow_horizontalAlign="center"/>
+            android:layout_height="35dp"/>
 
 
     </LinearLayout>

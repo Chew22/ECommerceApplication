@@ -59,6 +59,7 @@ public class ChatActivity extends AppCompatActivity {
 
         // Get seller ID from intent
         String sellerId = getIntent().getStringExtra("sellerId");
+        Log.w(TAG, "Chat activity: sellerId from intent " + sellerId);
 
         FirebaseUtil.getSellerReference(sellerId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {

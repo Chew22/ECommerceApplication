@@ -18,12 +18,12 @@ public class AndroidUtil {
         intent.putExtra("address", model.getAddress());
         // Retrieve the document ID of the SellerModel
         FirebaseFirestore.getInstance().collection("seller")
-                .whereEqualTo("email", model.getEmail())  // Assuming 'email' is a unique field to identify sellers
+                .whereEqualTo("shopName", model.getShopName())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().getDocuments().isEmpty()) {
                         String sellerId = task.getResult().getDocuments().get(0).getId();
-                        intent.putExtra("sellerID", sellerId);
+                        intent.putExtra("sellerId", sellerId);
                     }
                 });
 

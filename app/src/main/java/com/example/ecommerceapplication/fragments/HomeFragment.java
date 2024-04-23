@@ -108,15 +108,17 @@ public class HomeFragment extends Fragment {
 
         newProductShowAll = view.findViewById(R.id.newProducts_see_all);
 
-        // Initialization for story
-        recyclerView_story = view.findViewById(R.id.recycler_view_story);
-        recyclerView_story.setHasFixedSize(true);
+//        // Initialization for story
+//        recyclerView_story = view.findViewById(R.id.recycler_view_story);
+//        recyclerView_story.setHasFixedSize(true);
+//
+//        recyclerView_story.setLayoutManager(linearLayoutManager);
+//        storyList = new ArrayList<>();
+//        storyAdapter = new StoryAdapter(getContext(), storyList);
+//        recyclerView_story.setAdapter(storyAdapter);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.HORIZONTAL, false);
-        recyclerView_story.setLayoutManager(linearLayoutManager);
-        storyList = new ArrayList<>();
-        storyAdapter = new StoryAdapter(getContext(), storyList);
-        recyclerView_story.setAdapter(storyAdapter);
 
         db = FirebaseFirestore.getInstance();
 
@@ -233,7 +235,7 @@ public class HomeFragment extends Fragment {
                     }
                     // Once the following list is obtained, invoke the method to read posts and stories
                     readPosts();
-                    readStory();
+//                    readStory();
                 }
             }
         });
@@ -278,7 +280,7 @@ public class HomeFragment extends Fragment {
         // Reference to the "Story" collection in Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Clear the existing storyList to avoid duplication
-        storyList.clear();
+//        storyList.clear();
         // Adding a snapshot listener to fetch data from the "Story" collection
         db.collection("Story").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override

@@ -4,6 +4,7 @@ import static com.example.ecommerceapplication.utils.FirebaseUtil.getSellerDocum
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +18,10 @@ import com.bumptech.glide.Glide;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.activities.ChatActivity;
 import com.example.ecommerceapplication.models.SellerModel;
-import com.example.ecommerceapplication.utils.AndroidUtil;
 import com.example.ecommerceapplication.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<SellerModel, SearchUserRecyclerAdapter.UserModelViewHolder> {
@@ -54,10 +55,25 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<SellerMo
         holder.itemView.setOnClickListener(v -> {
             // Navigate to chat activity
             Intent intent = new Intent(context, ChatActivity.class);
-            AndroidUtil.passUserModelAsIntent(intent, model);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+            intent.putExtra("shopName", model.getShopName());
+            intent.putExtra("address", model.getAddress());
+
+            // Retrieve the document ID of the SellerModel
+            FirebaseFirestore.getInstance().collection("seller")
+                    .whereEqualTo("shopName", model.getShopName())
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && !task.getResult().getDocuments().isEmpty()) {
+                            String sellerId = task.getResult().getDocuments().get(0).getId();
+                            intent.putExtra("sellerId", sellerId);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent); // Only start activity after sellerId is obtained
+                        } else {
+                            Log.e("ChatAdapter", "Could not find sellerId for shopName: " + model.getShopName());
+                        }
+                    });
         });
+
     }
 
 

@@ -1,13 +1,16 @@
 package com.example.ecommerceapplication.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,10 +20,11 @@ import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.activities.ChatActivity;
 import com.example.ecommerceapplication.models.ChatroomModel;
 import com.example.ecommerceapplication.models.SellerModel;
-import com.example.ecommerceapplication.utils.AndroidUtil;
 import com.example.ecommerceapplication.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
@@ -32,15 +36,12 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
 
     // Context reference for handling UI operations
     Context context;
+    FirestoreRecyclerOptions<ChatroomModel> options;
 
-    /**
-     * Constructor for the adapter.
-     * @param options FirestoreRecyclerOptions containing chatroom data.
-     * @param context The context in which the adapter is being used.
-     */
     public RecentChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatroomModel> options, Context context) {
         super(options);
         this.context = context;
+        this.options = options;  // Move options initialization here
     }
 
     /**
@@ -56,13 +57,18 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
 
         // Log the user IDs
         Log.d("ChatAdapter", "User IDs in chatroom: " + userIds.toString());
+        Log.d("ChatAdapter", "Current user ID: " + myUserId);
 
-        FirebaseUtil.getOtherUserFromChatroom(model.getUserIds())
-                .get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-                        boolean lastMessageSentByMe = model.getLastMessageSenderId().equals(FirebaseUtil.currentUserId());
+        DocumentReference otherUserRef = FirebaseUtil.getOtherUserFromChatroom(model.getUserIds());
+        Log.d("ChatAdapter", "Other user reference: " + otherUserRef);
 
-                        SellerModel otherUserModel = task.getResult().toObject(SellerModel.class);
+        if (otherUserRef != null) {
+            otherUserRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    boolean lastMessageSentByMe = model.getLastMessageSenderId().equals(FirebaseUtil.currentUserId());
+                    SellerModel otherUserModel = task.getResult().toObject(SellerModel.class);
+
+                    if (otherUserModel != null) {
                         holder.usernameText.setText(otherUserModel.getShopName());
                         if (lastMessageSentByMe) {
                             holder.lastMessageText.setText("You: " + model.getLastMessage());
@@ -79,15 +85,55 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
                         }
 
                         holder.itemView.setOnClickListener(v -> {
-                            // Navigate to chat activity
-                            Intent intent = new Intent(context, ChatActivity.class);
-                            AndroidUtil.passUserModelAsIntent(intent, otherUserModel);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(intent);
+                            FirebaseFirestore.getInstance().collection("seller")
+                                    .whereEqualTo("shopName", otherUserModel.getShopName())
+                                    .get()
+                                    .addOnCompleteListener(sellerTask -> {
+                                        if (sellerTask.isSuccessful() && !sellerTask.getResult().getDocuments().isEmpty()) {
+                                            String sellerId = sellerTask.getResult().getDocuments().get(0).getId();
+                                            Intent intent = new Intent(context, ChatActivity.class);
+                                            intent.putExtra("shopName", otherUserModel.getShopName());
+                                            intent.putExtra("address", otherUserModel.getAddress());
+                                            intent.putExtra("sellerId", sellerId);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            context.startActivity(intent);
+                                        } else {
+                                            Log.e("ChatAdapter", "Could not find sellerId for shopName: " + otherUserModel.getShopName());
+                                        }
+                                    });
                         });
+
+
+                    } else {
+                        Log.e("ChatAdapter", "Other user model is null");
                     }
+                }
+            });
+        } else {
+            Log.e("ChatAdapter", "Other user reference is null");
+        }
+
+        // Delete confirmation
+        holder.btnDelete.setOnClickListener(v -> {
+            new AlertDialog.Builder(context)
+                    .setTitle("Delete Chat")
+                    .setMessage("Are you sure you want to delete this chat?")
+                    .setPositiveButton("Delete", (dialog, which) -> deleteChat(position))
+                    .setNegativeButton("Cancel", null) // Just dismisses the dialog
+                    .show();
+        });
+    }
+
+    public void deleteChat(int position) {
+        getSnapshots().getSnapshot(position).getReference().delete()
+                .addOnSuccessListener(aVoid -> Log.d("ChatAdapter", "Chat deleted successfully"))
+                .addOnFailureListener(e -> {
+                    Log.e("ChatAdapter", "Failed to delete chat", e);
+                    Toast.makeText(context, "Failed to delete chat. Please try again.", Toast.LENGTH_SHORT).show();
                 });
     }
+
+
 
     /**
      * Inflates the layout for the ViewHolder.
@@ -110,6 +156,7 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
         TextView lastMessageText;
         TextView lastMessageTime;
         ImageView profilePic;
+        ImageButton btnDelete;
 
         /**
          * Constructor for the ViewHolder.
@@ -121,6 +168,7 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
             lastMessageText = itemView.findViewById(R.id.last_message_text);
             lastMessageTime = itemView.findViewById(R.id.last_message_time_text);
             profilePic = itemView.findViewById(R.id.profile_pic_image_view);
+            btnDelete = itemView.findViewById(R.id.btn_delete);
         }
     }
 }
