@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -52,6 +53,7 @@ public class NotificationFragment extends Fragment {
         return view;
     }
 
+
     private void readNotification() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         notificationList.clear();
@@ -73,17 +75,31 @@ public class NotificationFragment extends Fragment {
                         NotificationModel notification = snapshot.toObject(NotificationModel.class);
                         // Add the notification to the notificationList
                         notificationList.add(notification);
+
+                        // Log the data retrieved from Firestore
+                        Log.d("FirestoreData", "ID: " + snapshot.getId());
+                        Log.d("FirestoreData", "Data: " + snapshot.getData());
                     }
 
                     // Reverse the list to display the most recent notifications first
                     Collections.reverse(notificationList);
                     // Notify the adapter about the data change
                     notificationAdapter.notifyDataSetChanged();
+
+                    // Show/hide empty view based on notificationList size
+                    TextView emptyView = getView().findViewById(R.id.empty_view);
+                    if (notificationList.isEmpty()) {
+                        emptyView.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    } else {
+                        emptyView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     Log.d("readNotification", "Current data: null");
                 }
             }
+
         });
     }
-
 }

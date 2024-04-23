@@ -19,7 +19,7 @@ import com.example.ecommerceapplication.fragments.PostDetailFragment;
 import com.example.ecommerceapplication.fragments.ProfileFragment;
 import com.example.ecommerceapplication.models.NotificationModel;
 import com.example.ecommerceapplication.models.PostModel;
-import com.example.ecommerceapplication.models.SellerModel;
+import com.example.ecommerceapplication.models.UserModel;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -29,6 +29,8 @@ import java.util.List;
  */
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
 
+    // Declare a TAG for logging
+    private static final String TAG = "NotificationAdapter";
 
     private Context mContext;
     private List<NotificationModel> mNotification;
@@ -44,11 +46,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         View view = LayoutInflater.from(mContext).inflate(R.layout.notification_item, parent,false);
         return new NotificationAdapter.ViewHolder(view);
     }
-    // Declare a TAG for logging
-    private static final String TAG = "NotificationAdapter";
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         final NotificationModel notification = mNotification.get(position);
+
+        holder.text.setText(notification.getText());
 
         // Log position and notification type
         Log.d(TAG, "onBindViewHolder: Position - " + position + ", Notification Type - " + (notification.isIspost() ? "Post" : "Comment"));
@@ -87,8 +91,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                             .replace(R.id.fragment_container, new PostDetailFragment())
                             .commit();
                 } else {
+                    // Opens a ProfileFragment
                     SharedPreferences.Editor editor = mContext.getSharedPreferences("PREPS", Context.MODE_PRIVATE).edit();
-                    editor.putString("userid", notification.getUserid());
+                    editor.putString("profileid", notification.getUserid());
                     editor.apply();
 
                     ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
@@ -124,17 +129,17 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Reference to the document containing user information for the specified publisher ID
-        db.collection("seller").document(publisherId)
+        db.collection("CurrentUser").document(publisherId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     // Check if the document exists
                     if (documentSnapshot.exists()) {
                         // Convert the document snapshot to a UserModel object
-                        SellerModel user = documentSnapshot.toObject(SellerModel.class);
+                        UserModel user = documentSnapshot.toObject(UserModel.class);
                         // If UserModel object is not null, set user's profile image and username
                         if (user != null) {
-                            Glide.with(mContext).load(user.getImagePath()).into(imageView);
-                            username.setText(user.getShopName());
+                            Glide.with(mContext).load(user.getProfileImg()).into(imageView);
+                            username.setText(user.getUsername());
                         }
                     }
                 })
@@ -143,6 +148,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     Log.e(TAG, "Error getting user document", e);
                 });
     }
+
 
 
     // Fetch post image from Firestore.
@@ -154,7 +160,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     if (documentSnapshot.exists()) {
                         PostModel post = documentSnapshot.toObject(PostModel.class);
                         if (post != null) {
-                            Glide.with(mContext).load(post.getProductImages()).into(imageView);
+                            Glide.with(mContext).load(post.getFirstProductImage()).into(imageView);
                         }
                     }
                 })
