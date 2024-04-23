@@ -95,6 +95,7 @@
             android:fontFamily="@font/amethysta"
             android:gravity="end"
             android:text="See All"
+            android:visibility="gone"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold" />

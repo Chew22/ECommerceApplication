@@ -1,6 +1,7 @@
 package com.example.ecommerceapplication.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -84,6 +85,9 @@ public class PostActivity extends AppCompatActivity {
 
         // Query Firestore based on the productCategory
         if(productCategory != null && productCategory.equalsIgnoreCase("Handmade Crafts")){
+            // Log the category passed to PostActivity
+            Log.d("PostActivity", "Product Category: " + productCategory);
+
             // Query documents where "productCategory" field matches the 'antique''
             firestore.collection("Products").whereEqualTo("productCategory", "Handmade Crafts")
                     .get()
@@ -92,12 +96,16 @@ public class PostActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                             if (task.isSuccessful()) {
+                                Log.d("PostActivity", "Products fetched for category: " + productCategory);
+
                                 for (DocumentSnapshot doc : task.getResult().getDocuments()) {
                                     // Iterate through documents and add them to the list
                                     PostModel PostModel = doc.toObject(PostModel.class);
                                     PostModelList.add(PostModel);
                                     showAllAdapter.notifyDataSetChanged();
                                 }
+                            }else {
+                                Log.e("PostActivity", "Failed to fetch products for category: " + productCategory, task.getException());
                             }
                         }
                     });

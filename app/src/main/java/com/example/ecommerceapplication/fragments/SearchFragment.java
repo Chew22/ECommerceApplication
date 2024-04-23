@@ -316,7 +316,7 @@ public class SearchFragment extends Fragment {
                             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                                 PostModel post = document.toObject(PostModel.class);
                                 long timestamp = document.getLong("timestamp");
-                                post.setTimestamp(timestamp);  // Set the timestamp to the PostModel object
+                                post.setTimestamp(timestamp);
                                 mPosts.add(post);
                             }
                             PostAdapter.notifyDataSetChanged();

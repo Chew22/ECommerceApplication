@@ -141,9 +141,6 @@ public class DetailedActivity extends AppCompatActivity {
             updateLayout(postModel); // This initializes the colors and sizes UI
         }
 
-        // Log image URLs
-        Log.d("DetailedActivity", "Image URLs: " + imageUrls.toString());
-
         // Create SlideModel list
         List<SlideModel> slideModels = new ArrayList<>();
         for (String imageUrl : imageUrls) {

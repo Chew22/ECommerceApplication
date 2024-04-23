@@ -53,7 +53,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             public void onClick(View v) {
                 // Start ShowAllActivity and pass type data as an extra
                 Intent intent = new Intent(context, PostActivity.class);
-                intent.putExtra("type",list.get(position).getType());
+                intent.putExtra("productCategory",list.get(position).getType());
                 context.startActivity(intent);
             }
         });
