@@ -1,7 +1,6 @@
 package com.example.ecommerceapplication.models;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MyCartModel {
 
@@ -15,8 +14,8 @@ public class MyCartModel {
     String documentId;
     ArrayList<String> productImage;
     String sellerID;
-    List<Integer> colors;
-    List<String> sizes;
+    String selectedColor;
+    String selectedSize;
     String rating = null;
     Double offerPercentage;
 
@@ -24,7 +23,7 @@ public class MyCartModel {
 
     }
 
-    public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, ArrayList<String> productImage, String sellerID, List<Integer> colors, List<String> sizes, String rating, Double offerPercentage) {
+    public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, ArrayList<String> productImage, String sellerID, String selectedColor, String selectedSize, String rating, Double offerPercentage) {
         this.productId = productId;
         this.currentTime = currentTime;
         this.currentDate = currentDate;
@@ -35,8 +34,8 @@ public class MyCartModel {
         this.documentId = documentId;
         this.productImage = productImage;
         this.sellerID = sellerID;
-        this.colors = colors;
-        this.sizes = sizes;
+        this.selectedColor = selectedColor;
+        this.selectedSize = selectedSize;
         this.rating = rating;
         this.offerPercentage = offerPercentage;
     }
@@ -54,12 +53,12 @@ public class MyCartModel {
     }
 
 
-    public List<String> getSizes() {
-        return sizes != null ? sizes : new ArrayList<>(); // Returns empty list if null
+    public String getSelectedSize() {
+        return selectedSize;
     }
 
-    public void setSizes(List<String> sizes) {
-        this.sizes = sizes;
+    public void setSelectedSize(String selectedSize) {
+        this.selectedSize = selectedSize;
     }
 
     public String getRating() {
@@ -70,12 +69,12 @@ public class MyCartModel {
         this.rating = rating;
     }
 
-    public List<Integer> getColors() {
-        return colors != null ? colors : new ArrayList<>(); // Returns empty list if null
+    public String getSelectedColor() {
+        return selectedColor;
     }
 
-    public void setColors(List<Integer> colors) {
-        this.colors = colors;
+    public void setSelectedColor(String selectedColor) {
+        this.selectedColor = selectedColor;
     }
 
     public Double getOfferPercentage() {

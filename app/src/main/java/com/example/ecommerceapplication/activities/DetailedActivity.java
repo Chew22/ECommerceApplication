@@ -356,6 +356,7 @@ public class DetailedActivity extends AppCompatActivity {
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(40, 40);
                     colorButton.setLayoutParams(params);
                     colorButton.setBackgroundColor(color); // Assuming color is an integer color value
+                    colorButton.setTag(color); // Set tag to the integer color value
                     colorButton.setOnClickListener(view -> {
                         // Handle color selection
                         onColorOptionSelected(view);
@@ -365,6 +366,8 @@ public class DetailedActivity extends AppCompatActivity {
                     Log.w("DetailedActivity", "Encountered a null color in postModel.getColors()");
                 }
             }
+
+
         }
 
     }
@@ -400,6 +403,29 @@ public class DetailedActivity extends AppCompatActivity {
         cartMap.put("totalPrice", totalPrice);
         cartMap.put("sellerID", sellerId);
 
+        // Default size to "none" if no sizes are available
+        String selectedSize = "none"; // Default size
+        if (radioGroupSizes.getVisibility() == View.VISIBLE) {
+            int selectedSizeId = radioGroupSizes.getCheckedRadioButtonId(); // Get the selected radio button ID
+            if (selectedSizeId != -1) { // If a size is selected
+                RadioButton selectedRadioButton = radioGroupSizes.findViewById(selectedSizeId);
+                selectedSize = selectedRadioButton.getText().toString(); // Get the text of the selected radio button
+            }
+        }
+        cartMap.put("selectedSize", selectedSize); // Add to the cart map
+
+        String selectedColor = "0"; // Default color
+        if (layoutSelectedColors.getVisibility() == View.VISIBLE) {
+            if (lastSelectedButton != null) { // If a color is selected
+                Object tag = lastSelectedButton.getTag();
+                selectedColor = (tag != null) ? tag.toString() : "0"; // Check the tag and set it as the selected color
+            }
+        }
+        cartMap.put("selectedColor", selectedColor);
+
+// Log the selected color for the cart
+        Log.d("DetailedActivity", "Selected color for cart: " + selectedColor);
+
         // Add the cart item to Firestore
         firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
                 .collection("User").add(cartMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -419,33 +445,44 @@ public class DetailedActivity extends AppCompatActivity {
     }
 
 
+
     // Variable to store the original background color
     private Map<Button, Integer> buttonOriginalColors = new HashMap<>();
 
     public void onColorOptionSelected(View view) {
-            // If there's a previously selected button, reset its background
-            if (lastSelectedButton != null && lastSelectedButton != view) {
-                // Restore the original background color from the map
-                if (buttonOriginalColors.containsKey(lastSelectedButton)) {
-                    lastSelectedButton.setBackgroundColor(buttonOriginalColors.get(lastSelectedButton));
-                }
+        // If there's a previously selected button, reset its background
+        if (lastSelectedButton != null && lastSelectedButton != view) {
+            // Restore the original background color from the map
+            if (buttonOriginalColors.containsKey(lastSelectedButton)) {
+                lastSelectedButton.setBackgroundColor(buttonOriginalColors.get(lastSelectedButton));
             }
+        }
+        // Store the current button as the last selected
+        lastSelectedButton = (Button) view;
 
-            // Store the current button as the last selected
-            lastSelectedButton = (Button) view;
-
-            // If the button is not in the map, add its original color
-            if (!buttonOriginalColors.containsKey(lastSelectedButton)) {
-                ColorDrawable bgDrawable = (ColorDrawable) view.getBackground();
-                buttonOriginalColors.put(lastSelectedButton, bgDrawable.getColor());
-            }
-
-            // Add a border to the selected button
-            GradientDrawable borderDrawable = new GradientDrawable();
-            borderDrawable.setStroke(3, Color.BLACK); // Border width and color
-            borderDrawable.setColor(buttonOriginalColors.get(lastSelectedButton)); // Keep the original color with border
-            lastSelectedButton.setBackground(borderDrawable);
+        // If the button is not in the map, add its original color
+        if (!buttonOriginalColors.containsKey(lastSelectedButton)) {
+            ColorDrawable bgDrawable = (ColorDrawable) view.getBackground();
+            buttonOriginalColors.put(lastSelectedButton, bgDrawable.getColor());
         }
 
+        // Add a border to the selected button
+        GradientDrawable borderDrawable = new GradientDrawable();
+        borderDrawable.setStroke(3, Color.BLACK); // Border width and color
+        borderDrawable.setColor(buttonOriginalColors.get(lastSelectedButton)); // Keep the original color with border
+        Integer originalColor = buttonOriginalColors.get(lastSelectedButton);
+        if (originalColor != null) {
+            borderDrawable.setColor(originalColor);
+        }
+        lastSelectedButton.setBackground(borderDrawable);
+
+        // Log the tag if it's not null
+        Object tag = lastSelectedButton.getTag();
+        if (tag != null) {
+            Log.d("DetailedActivity", "Last selected color: " + tag.toString());
+        } else {
+            Log.d("DetailedActivity", "No color tag found on the last selected button.");
+        }
+    }
 
 }

@@ -9,6 +9,10 @@ public class ItemsModel {
     private String productPrice;
     private String totalQuantity;
     private double totalPrice;
+    String selectedColor;
+    String selectedSize;
+    String rating = null;
+    Double offerPercentage;
 
     public ItemsModel() {
     }
@@ -21,6 +25,52 @@ public class ItemsModel {
         this.totalQuantity = totalQuantity;
         this.totalPrice = totalPrice;
     }
+
+    public ItemsModel(String itemId, String productName, ArrayList<String> productImage, String productPrice, String totalQuantity, double totalPrice, String selectedColor, String selectedSize, String rating, Double offerPercentage) {
+        this.itemId = itemId;
+        this.productName = productName;
+        this.productImage = productImage;
+        this.productPrice = productPrice;
+        this.totalQuantity = totalQuantity;
+        this.totalPrice = totalPrice;
+        this.selectedColor = selectedColor;
+        this.selectedSize = selectedSize;
+        this.rating = rating;
+        this.offerPercentage = offerPercentage;
+    }
+
+    public String getSelectedSize() {
+        return selectedSize;
+    }
+
+    public void setSelectedSize(String selectedSize) {
+        this.selectedSize = selectedSize;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getSelectedColor() {
+        return selectedColor;
+    }
+
+    public void setSelectedColor(String selectedColor) {
+        this.selectedColor = selectedColor;
+    }
+
+    public Double getOfferPercentage() {
+        return offerPercentage;
+    }
+
+    public void setOfferPercentage(Double offerPercentage) {
+        this.offerPercentage = offerPercentage;
+    }
+
 
     // Method to get the first image URL
     public String getFirstProductImage() {

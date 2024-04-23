@@ -38,6 +38,8 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
         // Set product name, price, quantity, and total price
         holder.product_name.setText(item.getProductName());
+        holder.product_size.setText(item.getSelectedSize());
+        holder.product_color.setText(item.getSelectedColor());
         holder.product_price.setText(item.getProductPrice());
         holder.total_quantity.setText(item.getTotalQuantity());
         holder.total_price.setText(String.valueOf(item.getTotalPrice()));
@@ -61,13 +63,15 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
     }
 
     public static class OrderItemViewHolder extends RecyclerView.ViewHolder {
-        TextView total_quantity, product_name, product_price, total_price;
+        TextView total_quantity, product_name, product_price, total_price, product_size, product_color;
         ImageView product_image;
 
         public OrderItemViewHolder(@NonNull View itemView) {
             super(itemView);
             total_quantity = itemView.findViewById(R.id.total_quantity);
             product_name = itemView.findViewById(R.id.product_name);
+            product_size = itemView.findViewById(R.id.product_size);
+            product_color = itemView.findViewById(R.id.product_color);
             product_price = itemView.findViewById(R.id.product_price);
             total_price = itemView.findViewById(R.id.total_price);
             product_image = itemView.findViewById(R.id.product_image);

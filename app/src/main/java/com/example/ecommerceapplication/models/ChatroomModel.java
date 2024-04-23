@@ -2,6 +2,8 @@ package com.example.ecommerceapplication.models;
 
 import com.google.firebase.Timestamp;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ChatroomModel {
@@ -22,9 +24,12 @@ public class ChatroomModel {
         this.lastMessageSenderId = lastMessageSenderId;
     }
 
-    public String getChatroomId() {
-        return chatroomId;
+    public static String getChatroomId(String userId1, String userId2) {
+        List<String> sortedUserIds = Arrays.asList(userId1, userId2);
+        Collections.sort(sortedUserIds);  // Ensures consistent sorting
+        return String.join("_", sortedUserIds);
     }
+
 
     public void setChatroomId(String chatroomId) {
         this.chatroomId = chatroomId;

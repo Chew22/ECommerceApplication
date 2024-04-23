@@ -48,6 +48,7 @@ public class CartActivity extends AppCompatActivity {
     private TextView overAllAmount;
     private RecyclerView recyclerView;
     private Button buyNowButton;
+    private String userId;
 
     // Variables
     private double totalAmount = 0.0; // Updated total amount
@@ -62,6 +63,9 @@ public class CartActivity extends AppCompatActivity {
         // Initialize Firebase instances
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        checkCartEmpty(); // Check if cart is empty when activity starts
 
         // Initialize context variable
         context = this;
@@ -144,6 +148,23 @@ public class CartActivity extends AppCompatActivity {
                             cartAdapter.notifyDataSetChanged();
                             // Update the total amount TextView
                             overAllAmount.setText("Total Amount: RM " + String.format("%.2f", totalAmount));
+                        }
+                    }
+                });
+    }
+
+    private void checkCartEmpty() {
+        firestore.collection("AddToCart")
+                .document(userId)
+                .collection("User")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot document = task.getResult();
+                        if (document.isEmpty()) {
+                            buyNowButton.setVisibility(View.GONE); // Hide button if cart is empty
+                        } else {
+                            buyNowButton.setVisibility(View.VISIBLE); // Show button if cart has items
                         }
                     }
                 });
@@ -241,6 +262,8 @@ public class CartActivity extends AppCompatActivity {
                                                 orderItem.put("totalQuantity", cartItem.getTotalQuantity());
                                                 orderItem.put("totalPrice", cartItem.getTotalPrice());
                                                 orderItem.put("sellerID", cartItem.getSellerID());
+                                                orderItem.put("selectedColor", cartItem.getSelectedColor());
+                                                orderItem.put("selectedSize", cartItem.getSelectedSize());
 
                                                 // Save the item under "Items" in the order document
                                                 firestore.collection("Order")

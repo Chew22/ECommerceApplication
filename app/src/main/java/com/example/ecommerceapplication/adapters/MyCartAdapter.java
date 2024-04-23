@@ -26,7 +26,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,7 +43,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
     // View holder class
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView name, price, date, time, totalQuantity, totalPrice;
+        TextView name, price, size, color, date, time, totalQuantity, totalPrice;
         Button minusItem, plusItem;
         ImageView delete, image;
 
@@ -53,6 +52,8 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
 
             image = itemView.findViewById(R.id.product_image);
             name = itemView.findViewById(R.id.product_name);
+            size = itemView.findViewById(R.id.product_size);
+            color = itemView.findViewById(R.id.product_color);
             price = itemView.findViewById(R.id.product_price);
             date = itemView.findViewById(R.id.current_date);
             time = itemView.findViewById(R.id.current_time);
@@ -96,6 +97,8 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
 
         holder.date.setText(list.get(position).getCurrentDate());
         holder.time.setText(list.get(position).getCurrentTime());
+        holder.size.setText(list.get(position).getSelectedSize());
+        holder.color.setText(list.get(position).getSelectedColor());
         holder.price.setText( "RM " + String.format("%.2f", Double.parseDouble(list.get(position).getProductPrice())));
         holder.name.setText(list.get(position).getProductName());
         holder.totalPrice.setText( "RM " + String.format("%.2f", (list.get(position).getTotalPrice())));

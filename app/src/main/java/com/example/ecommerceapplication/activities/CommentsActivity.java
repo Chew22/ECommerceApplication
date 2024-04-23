@@ -132,13 +132,13 @@ public class CommentsActivity extends AppCompatActivity {
     // Method to add a notification to the database
     private void addNotification() {
         // Get reference to the "Notifications" collection in Firestore
-        CollectionReference notificationsRef = FirebaseFirestore.getInstance().collection("Notifications").document(publisherid).collection("Notifications");
+        CollectionReference notificationsRef = FirebaseFirestore.getInstance().collection("Notifications").document(publisherid).collection("notifications");
 
         // Create a HashMap to store notification data
         Map<String, Object> notificationData = new HashMap<>();
-        notificationData.put("userId", firebaseUser.getUid()); // Add user ID of the commenter
+        notificationData.put("userid", firebaseUser.getUid()); // Add user ID of the commenter
         notificationData.put("text", "commented: " + addcomment.getText().toString()); // Add text of the notification
-        notificationData.put("postId", postid); // Add post ID to which the comment is made
+        notificationData.put("postid", postid); // Add post ID to which the comment is made
         notificationData.put("isComment", true);  // Set the value to true to indicate it's a comment notification
 
         // Add the notification to Firestore

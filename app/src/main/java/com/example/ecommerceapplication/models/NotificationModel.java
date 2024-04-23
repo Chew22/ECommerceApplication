@@ -2,29 +2,29 @@ package com.example.ecommerceapplication.models;
 
 public class NotificationModel {
 
-    private String userId;
+    private String userid;
     private String text;
-    private String postId;
-    private boolean isPost;
+    private String postid;
+    private boolean ispost;
     private boolean isComment;
 
     public NotificationModel() {
     }
 
-    public NotificationModel(String userId, String text, String postId, boolean isPost, boolean isComment) {
-        this.userId = userId;
+    public NotificationModel(String userid, String text, String postid, boolean ispost, boolean isComment) {
+        this.userid = userid;
         this.text = text;
-        this.postId = postId;
-        this.isPost = isPost;
+        this.postid = postid;
+        this.ispost = ispost;
         this.isComment = isComment;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserid() {
+        return userid;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserid(String userid) {
+        this.userid = userid;
     }
 
     public String getText() {
@@ -35,20 +35,20 @@ public class NotificationModel {
         this.text = text;
     }
 
-    public String getPostId() {
-        return postId;
+    public String getPostid() {
+        return postid;
     }
 
-    public void setPostId(String postId) {
-        this.postId = postId;
+    public void setPostid(String postid) {
+        this.postid = postid;
     }
 
-    public boolean isPost() {
-        return isPost;
+    public boolean isIspost() {
+        return ispost;
     }
 
-    public void setPost(boolean post) {
-        isPost = post;
+    public void setIspost(boolean ispost) {
+        this.ispost = ispost;
     }
 
     public boolean isComment() {

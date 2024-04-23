@@ -1,6 +1,7 @@
 package com.example.ecommerceapplication.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -59,21 +60,20 @@ public class ChatActivity extends AppCompatActivity {
         // Get seller ID from intent
         String sellerId = getIntent().getStringExtra("sellerId");
 
-        // Retrieve shop name and profile image of the seller
         FirebaseUtil.getSellerReference(sellerId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
+            if (task.isSuccessful() && task.getResult() != null) {
                 seller = task.getResult().toObject(SellerModel.class);
                 if (seller != null) {
-                    // Set shop name to TextView
-                    shopName.setText(seller.getShopName()); // Assuming you have a getShopName() method in SellerModel
-
-                    // Load profile image using Glide or any other image loading library
-                    Glide.with(this)
-                            .load(seller.getImagePath())
-                            .into(profile_pic_layout);
+                    shopName.setText(seller.getShopName());
+                    Glide.with(this).load(seller.getImagePath()).into(profile_pic_layout);
+                } else {
+                    Log.w(TAG, "Seller data is null");
                 }
+            } else {
+                Log.e(TAG, "Failed to retrieve seller data");
             }
         });
+
 
         // Generate unique chatroom ID based on user IDs
         chatroomId = FirebaseUtil.getChatroomId(FirebaseUtil.currentUserId(), sellerId);
@@ -94,21 +94,24 @@ public class ChatActivity extends AppCompatActivity {
         setupChatRecyclerView();
 
         FirebaseUtil.getChatroomReference(chatroomId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                chatroomModel = task.getResult().toObject(ChatroomModel.class);
-                if (chatroomModel == null) {
-                    // First Time Chat
+            if (task.isSuccessful() && task.getResult() != null) {
+                ChatroomModel chatroom = task.getResult().toObject(ChatroomModel.class);
+                if (chatroom == null) {
+                    Log.w(TAG, "Chatroom with ID " + chatroomId + " does not exist");
+                } else {
                     chatroomModel = new ChatroomModel(
                             chatroomId,
                             Arrays.asList(FirebaseUtil.currentUserId(), sellerId),
                             Timestamp.now(),
                             ""
                     );
+                    FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
                 }
-                // Save or update chatroomModel in Firebase
-                FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
+            } else {
+                Log.e(TAG, "Failed to retrieve chatroom data" + chatroomId);
             }
         });
+
     }
 
 

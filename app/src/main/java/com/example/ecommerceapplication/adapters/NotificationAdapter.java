@@ -1,7 +1,5 @@
 package com.example.ecommerceapplication.adapters;
 
-import static androidx.fragment.app.FragmentManager.TAG;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -21,7 +19,7 @@ import com.example.ecommerceapplication.fragments.PostDetailFragment;
 import com.example.ecommerceapplication.fragments.ProfileFragment;
 import com.example.ecommerceapplication.models.NotificationModel;
 import com.example.ecommerceapplication.models.PostModel;
-import com.example.ecommerceapplication.models.UserModel;
+import com.example.ecommerceapplication.models.SellerModel;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -46,52 +44,59 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         View view = LayoutInflater.from(mContext).inflate(R.layout.notification_item, parent,false);
         return new NotificationAdapter.ViewHolder(view);
     }
-
+    // Declare a TAG for logging
+    private static final String TAG = "NotificationAdapter";
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final NotificationModel notification = mNotification.get(position);
-        holder.text.setText(notification.getText());
 
-        // Check if userId is not null before calling getUserInfo()
-        if (notification.getUserId() != null) {
-            getUserInfo(holder.image_profile, holder.username, notification.getUserId());
+        // Log position and notification type
+        Log.d(TAG, "onBindViewHolder: Position - " + position + ", Notification Type - " + (notification.isIspost() ? "Post" : "Comment"));
 
-            // Set post image visibility based on notification type (post or comment)
-            if (notification.isPost()) {
-                holder.post_image.setVisibility(View.VISIBLE);
-                getPostImage(holder.post_image, notification.getPostId());
-            } else {
-                holder.post_image.setVisibility(View.GONE);
-            }
-        } else {
-            // Handle the case where userId is null
+        // Check if userId is null
+        if (notification.getUserid() == null) {
+            // Log and handle the null userId
             Log.e(TAG, "User ID is null for notification at position: " + position);
+
+            // Set default values to prevent crashes
+            holder.username.setText("Unknown");
+            holder.image_profile.setImageResource(R.drawable.placeholder); // Example default image
+            holder.post_image.setVisibility(View.GONE); // Hide post image if userId is null
+            return; // No further action required for a null userId
+        }
+
+        // If userId is not null, proceed as usual
+        getUserInfo(holder.image_profile, holder.username, notification.getUserid());
+
+        if (notification.isIspost()) {
+            holder.post_image.setVisibility(View.VISIBLE);
+            getPostImage(holder.post_image, notification.getPostid());
+        } else {
+            holder.post_image.setVisibility(View.GONE);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (notification.isPost()){
-
-                    // It is a post, open PostDetailFragment with the post ID stored in SharedPreferences
+                if (notification.isIspost()) {
                     SharedPreferences.Editor editor = mContext.getSharedPreferences("PREPS", Context.MODE_PRIVATE).edit();
-                    editor.putString("postid", notification.getPostId());
+                    editor.putString("postid", notification.getPostid());
                     editor.apply();
 
-                    ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PostDetailFragment()).commit();
-
-                }else {
-                    // Opens a ProfileFragment
+                    ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new PostDetailFragment())
+                            .commit();
+                } else {
                     SharedPreferences.Editor editor = mContext.getSharedPreferences("PREPS", Context.MODE_PRIVATE).edit();
-                    editor.putString("profileid", notification.getUserId());
+                    editor.putString("userid", notification.getUserid());
                     editor.apply();
 
-                    ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
-
+                    ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new ProfileFragment())
+                            .commit();
                 }
             }
         });
-
     }
 
     @Override
@@ -119,17 +124,17 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Reference to the document containing user information for the specified publisher ID
-        db.collection("CurrentUser").document(publisherId)
+        db.collection("seller").document(publisherId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     // Check if the document exists
                     if (documentSnapshot.exists()) {
                         // Convert the document snapshot to a UserModel object
-                        UserModel user = documentSnapshot.toObject(UserModel.class);
+                        SellerModel user = documentSnapshot.toObject(SellerModel.class);
                         // If UserModel object is not null, set user's profile image and username
                         if (user != null) {
-                            Glide.with(mContext).load(user.getProfileImg()).into(imageView);
-                            username.setText(user.getUsername());
+                            Glide.with(mContext).load(user.getImagePath()).into(imageView);
+                            username.setText(user.getShopName());
                         }
                     }
                 })

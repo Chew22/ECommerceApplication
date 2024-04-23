@@ -50,7 +50,7 @@ public class SearchUserActivity extends AppCompatActivity {
 
     private void setupSearchRecyclerView(String searchTerm) {
 
-        Query query = FirebaseUtil.allUserCollectionReference()
+        Query query = FirebaseUtil.sellerCollectionReference()
                 .whereGreaterThanOrEqualTo("shopName", searchTerm);
 
         FirestoreRecyclerOptions<SellerModel> options = new FirestoreRecyclerOptions.Builder<SellerModel>()

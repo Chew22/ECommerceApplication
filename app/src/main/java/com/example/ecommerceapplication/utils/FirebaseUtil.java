@@ -1,7 +1,5 @@
 package com.example.ecommerceapplication.utils;
 
-import static com.example.ecommerceapplication.adapters.PostAdapter.TAG;
-
 import android.util.Log;
 
 import com.example.ecommerceapplication.models.SellerModel;
@@ -14,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+
 /**
  * Utility class for interacting with Firebase services such as Authentication and Firestore.
  * Provides methods for retrieving current user ID, checking login status, accessing user details,
@@ -45,14 +44,14 @@ public class FirebaseUtil {
         return FirebaseFirestore.getInstance().collection("CurrentUser").document(currentUserId());
     }
 
+
     /**
      * Retrieves the Firestore collection reference for all users.
      * @return Collection reference for all users.
      */
     public static CollectionReference allUserCollectionReference() {
-        return FirebaseFirestore.getInstance().collection("seller");
+        return FirebaseFirestore.getInstance().collection("CurrentUser");
     }
-
 
     /**
      * Retrieves the Firestore document reference for a specific chatroom.
@@ -71,7 +70,6 @@ public class FirebaseUtil {
     public static CollectionReference getChatroomMessageReference(String chatroomId) {
         return getChatroomReference(chatroomId).collection("chats");
     }
-
     /**
      * Generates a unique chatroom ID based on two user IDs.
      * @param userId1 The ID of the first user.
@@ -79,16 +77,11 @@ public class FirebaseUtil {
      * @return Unique chatroom ID generated from the user IDs.
      */
     public static String getChatroomId(String userId1, String userId2) {
-        if (userId1.hashCode() < userId2.hashCode()) {
+        if (userId1.compareTo(userId2) < 0) {
             return userId1 + "_" + userId2;
         } else {
             return userId2 + "_" + userId1;
         }
-    }
-
-    public static DocumentReference getSellerReference(String sellerId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("seller").document(sellerId);
     }
 
 
@@ -100,25 +93,40 @@ public class FirebaseUtil {
         return FirebaseFirestore.getInstance().collection("chatrooms");
     }
 
+    public static CollectionReference sellerCollectionReference() {
+        return FirebaseFirestore.getInstance().collection("seller");
+    }
+
+
+
     /**
      * Retrieves the Firestore document reference for the other user in a chatroom.
      * @param userIds List containing user IDs of both users in the chatroom.
      * @return Document reference for the other user in the chatroom.
      */
     public static DocumentReference getOtherUserFromChatroom(List<String> userIds) {
-        if (userIds != null && userIds.size() >= 2) {
-            if (userIds.get(0).equals(FirebaseUtil.currentUserId())) {
-                // Return the second user ID
-                return allUserCollectionReference().document(userIds.get(1));
-            } else {
-                // Not the current user, return the first user
-                return allUserCollectionReference().document(userIds.get(0));
-            }
-        } else {
-            Log.e(TAG, "Invalid userIds list: " + userIds);
+        if (userIds == null || userIds.isEmpty()) {
+            Log.w("FirebaseUtil", "User IDs list is empty or null");
             return null;
         }
+
+        String currentUserId = currentUserId();
+        if (currentUserId == null) {
+            Log.w("FirebaseUtil", "Current user ID is null");
+            return null;
+        }
+
+        // Determine the other user in the chatroom
+        String otherUserId = userIds.get(0).equals(currentUserId) ? userIds.get(1) : userIds.get(0);
+        if (otherUserId == null) {
+            Log.w("FirebaseUtil", "Other user ID is null");
+            return null;
+        }
+
+        return sellerCollectionReference().document(otherUserId);
     }
+
+
 
     /**
      * Converts a Firestore Timestamp object to a string representation.
@@ -141,5 +149,10 @@ public class FirebaseUtil {
                         return null;
                     }
                 });
+    }
+
+    public static DocumentReference getSellerReference(String sellerId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        return db.collection("seller").document(sellerId);
     }
 }

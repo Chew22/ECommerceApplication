@@ -22,13 +22,14 @@ import com.example.ecommerceapplication.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
+import java.util.List;
+
 /**
  * Adapter class for populating RecyclerView with recent chatroom data.
  * Responsible for binding chatroom data to ViewHolder and handling user interaction.
  */
 public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatroomModel, RecentChatRecyclerAdapter.ChatroomModelViewHolder> {
 
-    private static final String TAG = "RecentChatRecyclerAdapter";
     // Context reference for handling UI operations
     Context context;
 
@@ -42,8 +43,6 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
         this.context = context;
     }
 
-
-
     /**
      * Binds chatroom data to the ViewHolder.
      * @param holder The ViewHolder to bind the data to.
@@ -52,41 +51,42 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
      */
     @Override
     protected void onBindViewHolder(@NonNull ChatroomModelViewHolder holder, int position, @NonNull ChatroomModel model) {
-        if (model.getUserIds() != null) {
+        List<String> userIds = model.getUserIds(); // List of user IDs in the chatroom
+        String myUserId = FirebaseUtil.currentUserId(); // Current user ID
 
-            FirebaseUtil.getOtherUserFromChatroom(model.getUserIds())
-                    .get().addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            boolean lastMessageSentByMe = model.getLastMessageSenderId().equals(FirebaseUtil.currentUserId());
+        // Log the user IDs
+        Log.d("ChatAdapter", "User IDs in chatroom: " + userIds.toString());
 
-                            SellerModel otherUserModel = task.getResult().toObject(SellerModel.class);
-                            holder.usernameText.setText(otherUserModel.getShopName());
-                            if (lastMessageSentByMe) {
-                                holder.lastMessageText.setText("You: " + model.getLastMessage());
-                            } else {
-                                holder.lastMessageText.setText(model.getLastMessage());
-                            }
-                            holder.lastMessageTime.setText(FirebaseUtil.timestampToString(model.getLastMessageTimestamp()));
+        FirebaseUtil.getOtherUserFromChatroom(model.getUserIds())
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        boolean lastMessageSentByMe = model.getLastMessageSenderId().equals(FirebaseUtil.currentUserId());
 
-                            if (otherUserModel.getImagePath() != null && !otherUserModel.getImagePath().isEmpty()) {
-                                Glide.with(context)
-                                        .load(otherUserModel.getImagePath())
-                                        .placeholder(R.drawable.placeholder)
-                                        .into(holder.profilePic);
-                            }
-
-                            holder.itemView.setOnClickListener(v -> {
-                                // Navigate to chat activity
-                                Intent intent = new Intent(context, ChatActivity.class);
-                                AndroidUtil.passUserModelAsIntent(intent, otherUserModel);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                context.startActivity(intent);
-                            });
+                        SellerModel otherUserModel = task.getResult().toObject(SellerModel.class);
+                        holder.usernameText.setText(otherUserModel.getShopName());
+                        if (lastMessageSentByMe) {
+                            holder.lastMessageText.setText("You: " + model.getLastMessage());
+                        } else {
+                            holder.lastMessageText.setText(model.getLastMessage());
                         }
-                    });
-        }else {
-            Log.e(TAG, "Model or user IDs are null");
-        }
+                        holder.lastMessageTime.setText(FirebaseUtil.timestampToString(model.getLastMessageTimestamp()));
+
+                        if (otherUserModel.getImagePath() != null && !otherUserModel.getImagePath().isEmpty()) {
+                            Glide.with(context)
+                                    .load(otherUserModel.getImagePath())
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(holder.profilePic);
+                        }
+
+                        holder.itemView.setOnClickListener(v -> {
+                            // Navigate to chat activity
+                            Intent intent = new Intent(context, ChatActivity.class);
+                            AndroidUtil.passUserModelAsIntent(intent, otherUserModel);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        });
+                    }
+                });
     }
 
     /**
