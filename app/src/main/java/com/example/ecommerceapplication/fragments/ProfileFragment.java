@@ -70,7 +70,7 @@ public class ProfileFragment extends Fragment {
     MyFotoAdapter myFotoAdapter_saves;
     List<PostModel> postList_saves;
 
-    RecyclerView recyclerView;
+    RecyclerView recyclerView_products;
     MyFotoAdapter myFotoAdapter;
     List<PostModel> postList;
 
@@ -80,8 +80,6 @@ public class ProfileFragment extends Fragment {
     String profileid;
 
     ImageButton my_fotos, saved_fotos;
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,7 +93,7 @@ public class ProfileFragment extends Fragment {
         if (getArguments() != null) {
             profileid = getArguments().getString("sellerId");
 
-        }else {
+        } else {
 
             SharedPreferences prefs = getContext().getSharedPreferences("PREPS", Context.MODE_PRIVATE);
             profileid = prefs.getString("profileid", "none");
@@ -123,13 +121,13 @@ public class ProfileFragment extends Fragment {
         order_status = view.findViewById(R.id.order_status);
         messageButton = view.findViewById(R.id.message_button);
 
-        recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
+        recyclerView_products = view.findViewById(R.id.recycler_view);
+        recyclerView_products.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(getContext(), 3);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView_products.setLayoutManager(linearLayoutManager);
         postList = new ArrayList<>();
         myFotoAdapter = new MyFotoAdapter(getContext(), postList);
-        recyclerView.setAdapter(myFotoAdapter);
+        recyclerView_products.setAdapter(myFotoAdapter);
 
         recyclerView_saves = view.findViewById(R.id.recycler_view_save);
         recyclerView_saves.setHasFixedSize(true);
@@ -139,15 +137,12 @@ public class ProfileFragment extends Fragment {
         myFotoAdapter_saves = new MyFotoAdapter(getContext(), postList_saves);
         recyclerView_saves.setAdapter(myFotoAdapter_saves);
 
-        recyclerView.setVisibility(View.VISIBLE);
-        recyclerView_saves.setVisibility(View.GONE);
-
-
         userInfo();
         getFollowers();
         getNrPosts();
+        loadSavedPosts();
         myFotos();
-        mysaves();
+
 
         // Check if the profile belongs to the current user
         if (profileid.equals(firebaseUser.getUid())) {
@@ -182,7 +177,6 @@ public class ProfileFragment extends Fragment {
         });
 
 
-
         order_status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,23 +202,23 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        my_fotos.setOnClickListener(new View.OnClickListener(){
+        my_fotos.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                recyclerView.setVisibility(View.VISIBLE);
+                recyclerView_products.setVisibility(View.VISIBLE);
                 recyclerView_saves.setVisibility(View.GONE);
             }
         });
 
-        saved_fotos.setOnClickListener(new View.OnClickListener(){
-
+        saved_fotos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recyclerView.setVisibility(View.GONE);
+                recyclerView_products.setVisibility(View.GONE);
                 recyclerView_saves.setVisibility(View.VISIBLE);
             }
         });
+
 
         followers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -316,7 +310,7 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    private void addNotification(){
+    private void addNotification() {
         // Get reference to the "notifications" collection in Firestore
         CollectionReference notificationsRef = FirebaseFirestore.getInstance().collection("notifications").document(profileid).collection("notifications");
 
@@ -414,7 +408,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private void checkFollow(){
+    private void checkFollow() {
         // Get reference to the "Follow" collection in Firestore
         DocumentReference followRef = FirebaseFirestore.getInstance().collection("Follow")
                 .document(firebaseUser.getUid()).collection("following").document(profileid);
@@ -434,7 +428,7 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void getFollowers(){
+    private void getFollowers() {
         // Get reference to the "Follow" collection in Firestore for followers
         CollectionReference followersRef = FirebaseFirestore.getInstance().collection("Follow")
                 .document(profileid).collection("followers");
@@ -522,92 +516,73 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    private void mysaves() {
-        mySaves = new ArrayList<>();
 
-        // Check if the profileid is the current user's ID
-        if (profileid.equals(firebaseUser.getUid())) {
-            // Get reference to the "Saves" collection in Firestore for the current user
-            CollectionReference savesRef = FirebaseFirestore.getInstance().collection("Saves")
-                    .document(firebaseUser.getUid()).collection("SavedPosts");
-
-            // Query all documents in the "Saves" collection under the user's ID
-            savesRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            // Add the document ID (post ID) to mySaves list
-                            mySaves.add(document.getId());
-                        }
-                        // Once all saves are retrieved, call readSaves()
-                        readSaves();
-                    } else {
-                        // Handle errors
-                        Log.e("mysaves", "Error getting saved posts", task.getException());
-                    }
-                }
-            });
-        } else {
-            // If it's not the current user's profile, hide the saved_fotos button
-            saved_fotos.setVisibility(View.GONE);
-        }
-    }
-
-
-
-    private void readSaves() {
-        postList_saves.clear();
-
-        // Get reference to the "SavedPosts" collection for the current user
-        CollectionReference savedPostsRef = FirebaseFirestore.getInstance()
-                .collection("Saves").document(FirebaseAuth.getInstance().getUid())
+    private void loadSavedPosts() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference savesRef = db
+                .collection("Saves")
+                .document(firebaseUser.getUid())
                 .collection("SavedPosts");
 
-        // Query all documents in the "SavedPosts" collection
-        savedPostsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        savesRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    List<String> documentIds = new ArrayList<>();
+
+                    Log.i(TAG, "Retrieving saved post IDs.");
+
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        // Get the post ID from the document
-                        String postId = document.getId();
-
-                        FirebaseFirestore.getInstance().collection("Products")
-                                .whereEqualTo("productId", postId)
-                                .get()
-                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                        // Check if there are any documents matching the query
-                                        if (!queryDocumentSnapshots.isEmpty()) {
-                                            // Loop through the documents
-                                            for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
-                                                // Retrieve the data from the document
-                                                // You can convert it to a custom object or use getField to access individual fields
-                                                String productId = documentSnapshot.getString("productID");
-                                                // Do something with the data
-                                            }
-                                        } else {
-                                            // No documents found
-                                        }
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        // Handle any errors
-                                    }
-                                });
-
+                        String documentId = document.getId();
+                        documentIds.add(documentId);
+                        Log.d(TAG, "Saved post ID: " + documentId);
                     }
+
+                    Log.i(TAG, "Retrieved " + documentIds.size() + " saved posts.");
+
+                    // Fetch product details using document IDs
+                    fetchProductDetails(documentIds);
                 } else {
-                    // Handle errors
-                    Log.e("readSaves", "Error getting saved posts", task.getException());
+                    Log.e(TAG, "Error retrieving saved posts", task.getException());
                 }
             }
         });
     }
 
+    private void fetchProductDetails(List<String> documentIds) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final List<PostModel> savedPosts = new ArrayList<>();
+        final int totalDocuments = documentIds.size();
+        final int[] fetchedCount = {0}; // To track how many details have been fetched
+
+        for (String documentId : documentIds) {
+            db.collection("Products").whereEqualTo("productId", documentId).get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        fetchedCount[0]++; // Increment counter
+                        if (!querySnapshot.isEmpty()) {
+                            for (DocumentSnapshot documentSnapshot : querySnapshot) {
+                                PostModel post = documentSnapshot.toObject(PostModel.class);
+                                if (post != null) {
+                                    savedPosts.add(post);
+                                }
+                            }
+                        }
+
+                        if (fetchedCount[0] == totalDocuments) {
+                            updateAdapterWithSavedPosts(savedPosts); // Only update when all fetched
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        fetchedCount[0]++;
+                        if (fetchedCount[0] == totalDocuments) {
+                            updateAdapterWithSavedPosts(savedPosts); // Even if some fail, still update
+                        }
+                    });
+        }
+    }
+    private void updateAdapterWithSavedPosts(List<PostModel> savedPosts) {
+        myFotoAdapter_saves.setPosts(savedPosts);
+        myFotoAdapter_saves.notifyDataSetChanged();
+    }
 
 }

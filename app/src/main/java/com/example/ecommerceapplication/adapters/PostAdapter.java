@@ -72,8 +72,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         PostModel post = list.get(position);
 
-        Log.d("PostAdapter", "Images: " + post.getProductImages());
-
         // Set up RecyclerView for image slider
         if (post.getProductImages() != null && !post.getProductImages().isEmpty()) {
             List<SlideModel> imageList = new ArrayList<>();

@@ -49,6 +49,10 @@ public class PostModel implements Serializable {
         return null;
     }
 
+    public void setFirstProductImages(List<String> productImages) {
+        this.productImages = productImages;
+    }
+
     // Getter and Setter for timestamp
     public long getTimestamp() {
         return timestamp;

@@ -31,12 +31,16 @@ public class MyFotoAdapter extends RecyclerView.Adapter<MyFotoAdapter.ViewHolder
         this.mPosts = mPosts;
     }
 
+    public void setPosts(List<PostModel> posts) {
+        this.mPosts = posts;
+    }
+
+
     @NonNull
     @Override
     public MyFotoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(context).inflate(R.layout.fotos_item, parent, false);
-
         return new MyFotoAdapter.ViewHolder(view);
     }
 
@@ -44,7 +48,11 @@ public class MyFotoAdapter extends RecyclerView.Adapter<MyFotoAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         final PostModel post = mPosts.get(position);
-        Glide.with(context).load(post.getFirstProductImage()).into(holder.post_image);
+        Glide.with(context)
+                .load(post.getFirstProductImage())
+                .placeholder(R.drawable.placeholder)         // Replace with your error image
+                .into(holder.post_image);
+
 
         holder.post_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,8 +70,9 @@ public class MyFotoAdapter extends RecyclerView.Adapter<MyFotoAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return mPosts.size();
+        return mPosts != null ? mPosts.size() : 0;
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
