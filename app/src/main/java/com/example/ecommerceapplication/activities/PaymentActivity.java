@@ -1,6 +1,7 @@
 package com.example.ecommerceapplication.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.models.UserModel;
+import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -26,10 +28,11 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
 
 
     // Variable declarations
-    double amount;
+    private static final double SHIPPING_COST = 5.00;
     Toolbar toolbar;
     TextView subTotal, discount, shipping, total;
     Button paymentBtn;
+    MaterialCardView bankCard;
 
     private FirebaseUser firebaseUser;
 
@@ -58,27 +61,44 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
         shipping = findViewById(R.id.shipping);
         total = findViewById(R.id.total);
         paymentBtn = findViewById(R.id.pay_btn);
+        bankCard = findViewById(R.id.bank_card);
 
-        // Retrieve amount from intent extras
-        double amount = getIntent().getDoubleExtra("totalAmount", 0.0);
-        Log.d("PaymentActivity", "TotalAmount received: " + amount);
-        subTotal.setText("RM " + String.format("%.2f", amount));
-        total.setText("RM " + String.format("%.2f", amount));
+        // Set click listener to navigate to CardPaymentActivity
+        bankCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PaymentActivity.this, CardPaymentActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // Retrieve the original amount from the intent
+        double subTotalAmount = getIntent().getDoubleExtra("totalAmount", 0.0);
+        Log.d("PaymentActivity", "TotalAmount received: " + subTotalAmount);
+
+        // Set sub-total
+        subTotal.setText("RM " + String.format("%.2f", subTotalAmount));
+
+        // Set shipping fee
+        shipping.setText("RM " + String.format("%.2f", SHIPPING_COST));
+
+        // Calculate total with shipping fee
+        double totalAmount = subTotalAmount + SHIPPING_COST;
+        total.setText("RM " + String.format("%.2f", totalAmount));
 
         // Set onClickListener for payment button
         paymentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Call method to initiate payment
-                paymentMethod();
+                paymentMethod(totalAmount);
             }
         });
 
     }
 
     // Method to initiate payment
-    private void paymentMethod() {
-
+    private void paymentMethod(double amount) {
         final Activity activity = PaymentActivity.this;
 
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -108,17 +128,16 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
                                 // Image to be displayed
                                 options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.png");
                                 // Currency type
-                                options.put("currency", "RM");
+                                options.put("currency", "INR");
                                 // Convert amount to cents
-                                amount = amount * 100;
+                                double paymentAmount = amount * 100; // In cents for Razorpay
                                 // Set payment amount
-                                options.put("amount", amount);
-                                JSONObject preFill = new JSONObject();
-                                // Email
-                                preFill.put("email", userEmail);
-                                // Contact number
-                                preFill.put("contact", userContact);
+                                options.put("amount", paymentAmount);
 
+                                // Prefill email and contact information
+                                JSONObject preFill = new JSONObject();
+                                preFill.put("email", userEmail);
+                                preFill.put("contact", userContact);
                                 options.put("prefill", preFill);
 
                                 // Open Razorpay Checkout activity
@@ -129,11 +148,9 @@ public class PaymentActivity extends AppCompatActivity implements PaymentResultL
                         }
                     }
                 } else {
-                    // Handle case where user document doesn't exist
                     Log.e("TAG", "User document does not exist");
                 }
             }).addOnFailureListener(e -> {
-                // Handle errors
                 Log.e("TAG", "Error retrieving user information: " + e.getMessage());
             });
         }

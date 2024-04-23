@@ -17,28 +17,82 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Payment Detailed"/>
 
-
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="340dp"
-        android:layout_height="244dp"
-        android:layout_marginTop="24dp"
+    <!-- Bank Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bank_card"
+        android:layout_width="300dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="32dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:flow_horizontalAlign="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.434"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/payment_toolbar"
-        app:srcCompat="@drawable/card_prev" />
+        app:layout_constraintTop_toBottomOf="@id/payment_toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bank_card"
+            android:padding="16dp">
+
+            <!-- Bank Card Title -->
+            <TextView
+                android:id="@+id/card_bank_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ShopLoca"
+                android:layout_marginLeft="180dp"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Bank Card Number -->
+            <TextView
+                android:id="@+id/card_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"
+                android:text="1234   5678   9876   5432"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Expiry Date -->
+            <TextView
+                android:id="@+id/card_expiry_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="EXP 12/25"
+                android:layout_marginLeft="150dp"
+                android:textColor="@android:color/white"
+                android:textSize="8sp" />
+
+            <!-- Cardholder Name -->
+            <TextView
+                android:id="@+id/cardholder_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sam Chew ShopLoca"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
 
     <TextView
         android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="84dp"
+        android:layout_marginTop="30dp"
         android:text="Subtotal"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/bank_card" />
 
     <TextView
         android:id="@+id/textView14"
@@ -60,16 +114,18 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/textView14"
         app:layout_constraintStart_toStartOf="@+id/textView14"
-        app:layout_constraintTop_toBottomOf="@+id/textView14" />
+        app:layout_constraintTop_toBottomOf="@+id/textView14"/>
+
     <TextView
         android:id="@+id/sub_total"
         android:layout_width="wrap_content"
+        android:layout_marginTop="30dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="84dp"
         android:text="RM 0"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/bank_card" />
 
     <TextView
         android:id="@+id/discount"
@@ -110,6 +166,9 @@
         android:layout_marginStart="76dp"
         android:layout_marginTop="18dp"
         android:text="Total"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="@color/theme_orange"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider5" />
 
@@ -120,6 +179,9 @@
         android:layout_marginTop="18dp"
         android:layout_marginEnd="76dp"
         android:text="RM 0"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/theme_orange"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider5" />
 

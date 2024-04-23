@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeDay">
         <activity
+            android:name=".activities.CardPaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ProfileActivity"
             android:exported="false" />
         <activity
