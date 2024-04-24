@@ -1,7 +1,5 @@
 package com.example.ecommerceapplication.models;
 
-import java.util.ArrayList;
-
 public class MyCartModel {
 
     String productId;
@@ -12,7 +10,7 @@ public class MyCartModel {
     String totalQuantity;
     double totalPrice;
     String documentId;
-    ArrayList<String> productImage;
+    String productImage;
     String sellerID;
     String selectedColor;
     String selectedSize;
@@ -23,7 +21,7 @@ public class MyCartModel {
 
     }
 
-    public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, ArrayList<String> productImage, String sellerID, String selectedColor, String selectedSize, String rating, Double offerPercentage) {
+    public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, String productImage, String sellerID, String selectedColor, String selectedSize, String rating, Double offerPercentage) {
         this.productId = productId;
         this.currentTime = currentTime;
         this.currentDate = currentDate;
@@ -40,7 +38,7 @@ public class MyCartModel {
         this.offerPercentage = offerPercentage;
     }
 
-    public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, ArrayList<String> productImage) {
+    public MyCartModel(String productId, String currentTime, String currentDate, String productName, String productPrice, String totalQuantity, double totalPrice, String documentId, String productImage) {
         this.productId = productId;
         this.currentTime = currentTime;
         this.currentDate = currentDate;
@@ -101,18 +99,11 @@ public class MyCartModel {
         this.productId = productId;
     }
 
-    public String getFirstProductImage() {
-        if (productImage != null && !productImage.isEmpty()) {
-            return productImage.get(0); // Return the first image URL
-        }
-        return null;
-    }
-
-    public ArrayList<String> getProductImage() {
+    public String getProductImage() {
         return productImage;
     }
 
-    public void setProductImage(ArrayList<String> productImage) {
+    public void setProductImage(String productImage) {
         this.productImage = productImage;
     }
 

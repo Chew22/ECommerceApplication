@@ -20,6 +20,11 @@ import com.example.ecommerceapplication.fragments.HomeFragment;
 import com.example.ecommerceapplication.fragments.NotificationFragment;
 import com.example.ecommerceapplication.fragments.ProfileFragment;
 import com.example.ecommerceapplication.fragments.SearchFragment;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Firebase
     FirebaseAuth auth;
+    GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
+
+        // Initialize GoogleSignInClient
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail().build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // Chat Fragement
         chatFragment = new ChatFragment();
@@ -147,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.menu_logout){
             // Signing out the user and redirecting to the registration activity
             auth.signOut();
+            logout();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         } else if (id == R.id.menu_my_cart) {
@@ -155,6 +169,26 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
+    private void logout() {
+        // Sign out from Firebase Authentication
+        auth.signOut();
+
+        // Sign out from Google
+        mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(MainActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+
+                // Redirect to login screen after logging out
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                finish(); // Finish the current activity to prevent back navigation
+            }
+        });
+    }
+
+
 
 
 }

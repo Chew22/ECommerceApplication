@@ -25,8 +25,13 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.ecommerceapplication.R;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,6 +42,9 @@ public class OptionsActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "MyPrefs";
     private static final String THEME_KEY = "theme";
     private SharedPreferences sharedPreferences;
+    FirebaseAuth auth;
+    GoogleSignInClient mGoogleSignInClient;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +70,16 @@ public class OptionsActivity extends AppCompatActivity {
         // Initialize day/night switch
         dayNightSwitch = findViewById(R.id.dayNightSwitch);
 
+        // Initialize FirebaseAuth
+        auth = FirebaseAuth.getInstance();
+
+        // Initialize GoogleSignInClient
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail().build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         dayNightSwitch.setChecked(savedTheme == AppCompatDelegate.MODE_NIGHT_YES);
 
         dayNightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -84,10 +102,7 @@ public class OptionsActivity extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Sign out the user and navigate to the login activity
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(OptionsActivity.this, LoginActivity.class)
-                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                logout();
             }
         });
 
@@ -109,6 +124,25 @@ public class OptionsActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void logout() {
+        // Sign out from Firebase Authentication
+        auth.signOut();
+
+        // Sign out from Google
+        mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(OptionsActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+
+                // Redirect to login screen after logging out
+                startActivity(new Intent(OptionsActivity.this, LoginActivity.class));
+                finish(); // Finish the current activity to prevent back navigation
+            }
+        });
+    }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

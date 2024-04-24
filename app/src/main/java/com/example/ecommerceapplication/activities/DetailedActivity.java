@@ -34,15 +34,15 @@ import com.example.ecommerceapplication.models.PostModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -369,77 +369,118 @@ public class DetailedActivity extends AppCompatActivity {
 
     }
 
-
-    // Method to add the current item to the user's cart
     private void addToCart() {
-        // Get the seller ID from the appropriate model
-        String sellerId = "";
-        if (newProductsModel != null) {
-            sellerId = newProductsModel.getSellerID();
-        } else if (postModel != null) {
-            sellerId = postModel.getSellerID();
-        }
+        // Get the current user ID
+        String userId = auth.getCurrentUser().getUid();
 
-        // Get the current date and time
-        String saveCurrentTime, saveCurrentDate;
-        Calendar calForDate = Calendar.getInstance();
-        SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
-        saveCurrentDate = currentDate.format(calForDate.getTime());
-        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
-        saveCurrentTime = currentTime.format(calForDate.getTime());
+        // Get current date and time
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        String currentDate = dateFormat.format(new Date());
+        String currentTime = timeFormat.format(new Date());
 
-        // Create a HashMap to store cart item information
-        final HashMap<String, Object> cartMap = new HashMap<>();
-        cartMap.put("productId", productId.getText().toString());
-        cartMap.put("productName", name.getText().toString());
-        cartMap.put("productImage", newProductsModel != null ? newProductsModel.getProductImages() : postModel.getProductImages());
-        cartMap.put("productPrice", price.getText().toString());
-        cartMap.put("currentTime", saveCurrentTime);
-        cartMap.put("currentDate", saveCurrentDate);
-        cartMap.put("totalQuantity", quantity.getText().toString());
-        cartMap.put("totalPrice", totalPrice);
-        cartMap.put("sellerID", sellerId);
 
-        // Default size to "none" if no sizes are available
-        String selectedSize = "none"; // Default size
-        if (radioGroupSizes.getVisibility() == View.VISIBLE) {
-            int selectedSizeId = radioGroupSizes.getCheckedRadioButtonId(); // Get the selected radio button ID
-            if (selectedSizeId != -1) { // If a size is selected
-                RadioButton selectedRadioButton = radioGroupSizes.findViewById(selectedSizeId);
-                selectedSize = selectedRadioButton.getText().toString(); // Get the text of the selected radio button
-            }
-        }
-        cartMap.put("selectedSize", selectedSize); // Add to the cart map
+        // Retrieve existing cart items
+        firestore.collection("AddToCart").document(userId)
+                .collection("User")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<DocumentSnapshot> cartItems = task.getResult().getDocuments();
+                        boolean itemExists = false;
 
-        String selectedColor = "0"; // Default color
-        if (layoutSelectedColors.getVisibility() == View.VISIBLE) {
-            if (lastSelectedButton != null) { // If a color is selected
-                Object tag = lastSelectedButton.getTag();
-                selectedColor = (tag != null) ? tag.toString() : "0"; // Check the tag and set it as the selected color
-            }
-        }
-        cartMap.put("selectedColor", selectedColor);
+                        // Information for the new item
+                        String newProductId = productId.getText().toString();
+                        String newProductName = name.getText().toString();
+                        String newProductImage = newProductsModel != null ?
+                                newProductsModel.getProductImages().get(0) :
+                                postModel.getProductImages().get(0);
+                        String newProductPrice = price.getText().toString();
+                        String newSelectedSize = radioGroupSizes.getVisibility() == View.VISIBLE
+                                ? getSelectedSize() : "none";
+                        String newSelectedColor = layoutSelectedColors.getVisibility() == View.VISIBLE
+                                ? getSelectedColor() : "0";
+                        int newTotalQuantity = totalQuantity;
+                        double newTotalPrice = Double.parseDouble(newProductPrice) * newTotalQuantity;
 
-// Log the selected color for the cart
-        Log.d("DetailedActivity", "Selected color for cart: " + selectedColor);
+                        // Compare against existing items
+                        for (DocumentSnapshot doc : cartItems) {
+                            String existingProductId = doc.getString("productId");
+                            String existingSize = doc.getString("selectedSize");
+                            String existingColor = doc.getString("selectedColor");
+                            int existingQuantity = Integer.parseInt(doc.getString("totalQuantity"));
 
-        // Add the cart item to Firestore
-        firestore.collection("AddToCart").document(auth.getCurrentUser().getUid())
-                .collection("User").add(cartMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if (task.isSuccessful()) {
-                            // Show a toast message indicating success
-                            Toast.makeText(DetailedActivity.this, "Added To Cart", Toast.LENGTH_SHORT).show();
-                            // Finish the activity
-                            finish();
-                        } else {
-                            // Show a toast message if there's an error
-                            Toast.makeText(DetailedActivity.this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                            // Check for matching product ID, color, and size
+                            if (existingProductId.equals(newProductId) &&
+                                    (newSelectedSize.equals(existingSize) || existingSize.equals("none")) &&
+                                    (newSelectedColor.equals(existingColor) || existingColor.equals("0"))) {
+
+                                // If they match, update the quantity
+                                int updatedQuantity = existingQuantity + newTotalQuantity;
+                                doc.getReference().update("totalQuantity", String.valueOf(updatedQuantity));
+                                Toast.makeText(DetailedActivity.this, "Added to Cart", Toast.LENGTH_SHORT).show();
+
+
+                                itemExists = true; // Indicate that the item exists
+                                break; // No need to continue checking
+                            }
                         }
+
+                        if (!itemExists) {
+                            // Add new item to the cart
+                            Map<String, Object> cartMap = new HashMap<>();
+                            cartMap.put("productId", newProductId);
+                            cartMap.put("productName", newProductName);
+                            cartMap.put("productImage", newProductImage);
+                            cartMap.put("productPrice", newProductPrice);
+                            cartMap.put("selectedSize", newSelectedSize);
+                            cartMap.put("selectedColor", newSelectedColor);
+                            cartMap.put("currentDate", currentDate);
+                            cartMap.put("currentTime", currentTime);
+                            cartMap.put("totalQuantity", String.valueOf(newTotalQuantity));
+                            cartMap.put("totalPrice", newTotalPrice);
+                            cartMap.put("sellerID", getSellerId()); // Assuming a method to get seller ID
+
+                            firestore.collection("AddToCart").document(userId)
+                                    .collection("User")
+                                    .add(cartMap)
+                                    .addOnCompleteListener(addTask -> {
+                                        if (addTask.isSuccessful()) {
+                                            Toast.makeText(DetailedActivity.this, "Added to Cart", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(DetailedActivity.this, "Failed to add to Cart", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
+                    } else {
+                        // Handle error fetching cart items
+                        Toast.makeText(DetailedActivity.this, "Error retrieving cart", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
+    private String getSelectedSize() {
+        int selectedSizeId = radioGroupSizes.getCheckedRadioButtonId();
+        if (selectedSizeId != -1) {
+            RadioButton selectedRadioButton = radioGroupSizes.findViewById(selectedSizeId);
+            return selectedRadioButton.getText().toString();
+        }
+        return "none";
+    }
+
+    private String getSelectedColor() {
+        return lastSelectedButton != null ? lastSelectedButton.getTag().toString() : "0";
+    }
+
+    private String getSellerId() {
+        if (newProductsModel != null) {
+            return newProductsModel.getSellerID();
+        } else if (postModel != null) {
+            return postModel.getSellerID();
+        }
+        return "";
+    }
+
 
 
 

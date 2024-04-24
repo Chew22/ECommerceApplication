@@ -120,6 +120,8 @@ dependencies {
     // Flex Box
     implementation ("com.google.android.flexbox:flexbox:3.0.0")
 
+    implementation ("com.squareup.okhttp3:okhttp:4.10.0")
+
 
     // Order
 //    implementation ("com.amulyakhare:com.amulyakhare.textdrawable:1.0.1")

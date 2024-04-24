@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 public class CartActivity extends AppCompatActivity {
 
@@ -135,8 +136,7 @@ public class CartActivity extends AppCompatActivity {
                                 myCartModel.setDocumentId(documentId);
 
                                 // Get the first image URL from the MyCartModel
-                                String imageUrl = myCartModel.getFirstProductImage();
-                                // You can now use this imageUrl to display the image in your RecyclerView or wherever you need it
+                                String imageUrl = myCartModel.getProductImage();
 
                                 // Add the MyCartModel to the cartModelList
                                 cartModelList.add(myCartModel);
@@ -251,8 +251,13 @@ public class CartActivity extends AppCompatActivity {
                                         public void onSuccess(Void aVoid) {
                                             Log.d(TAG, "Order ID added to order details: " + orderId);
 
-                                            // Loop through cart items and save them under "Items" in the order document
+                                            // Create a HashSet to keep track of unique seller IDs
+                                            HashSet<String> sellersToNotify = new HashSet<>();
+
                                             for (MyCartModel cartItem : cartModelList) {
+                                                // Collect seller ID while saving cart items to "Items"
+                                                sellersToNotify.add(cartItem.getSellerID());
+
                                                 // Create a HashMap to store item details
                                                 HashMap<String, Object> orderItem = new HashMap<>();
                                                 orderItem.put("productId", cartItem.getProductId());
@@ -272,22 +277,20 @@ public class CartActivity extends AppCompatActivity {
                                                         .document(orderId) // Reference the newly created order document
                                                         .collection("Items") // Add subcollection "Items"
                                                         .add(orderItem) // Add the item details as a document
-                                                        .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                                            @Override
-                                                            public void onComplete(@NonNull Task<DocumentReference> task) {
-                                                                if (task.isSuccessful()) {
-
-                                                                    // Cart item saved successfully
-                                                                    Log.d(TAG, "Cart item saved to Order: " + task.getResult().getId());
-                                                                    // Remove the item from the cart after it's been successfully saved to the Order collection
-                                                                    removeCartItemFromFirestore(cartItem.getDocumentId());
-                                                                } else {
-                                                                    // Handle errors
-                                                                    Log.d(TAG, "Error saving cart item to Order: ", task.getException());
-                                                                }
+                                                        .addOnCompleteListener(task -> {
+                                                            if (task.isSuccessful()) {
+                                                                // Remove the item from the cart after it's been successfully saved
+                                                                removeCartItemFromFirestore(cartItem.getDocumentId());
+                                                            } else {
+                                                                // Handle errors
+                                                                Log.d(TAG, "Error saving cart item to Order: ", task.getException());
                                                             }
                                                         });
                                             }
+                                            for (String sellerID : sellersToNotify) {
+                                                sendNotificationToSeller(sellerID, orderId); // Custom method to send a notification
+                                            }
+
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
@@ -306,6 +309,38 @@ public class CartActivity extends AppCompatActivity {
     }
 
 
+    private void sendNotificationToSeller(String sellerID, String orderId) {
+        // This method sends a notification to the seller with a given ID
+        firestore.collection("seller").document(sellerID).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot sellerDoc = task.getResult();
+                if (sellerDoc.exists()) {
+                    // Extract contact information for notification
+                    String sellerEmail = sellerDoc.getString("email");
+                    String sellerFCMToken = sellerDoc.getString("fcmToken");
+
+                    if (sellerEmail != null) {
+                        sendEmailNotification(sellerEmail, orderId);
+                    }
+
+                    // Or send a push notification via FCM
+                    if (sellerFCMToken != null) {
+                        sendPushNotification(sellerFCMToken, orderId);
+                    }
+                }
+            }
+        });
+    }
+
+    private void sendEmailNotification(String sellerEmail, String orderId) {
+        // Code to send an email to the seller
+        // You could use a service like SendGrid, Mailgun, etc.
+    }
+
+    private void sendPushNotification(String sellerFCMToken, String orderId) {
+        // Code to send a push notification via FCM
+        // This could involve a Firebase Cloud Function or a server-side script
+    }
 
     // Method to remove cart item from Firestore
     private void removeCartItemFromFirestore(String documentId) {

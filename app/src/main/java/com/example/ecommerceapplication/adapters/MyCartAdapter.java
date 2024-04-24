@@ -105,7 +105,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
         holder.totalQuantity.setText(String.valueOf(list.get(position).getTotalQuantity()));
 
        Glide.with(context)
-                    .load(cartModel.getFirstProductImage())
+                    .load(cartModel.getProductImage())
                     .into(holder.image);
 
         holder.delete.setOnClickListener(new View.OnClickListener() {
