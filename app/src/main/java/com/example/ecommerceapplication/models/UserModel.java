@@ -1,6 +1,6 @@
 package com.example.ecommerceapplication.models;
 
-public class UserModel {
+public class UserModel implements Identifiable {
 
     private String id;
     private String profileImg;

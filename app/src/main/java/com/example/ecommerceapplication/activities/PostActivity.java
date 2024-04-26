@@ -1,5 +1,6 @@
 package com.example.ecommerceapplication.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +34,8 @@ public class PostActivity extends AppCompatActivity {
     // Declare Firestore instance
    FirebaseFirestore firestore;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +54,6 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
-        // Retrieve productCategory from intent extra
-        String productCategory = getIntent().getStringExtra("productCategory");
 
         // Initialize Firestore instance and RecyclerView
         firestore = FirebaseFirestore.getInstance();
@@ -61,6 +62,40 @@ public class PostActivity extends AppCompatActivity {
         PostModelList = new ArrayList<>();
         showAllAdapter = new ShowAllAdapter(this, PostModelList);
         recyclerView_post.setAdapter(showAllAdapter);
+
+
+        // Retrieve productCategory from intent extra
+        String productCategory = getIntent().getStringExtra("productCategory");
+
+        // Safe retrieval of intent extras
+        Intent intent = getIntent();
+        if (intent != null) {
+            boolean isNewProducts = intent.getBooleanExtra("isNewProducts", false);  // Provide default value
+
+            if (isNewProducts) {
+                firestore.collection("NewProduct")  // Target the specific collection
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (DocumentSnapshot doc : task.getResult().getDocuments()) {
+                                        PostModel postModel = doc.toObject(PostModel.class);
+                                        PostModelList.add(postModel);
+                                    }
+                                    showAllAdapter.notifyDataSetChanged();  // Notify adapter of changes
+                                }
+                            }
+                        });
+            }
+
+        } else {
+            // Handle the case when there's no intent or required extras
+            Log.e("PostActivity", "Intent is null or missing expected extras");
+            finish();  // Close the activity if it's critical to have these extras
+        }
+
+
 
         // Fetch data based on the selected productCategory
         if(productCategory == null || productCategory.isEmpty()) {

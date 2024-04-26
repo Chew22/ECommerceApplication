@@ -12,12 +12,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ecommerceapplication.R;
+import com.example.ecommerceapplication.adapters.IdentifableAdapter;
 import com.example.ecommerceapplication.adapters.UserAdapter;
+import com.example.ecommerceapplication.models.Identifiable;
+import com.example.ecommerceapplication.models.SellerModel;
 import com.example.ecommerceapplication.models.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,6 +43,8 @@ public class FollowersActivity extends AppCompatActivity {
     RecyclerView recyclerView; // RecyclerView to display the list of users
     UserAdapter userAdapter; // Adapter for the RecyclerView
     List<UserModel> userList; // List to store user data
+    List<SellerModel> sellerList; // List for seller data (add this if you don't have it yet)
+    List<Identifiable> combinedList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,8 @@ public class FollowersActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         userList = new ArrayList<>();
+        sellerList = new ArrayList<>(); // Make sure you have this line
+        combinedList = new ArrayList<>();
         userAdapter = new UserAdapter(this, userList, false);
         recyclerView.setAdapter(userAdapter);
 
@@ -158,28 +166,53 @@ public class FollowersActivity extends AppCompatActivity {
                 });
     }
 
+
+    // Update showUsers to get data from both "CurrentUser" and "seller"
     private void showUsers() {
-        FirebaseFirestore.getInstance().collection("CurrentUser")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        userList.clear();
-                        for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
-                            UserModel user = snapshot.toObject(UserModel.class);
-                            if (user != null && idList.contains(user.getId())) {
-                                userList.add(user);
-                            }
-                        }
-                        userAdapter.notifyDataSetChanged();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Retrieve data from both collections
+        Task<QuerySnapshot> currentUserTask = db.collection("CurrentUser").get();
+        Task<QuerySnapshot> sellerTask = db.collection("seller").get();
+
+        // Wait for both tasks to complete
+        Tasks.whenAllSuccess(currentUserTask, sellerTask).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+            @Override
+            public void onSuccess(List<Object> results) {
+                userList.clear();
+
+                // Process results from "CurrentUser"
+                QuerySnapshot currentUserSnapshot = (QuerySnapshot) results.get(0);
+                for (DocumentSnapshot snapshot : currentUserSnapshot.getDocuments()) {
+                    UserModel user = snapshot.toObject(UserModel.class);
+                    if (user != null && idList.contains(user.getId())) {
+                        combinedList.addAll(userList); // Add UserModel objects
+                        combinedList.addAll(sellerList);
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle failure
+                }
+
+                // Process results from "seller"
+                QuerySnapshot sellerSnapshot = (QuerySnapshot) results.get(1);
+                for (DocumentSnapshot snapshot : sellerSnapshot.getDocuments()) {
+                    SellerModel seller = snapshot.toObject(SellerModel.class);
+                    if (seller != null && idList.contains(seller.getSellerID())) {
+                        combinedList.addAll(userList); // Add UserModel objects
+                        combinedList.addAll(sellerList);
                     }
-                });
+                }
+
+                // Create an adapter with combinedList and set it to the RecyclerView
+                IdentifableAdapter adapter = new IdentifableAdapter(combinedList);
+                recyclerView.setAdapter(adapter); // Set the adapter to display combined data
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Handle failure case
+                Log.e(TAG, "Error getting users: ", e);
+            }
+        });
     }
 
 }

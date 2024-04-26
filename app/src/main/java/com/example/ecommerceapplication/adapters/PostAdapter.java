@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +35,7 @@ import com.example.ecommerceapplication.models.SellerModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -72,6 +75,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         PostModel post = list.get(position);
 
+        // Check if the current user is following the seller
+        checkFollowStatus(holder.post_follow_button, post.getSellerID());
+
         // Set up RecyclerView for image slider
         if (post.getProductImages() != null && !post.getProductImages().isEmpty()) {
             List<SlideModel> imageList = new ArrayList<>();
@@ -98,6 +104,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         nrLikes(holder.likes, post.getProductId());
         getComments(post.getProductId(), holder.comments);
         isSaved(post.getProductId(), holder.save);
+
+        holder.post_follow_button.setOnClickListener(view -> {
+            Button button = (Button) view;
+            if ("Follow".equals(button.getText().toString())) {
+                followSeller(post.getSellerID(), button);
+            } else {
+                unfollowSeller(post.getSellerID(), button);
+            }
+        });
 
 
         holder.image_profile.setOnClickListener(v -> {
@@ -194,6 +209,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         ImageView image_profile, like, comment, save;
         TextView shopName, likes, product_name, description, comments, price;
         ImageSlider imageSlider;
+        Button post_follow_button;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -208,10 +224,78 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             comments = itemView.findViewById(R.id.comments);
             price = itemView.findViewById(R.id.all_price);
             imageSlider = itemView.findViewById(R.id.imageSlider);
+            post_follow_button = itemView.findViewById(R.id.post_follow_button);
+
         }
     }
 
+    // Check if the user is following the seller
+    private void checkFollowStatus(Button followButton, String sellerId) {
+        DocumentReference followRef = db.collection("Follow")
+                .document(firebaseUser.getUid()).collection("following").document(sellerId);
 
+        followRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                followButton.setText("Following");
+            } else {
+                followButton.setText("Follow");
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(context, "Error checking follow status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    // Follow a seller
+    private void followSeller(String sellerId, Button followButton) {
+        DocumentReference followingRef = db.collection("Follow")
+                .document(firebaseUser.getUid()).collection("following").document(sellerId);
+
+        DocumentReference followerRef = db.collection("Follow")
+                .document(sellerId).collection("followers").document(firebaseUser.getUid());
+
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("timestamp", com.google.firebase.firestore.FieldValue.serverTimestamp());
+
+        followingRef.set(data)
+                .addOnSuccessListener(aVoid -> {
+                    followButton.setText("Following");
+                    addFollowNotification(sellerId);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Failed to follow: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+
+        followerRef.set(data);
+    }
+
+    // Unfollow a seller
+    private void unfollowSeller(String sellerId, Button followButton) {
+        DocumentReference followingRef = db.collection("Follow")
+                .document(firebaseUser.getUid()).collection("following").document(sellerId);
+
+        DocumentReference followerRef = db.collection("Follow")
+                .document(sellerId).collection("followers").document(firebaseUser.getUid());
+
+        followingRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    followButton.setText("Follow");
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Failed to unfollow: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+
+        followerRef.delete();
+    }
+
+    // Add follow notification
+    private void addFollowNotification(String sellerId) {
+        HashMap<String, Object> notificationData = new HashMap<>();
+        notificationData.put("userid", firebaseUser.getUid());
+        notificationData.put("text", "started following you");
+
+        db.collection("Notifications").document(sellerId).collection("Notifications")
+                .add(notificationData);
+    }
     // Retrieve and display publisher information
     private void publisherInfo(ImageView image_profile, TextView username, String userid) {
         db.collection("seller").document(userid).get()

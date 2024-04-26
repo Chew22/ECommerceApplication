@@ -1,7 +1,7 @@
 package com.example.ecommerceapplication.models;
 
 
-public class SellerModel{
+public class SellerModel implements Identifiable{
 
     private String shopName;
     private String address;
@@ -58,5 +58,10 @@ public class SellerModel{
 
     public void setSellerID(String sellerID) {
         this.sellerID = sellerID;
+    }
+
+    @Override
+    public String getId() {
+        return sellerID;
     }
 }

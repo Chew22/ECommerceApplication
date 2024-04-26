@@ -142,14 +142,15 @@ public class HomeFragment extends Fragment {
         progressDialog.show();
 
         // Setting up OnClickListener for see all buttons
-
-        newProductShowAll.setOnClickListener(new View.OnClickListener(){
+        newProductShowAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), PostActivity.class);
+                intent.putExtra("isNewProducts", true);
                 startActivity(intent);
             }
         });
+
 
 
         // Fetching new products from Firestore and populating New Products RecyclerView
