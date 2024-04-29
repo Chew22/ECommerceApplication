@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.activities.MainActivity;
-import com.example.ecommerceapplication.fragments.ProfileFragment;
+import com.example.ecommerceapplication.fragments.Chew_ProfileFragment;
 import com.example.ecommerceapplication.models.CommentModel;
 import com.example.ecommerceapplication.models.UserModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -71,7 +71,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         viewHolder.image_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mcontext, ProfileFragment.class);
+                Intent intent = new Intent(mcontext, Chew_ProfileFragment.class);
                 intent.putExtra("publisherid", comment.getPublisherid());
                 mcontext.startActivity(intent);
             }

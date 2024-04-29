@@ -15,7 +15,7 @@
         android:layout_width="350dp"
         android:layout_height="350dp"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/logo"
+        android:src="@drawable/chew_logo"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -77,10 +77,22 @@
         app:layout_constraintTop_toBottomOf="@+id/email"
         app:layout_constraintWidth_percent=".8" />
 
-    <!--Allows users to submit their login credentials-->
-    <!--Specifies the method to be called when the button is clicked.-->
+    <!-- Buyer login fields and login button -->
+    <Button
+        android:id="@+id/buyer_login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/green"
+        android:text="Login as Buyer"
+        android:textSize="9sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressbar" />
 
-    <TextView
+
+
+    <!--Allows users to submit their login credentials-->
+       <TextView
         android:id="@+id/txtForgotPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

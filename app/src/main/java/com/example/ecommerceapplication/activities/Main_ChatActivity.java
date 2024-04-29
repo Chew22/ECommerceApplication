@@ -20,7 +20,7 @@
 //
 //        searchButton = findViewById(R.id.main_search_btn);
 //        searchButton.setOnClickListener((v)->{
-//            startActivity(new Intent(Main_ChatActivity.this, SearchUserActivity.class));
+//            startActivity(new Intent(Main_ChatActivity.this, Chew_SearchUserActivity.class));
 //
 //        });
 //    }

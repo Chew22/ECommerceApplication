@@ -8,7 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 
 import com.example.ecommerceapplication.R;
-import com.example.ecommerceapplication.fragments.ProfileFragment;
+import com.example.ecommerceapplication.fragments.Chew_ProfileFragment;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -30,13 +30,13 @@ public class ProfileActivity extends AppCompatActivity {
         // Get the seller ID from the intent
         String sellerId = getIntent().getStringExtra("sellerId");
 
-        // Create a new instance of ProfileFragment and pass the seller ID
-        ProfileFragment profileFragment = new ProfileFragment();
+        // Create a new instance of Chew_ProfileFragment and pass the seller ID
+        Chew_ProfileFragment profileFragment = new Chew_ProfileFragment();
         Bundle bundle = new Bundle();
         bundle.putString("sellerId", sellerId);
         profileFragment.setArguments(bundle);
 
-        // Start the ProfileFragment
+        // Start the Chew_ProfileFragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.profile_container, profileFragment)
                 .commit();

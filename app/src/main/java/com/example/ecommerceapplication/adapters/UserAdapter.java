@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.activities.MainActivity;
-import com.example.ecommerceapplication.fragments.ProfileFragment;
+import com.example.ecommerceapplication.fragments.Chew_ProfileFragment;
 import com.example.ecommerceapplication.models.UserModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -96,13 +96,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             public void onClick(View v) {
                 // Check if the current context is a fragment
                 if (isfragment) {
-                    // If it's a fragment, navigate to the ProfileFragment
+                    // If it's a fragment, navigate to the Chew_ProfileFragment
                     SharedPreferences.Editor editor = mcontext.getSharedPreferences("PREPS", Context.MODE_PRIVATE).edit();
                     editor.putString("profileid", user.getId());
                     editor.apply();
 
                     ((FragmentActivity) mcontext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                            new ProfileFragment()).commit();
+                            new Chew_ProfileFragment()).commit();
 
                 } else {
                     // If it's not a fragment, navigate to MainActivity

@@ -10,7 +10,7 @@
     <ImageView
         android:padding="4dp"
         android:layout_centerInParent= "true"
-        android:id="@+id/imagePath"
+        android:id="@+id/profile_pic_image_view"
         android:layout_width="52dp"
         android:layout_height="52dp"
         android:layout_gravity="center"
@@ -28,13 +28,13 @@
             android:text="User name"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:id="@+id/shopName"/>
+            android:id="@+id/user_name_text"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This is the Shop Address"
-            android:id="@+id/address"/>
+            android:text="+60123456789"
+            android:id="@+id/phone_text"/>
 
     </LinearLayout>
 

@@ -20,7 +20,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 public class OrderListActivity extends AppCompatActivity implements OrderAdapter.OnOrderItemClickListener {
 
@@ -54,31 +59,51 @@ public class OrderListActivity extends AppCompatActivity implements OrderAdapter
         fetchOrderData();
     }
 
+
+
     private void fetchOrderData() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss a");
 
         firestore.collection("Order")
                 .document(auth.getCurrentUser().getUid())
-                .collection("Orders")  // Reference the "Orders" subcollection
+                .collection("Orders")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Log the document data
-                                Log.d(TAG, "Document ID: " + document.getId());
-                                Log.d(TAG, "Document data: " + document.getData());
+                            orderList.clear(); // Clear any previous data
 
-                                // Convert each document to OrderModel and add it to the list
+                            // Convert documents to OrderModel and add them to orderList
+                            for (QueryDocumentSnapshot document : task.getResult()) {
                                 OrderModel order = document.toObject(OrderModel.class);
                                 orderList.add(order);
                             }
 
-                            // Create the adapter and pass the order list to it
+                            Collections.sort(orderList, new Comparator<OrderModel>() {
+                                @Override
+                                public int compare(OrderModel o1, OrderModel o2) {
+                                    try {
+                                        String combinedDateTime1 = o1.getOrderDate() + " " + o1.getOrderTime(); // Combine date and time
+                                        String combinedDateTime2 = o2.getOrderDate() + " " + o2.getOrderTime();
+
+                                        LocalDateTime dateTime1 = LocalDateTime.parse(combinedDateTime1, formatter);
+                                        LocalDateTime dateTime2 = LocalDateTime.parse(combinedDateTime2, formatter);
+
+                                        return dateTime1.compareTo(dateTime2);
+                                    } catch (DateTimeParseException e) {
+                                        Log.e("OrderListActivity", "Error parsing date/time", e);
+                                        return 0; // Return a neutral comparison if parsing fails
+                                    }
+                                }
+                            });
+
+                            Collections.reverse(orderList); // Optional, if you want descending order
+
+                            // Set the adapter with the sorted and reversed list
                             OrderAdapter adapter = new OrderAdapter(OrderListActivity.this, orderList);
                             adapter.setOnOrderItemClickListener(OrderListActivity.this);
                             recyclerView.setAdapter(adapter);
-
                         } else {
                             Log.e(TAG, "Error getting documents: ", task.getException());
                         }

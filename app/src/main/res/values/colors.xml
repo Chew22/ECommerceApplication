@@ -5,9 +5,7 @@
     <color name="dark_blue">#FF3700B3</color>
     <color name="green">#004225</color>
     <color name="turquoise">#FF018786</color>
-    <color name="black">#FF000000</color>
     <color name="grey">#777777</color>
-    <color name="white">#FFFFFFFF</color>
     <color name="theme_orange">#FFB000</color>
     <color name="light_blue">#008eff</color>
 
@@ -22,6 +20,8 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
 
     <color name="g_gray700">#666666</color>
     <color name="g_black">#171717</color>
@@ -39,7 +39,6 @@
     <color name="g_gray500">#969899</color>
     <color name="g_orange_yellow">#F8BA00</color>
 
-
     <color name="forest_green">#004225</color>
     <color name="dusty_white">#F5F5DC</color>
     <color name="bright_yellow">#FFB000</color>
@@ -47,7 +46,7 @@
     <color name="beige">#FFCF9D</color>
     <color name="selected_color_outline">#FAFBFC</color>
     <color name="color_option_1">#FF0000</color> <!-- Red -->
-    <color name="color_option_2">#eb860c</color> <!-- Orange -->
+    <color name="color_option_2">#FFFFFFFF</color> <!-- Orange -->
     <color name="color_option_3">#77bd88</color> <!-- Green -->
     <color name="color_option_4">#F8BA00</color> <!-- Yellow -->
     <color name="color_option_5">#000DAE</color> <!-- Navy Blue -->
@@ -56,6 +55,6 @@
     <color name="color_option_8">#c47acc</color> <!-- Purple -->
     <color name="color_option_9">#000000</color> <!-- Pink -->
     <color name="color_option_10">#FAFBFC</color> <!-- Purple -->
-
+    <color name="g_orange">#ed5605</color>
 
 </resources>

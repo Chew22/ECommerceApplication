@@ -1,6 +1,6 @@
-package com.example.ecommerceapplication.ui.theme
+package com.example.shoplo.ui.theme
 
-import android.app.Activity
+/*import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +38,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun ECommerceApplicationTheme(
+fun ShopLoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -67,4 +67,4 @@ fun ECommerceApplicationTheme(
         typography = Typography,
         content = content
     )
-}
+} */

@@ -34,10 +34,10 @@
             android:name=".activities.OrderStatusActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.ChatActivity"
+            android:name=".activities.Chew_ChatActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.SearchUserActivity"
+            android:name=".activities.Chew_SearchUserActivity"
             android:exported="false" />
         <activity
             android:name="com.canhub.cropper.CropImageActivity"

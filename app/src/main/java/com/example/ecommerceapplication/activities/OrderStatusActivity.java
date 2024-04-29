@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ecommerceapplication.R;
+import com.example.ecommerceapplication.adapters.Chew_OrderItemAdapter;
 import com.example.ecommerceapplication.adapters.OrderAdapter;
-import com.example.ecommerceapplication.adapters.OrderItemAdapter;
 import com.example.ecommerceapplication.models.ItemsModel;
 import com.example.ecommerceapplication.models.OrderModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -95,27 +96,35 @@ public class OrderStatusActivity extends AppCompatActivity {
     }
 
 
+
     private void fetchOrderItemData(String orderId) {
         firestore.collection("Order")
                 .document(auth.getCurrentUser().getUid())
                 .collection("Orders")
-                .document(orderId)  // Use the order ID passed from OrderListActivity
+                .document(orderId)
                 .collection("Items")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            orderItemList.clear(); // Clear previous data
+
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // Convert the document to ItemsModel
                                 ItemsModel orderItem = document.toObject(ItemsModel.class);
-                                orderItemList.add(orderItem);
+                                String firstImage = orderItem.getFirstProductImage();
+                                Log.d("OrderStatusActivity", "First image URL: " + firstImage);
+
+                                orderItemList.add(orderItem); // Add the item to the list
                             }
-                            // Create the adapter and pass the orderItemList
-                            OrderItemAdapter adapter = new OrderItemAdapter(OrderStatusActivity.this, orderItemList);
+
+                            // Create the adapter with the updated list
+                            Chew_OrderItemAdapter adapter = new Chew_OrderItemAdapter(OrderStatusActivity.this, orderItemList);
                             recyclerView.setAdapter(adapter);
                         } else {
-                            Log.e(TAG, "Error getting documents: ", task.getException());
+                            Log.e("OrderStatusActivity", "Error getting documents: ", task.getException());
+                            Toast.makeText(OrderStatusActivity.this, "Failed to fetch order items. Please try again later.", Toast.LENGTH_LONG).show();
                         }
                     }
                 });

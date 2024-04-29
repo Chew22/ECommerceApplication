@@ -58,7 +58,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         OrderModel order = list.get(position);
 
             holder.order_id.setText(order.getOrderId());
-            holder.order_placed_date.setText(order.getOrderDate());
+        holder.order_placed_date.setText(order.getOrderTime());
+        holder.order_placed_time.setText(order.getOrderDate());
             holder.order_status.setText(order.getOrderStatus());
             holder.total_amount.setText("RM " + order.getOrderTotal());
 
@@ -88,11 +89,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     }
 
     static class OrderViewHolder extends RecyclerView.ViewHolder {
-        TextView order_id, order_placed_date, order_status, total_amount;
+        TextView order_id, order_placed_date, order_status, total_amount, order_placed_time;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
             order_id = itemView.findViewById(R.id.order_id);
+            order_placed_time = itemView.findViewById(R.id.order_placed_time);
             order_placed_date = itemView.findViewById(R.id.order_placed_date);
             order_status = itemView.findViewById(R.id.order_status);
             total_amount = itemView.findViewById(R.id.total_amount);

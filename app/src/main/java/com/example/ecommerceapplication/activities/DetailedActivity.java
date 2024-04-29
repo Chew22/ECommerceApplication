@@ -233,7 +233,7 @@ public class DetailedActivity extends AppCompatActivity {
                 }
 
                 // Start the ChatActivity with the seller ID
-                Intent intent = new Intent(DetailedActivity.this, ChatActivity.class);
+                Intent intent = new Intent(DetailedActivity.this, Chew_ChatActivity.class);
                 intent.putExtra("sellerId", sellerId);
                 startActivity(intent);
 

@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.ecommerceapplication.R;
+import com.example.ecommerceapplication.fragments.Chew_ProfileFragment;
 import com.example.ecommerceapplication.fragments.PostDetailFragment;
-import com.example.ecommerceapplication.fragments.ProfileFragment;
 import com.example.ecommerceapplication.models.NotificationModel;
 import com.example.ecommerceapplication.models.PostModel;
 import com.example.ecommerceapplication.models.UserModel;
@@ -91,13 +91,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                             .replace(R.id.fragment_container, new PostDetailFragment())
                             .commit();
                 } else {
-                    // Opens a ProfileFragment
+                    // Opens a Chew_ProfileFragment
                     SharedPreferences.Editor editor = mContext.getSharedPreferences("PREPS", Context.MODE_PRIVATE).edit();
                     editor.putString("profileid", notification.getUserid());
                     editor.apply();
 
                     ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new ProfileFragment())
+                            .replace(R.id.fragment_container, new Chew_ProfileFragment())
                             .commit();
                 }
             }

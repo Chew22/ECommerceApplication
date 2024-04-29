@@ -24,5 +24,35 @@
     <string name="color_option_9">Black</string>
     <string name="color_option_10">White</string>
 
+    <!--Samyuktha-->
+ <string name="app_name">ShopLoca</string>
+    <string name="welcomeMsg">Welcome To ShopLoca Sellers!</string>
+    <string name="instructionMsg">Complete Registration in 2 Steps.</string>
+    <string name="registernuma">1</string>
+    <string name="registertitlea">Personal Information</string>
+    <string name="search">Search Now</string>
+    <string name="category_prompt">Category</string>
+    <string name="date">A thin wrapper around a millisecond value that allows JDBC to identify this as an SQL DATE
+        value. A milliseconds value represents the number of milliseconds that have passed since January 1, 1970 00:00:00.000 GMT.
+        To conform with the definition of SQL DATE, the millisecond values wrapped by a java.sql.Date instance
+        must be normalized by setting the hours, minutes, seconds, and milliseconds to zero in the particular time zone with which the instance is associated.
+        </string>
+
+    <string name="rating">A RatingBar is an extension of SeekBar and ProgressBar that shows a rating in stars.
+        The user can touch/drag or use arrow keys to set the rating when using the default size RatingBar.
+        The smaller RatingBar style ( R.attr.ratingBarStyleSmall) and the larger indicator-only style
+        (R.attr.ratingBarStyleIndicator) do not support user interaction and should only be used as indicators.
+        When using a RatingBar that supports user interaction, placing widgets to the left or right of the
+        RatingBar is discouraged.</string>
+
+    <string name="edit">A TextView displays text to the user and optionally allows them to edit it.
+        A TextView is a complete text editor, however the basic class is configured to not allow editing.
+        </string>
+
+    <string name="camera">Growing your business can be a difficult task to do. Leverage your business using ShopLoca by utlising our social media elements. Post more of your promotions and sale products on our app to reach more customers. Soial media can be a powerful tool for your to promote your products and reach a wider audience.</string>
+
+    <string name="recyclerview"> Stand out among the crowd by being special. Post your handmade products and provide detailed descriptions on how your products are made. This helps to bring your customers closer and make them feel that your products required the most effort. State the ingredients you used and be specifi on why your ingredients are special too.
+    </string>
+
 
 </resources>

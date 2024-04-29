@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ecommerceapplication.R;
-import com.example.ecommerceapplication.adapters.PostAdapter;
+import com.example.ecommerceapplication.adapters.Chew_PostAdapter;
 import com.example.ecommerceapplication.models.PostModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,7 +30,7 @@ public class PostDetailFragment extends Fragment {
 
     String postid;
     private RecyclerView recyclerView;
-    private PostAdapter postAdapter;
+    private Chew_PostAdapter chewPostAdapter;
     private List<PostModel> postList;
 
     @Override
@@ -48,8 +48,8 @@ public class PostDetailFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         postList = new ArrayList<>();
-        postAdapter = new PostAdapter(getContext(), postList);
-        recyclerView.setAdapter(postAdapter);
+        chewPostAdapter = new Chew_PostAdapter(getContext(), postList);
+        recyclerView.setAdapter(chewPostAdapter);
 
         readPost();
 
@@ -74,7 +74,7 @@ public class PostDetailFragment extends Fragment {
                     // Add the post to the postList
                     postList.add(post);
                     // Notify the adapter about the data change
-                    postAdapter.notifyDataSetChanged();
+                    chewPostAdapter.notifyDataSetChanged();
                 } else {
                     // Handle case when the document doesn't exist
                     Log.d("readPost", "No such document");

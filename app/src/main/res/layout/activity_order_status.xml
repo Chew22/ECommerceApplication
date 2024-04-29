@@ -114,7 +114,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
             android:layout_marginTop="10dp"
-            tools:listitem="@layout/order_item" />
+            tools:listitem="@layout/chew_order_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

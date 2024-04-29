@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--suppress ALL -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/managing_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.shoplo.fragment.Managing.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home">
+
+        <!-- Add action to navigate to productFragment -->
+        <action
+            android:id="@+id/action_homeFragment_to_productdisplayFragment"
+            app:destination="@id/productdisplayFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_productDetailViewFragment"
+            app:destination="@id/productDetailViewFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_faqFragment"
+            app:destination="@id/faqFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_userAccountFragment"
+            app:destination="@id/userAccountFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_postFragment"
+            app:destination="@id/postFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_allOrdersFragment"
+            app:destination="@id/allOrdersFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_guideFragment"
+            app:destination="@id/guideFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.shoplo.fragment.Managing.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_productDetailViewFragment"
+            app:destination="@id/productDetailViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/messageFragment"
+        android:name="com.example.shoplo.fragment.Managing.MessageFragment"
+        android:label="MessageFragment"
+        tools:layout="@layout/fragment_message"/>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.shoplo.fragment.Managing.ProfileFragment"
+        android:label="ProfileFragment"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_addressFragment"
+            app:destination="@id/addressFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_userAccountFragment"
+            app:destination="@id/userAccountFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_allOrdersFragment"
+            app:destination="@id/allOrdersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="com.example.shoplo.fragment.Managing.ProductFragment"
+        android:label="ProductFragment"
+        tools:layout="@layout/fragment_productdetails"/>
+
+    <!--suppress NavigationFile -->
+
+    <fragment
+        android:id="@+id/productdisplayFragment"
+        android:name="com.example.shoplo.fragment.Managing.ProductDisplayFragment"
+        android:label="ProductDisplayFragment"
+        tools:layout="@layout/fragment_product">
+    <action
+        android:id="@+id/action_productdisplayFragment_to_productFragment"
+        app:destination="@id/productFragment" />
+        <action
+            android:id="@+id/action_productdisplayFragment_to_productDetailViewFragment"
+            app:destination="@id/productDetailViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/productDetailViewFragment"
+        android:name="com.example.shoplo.fragment.Managing.ProductDetailViewFragment"
+        android:label="ProductDetailViewFragment"
+        tools:layout="@layout/fragment_productdetailview">
+
+        <!-- Argument for the ProductDetailViewFragment -->
+        <argument
+            android:name="product"
+            app:argType="com.example.shoplo.data.Product" />
+        <action
+            android:id="@+id/action_productDetailViewFragment_to_editProductFragment"
+            app:destination="@id/editProductFragment" />
+
+        <!-- Action leading to ProductFragment -->
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/addressFragment"
+        android:name="com.example.shoplo.fragment.Managing.AddressFragment"
+        android:label="AddressFragment"
+        tools:layout="@layout/fragment_address"/>
+    <fragment
+        android:id="@+id/userAccountFragment"
+        android:name="com.example.shoplo.fragment.Settings.UserAccountFragment"
+        android:label="UserAccountFragment"
+        tools:layout="@layout/fragment_user_account"/>
+    <fragment
+        android:id="@+id/faqFragment"
+        android:name="com.example.shoplo.fragment.Managing.FaqFragment"
+        android:label="FaqFragment" />
+    <fragment
+        android:id="@+id/postFragment"
+        android:name="com.example.shoplo.fragment.Managing.PostFragment"
+        android:label="PostFragment" >
+        <action
+            android:id="@+id/action_postFragment_to_postDetailsFragment"
+            app:destination="@id/postDetailsFragment">
+            <!--suppress NavigationFile -->
+            <argument
+                android:name="selectedPost"
+                app:argType="com.example.shoplo.data.Post"
+                />
+        </action>
+        <action
+            android:id="@+id/action_postFragment_to_postDetailViewFragment"
+            app:destination="@id/postDetailViewFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/postDetailsFragment"
+        android:name="com.example.shoplo.fragment.Managing.PostDetailsFragment"
+        android:label="PostDetailsFragment" >
+        <action
+            android:id="@+id/action_postDetailsFragment_to_postFragment"
+            app:destination="@id/postFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/guideFragment"
+        android:name="com.example.shoplo.fragment.Managing.GuideFragment"
+        android:label="GuideFragment" >
+        <action
+            android:id="@+id/action_guideFragment_to_guideDetailsFragment"
+            app:destination="@id/guideDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/guideDetailsFragment"
+        android:name="com.example.shoplo.fragment.Managing.GuideDetailsFragment"
+        android:label="GuideDetailsFragment" />
+    <fragment
+        android:id="@+id/allOrdersFragment"
+        android:name="com.example.shoplo.fragment.Managing.AllOrdersFragment"
+        android:label="AllOrdersFragment" >
+        <action
+            android:id="@+id/action_allOrdersFragment_to_orderDetailFragment"
+            app:destination="@id/orderDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetailFragment"
+        android:name="com.example.shoplo.fragment.Managing.OrderDetailFragment"
+        android:label="OrderDetailFragment" >
+        <!--suppress NavigationFile -->
+        <argument
+            android:name="order"
+            app:argType="com.example.shoplo.data.Order" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.shoplo.fragment.Managing.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
+    <fragment
+        android:id="@+id/editProductFragment"
+        android:name="com.example.shoplo.fragment.Managing.EditProductFragment"
+        android:label="EditProductFragment" >
+        <argument
+            android:name="productId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/postDetailViewFragment"
+        android:name="com.example.shoplo.fragment.Managing.PostDetailViewFragment"
+        android:label="PostDetailViewFragment" >
+        <argument
+            android:name="selectedPost"
+            app:argType="com.example.shoplo.data.Post" />
+    </fragment>
+
+</navigation>

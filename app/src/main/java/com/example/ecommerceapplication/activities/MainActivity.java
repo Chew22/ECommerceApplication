@@ -15,11 +15,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.ecommerceapplication.R;
-import com.example.ecommerceapplication.fragments.ChatFragment;
-import com.example.ecommerceapplication.fragments.HomeFragment;
+import com.example.ecommerceapplication.fragments.Chew_ChatFragment;
+import com.example.ecommerceapplication.fragments.Chew_HomeFragment;
+import com.example.ecommerceapplication.fragments.Chew_SearchFragment;
 import com.example.ecommerceapplication.fragments.NotificationFragment;
-import com.example.ecommerceapplication.fragments.ProfileFragment;
-import com.example.ecommerceapplication.fragments.SearchFragment;
+import com.example.ecommerceapplication.fragments.Chew_ProfileFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
 
     // Chat Page
-    ChatFragment chatFragment;
+    Chew_ChatFragment chewChatFragment;
 
     // Currently selected fragment
     Fragment selectedFragment = null;
@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(false);
         }
 
-        // Loading the HomeFragment by default
-        homeFragment = new HomeFragment();
+        // Loading the Chew_HomeFragment by default
+        homeFragment = new Chew_HomeFragment();
         loadFragment(homeFragment);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // Chat Fragement
-        chatFragment = new ChatFragment();
+        chewChatFragment = new Chew_ChatFragment();
 
         // Checking if there is any intent extras
         Bundle intent = getIntent().getExtras();
@@ -87,13 +87,13 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = getSharedPreferences("PREPS", MODE_PRIVATE).edit();
             editor.putString("profileid", publisher);
             editor.apply();
-            // Replace the fragment container with a new instance of HomeFragment
+            // Replace the fragment container with a new instance of Chew_HomeFragment
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new HomeFragment()).commit();
+                    new Chew_HomeFragment()).commit();
         }else {
-            // Replace the fragment container with a new instance of HomeFragment
+            // Replace the fragment container with a new instance of Chew_HomeFragment
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new HomeFragment()).commit();
+                    new Chew_HomeFragment()).commit();
         }
     }
 
@@ -102,11 +102,11 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             // Handle each bottom navigation item separately
             if (item.getItemId() == R.id.nav_home) {
-                selectedFragment = new HomeFragment();
+                selectedFragment = new Chew_HomeFragment();
             } else if (item.getItemId() == R.id.nav_chat) {
-                selectedFragment = new ChatFragment();
+                selectedFragment = new Chew_ChatFragment();
             } else if (item.getItemId() == R.id.nav_search) {
-                selectedFragment = new SearchFragment();
+                selectedFragment = new Chew_SearchFragment();
             } else if (item.getItemId() == R.id.nav_notification) {
                 selectedFragment = new NotificationFragment();
                 Log.d("Navigation", "Notification fragment selected");
@@ -119,13 +119,13 @@ public class MainActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor = getSharedPreferences("PREPS", MODE_PRIVATE).edit();
                         editor.putString("profileid", profileId);
                         editor.apply();
-                        selectedFragment = new ProfileFragment();
+                        selectedFragment = new Chew_ProfileFragment();
                     } else {
-                        Log.e("ProfileFragment", "Profile ID is null or empty");
+                        Log.e("Chew_ProfileFragment", "Profile ID is null or empty");
                         Toast.makeText(MainActivity.this, "Profile ID is not available", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Log.e("ProfileFragment", "User is not authenticated");
+                    Log.e("Chew_ProfileFragment", "User is not authenticated");
                     Toast.makeText(MainActivity.this, "User is not authenticated", Toast.LENGTH_SHORT).show();
                 }
             }
