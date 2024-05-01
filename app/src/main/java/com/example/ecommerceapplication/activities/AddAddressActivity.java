@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class represents an activity for adding a new address.
+ * This class reprfgjesents an activity for adding a new address.
  */
 public class AddAddressActivity extends AppCompatActivity {
 
