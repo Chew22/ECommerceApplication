@@ -485,7 +485,7 @@ public class DetailedActivity extends AppCompatActivity {
             tvColorsTitle.setVisibility(View.VISIBLE);
             layoutSelectedColors.removeAllViews();
 
-            // Check if there are valid colors (i.e., not -1)
+            // bla Check if there are valid colors (i.e., not -1)
             for (Integer color : productModel.getColors()) {
                 if (color != null && color != -1) {
                     hasValidColor = true;
