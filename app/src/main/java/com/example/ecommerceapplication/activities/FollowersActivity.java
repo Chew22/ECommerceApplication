@@ -35,10 +35,10 @@ public class FollowersActivity extends AppCompatActivity {
 
     private static final String TAG = "FollowersActivity";
 
-    String id; // User ID for which followers, following, or likes are being retrieved
+    String id; // product ID for the related followers, following, or likes are being retrieved
     String title; // Title of the activity (e.g., "followers", "following", "likes")
 
-    List<String> idList; // List to store user IDs of followers, following, or likes
+    List<String> idList; // List to store post IDs of followers, following, or likes
    
     RecyclerView recyclerView; // RecyclerView to display the list of users
     UserAdapter userAdapter; // Adapter for the RecyclerView
@@ -93,8 +93,6 @@ public class FollowersActivity extends AppCompatActivity {
                 break;
         }
     }
-
-    // Method to retrieve liked posts
     private void getLikes() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference likesRef = db.collection("Likes").document(id).collection("Likes");
@@ -104,20 +102,19 @@ public class FollowersActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     idList.clear();
-                    // Iterate through each document in the query result
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        // Add the document ID (post ID) to idList
-                        idList.add(document.getId());
+                        String documentId = document.getId();
+                        Log.d(TAG, "Liked product ID: " + documentId); // Log the document ID
+                        idList.add(documentId);
                     }
-                    // Once all liked posts are retrieved, you can show the users who liked the posts
-                    showUsers();
+                    showUsers(); // Proceed to display the users
                 } else {
-                    // Handle errors
-                    Log.e(TAG, "Error getting liked posts: ", task.getException());
+                    Log.e(TAG, "Error getting likes: ", task.getException());
                 }
             }
         });
     }
+
 
 
     private void getFollowing() {
@@ -167,52 +164,49 @@ public class FollowersActivity extends AppCompatActivity {
     }
 
 
-    // Update showUsers to get data from both "CurrentUser" and "seller"
     private void showUsers() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Retrieve data from both collections
         Task<QuerySnapshot> currentUserTask = db.collection("CurrentUser").get();
         Task<QuerySnapshot> sellerTask = db.collection("seller").get();
 
-        // Wait for both tasks to complete
         Tasks.whenAllSuccess(currentUserTask, sellerTask).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
             @Override
             public void onSuccess(List<Object> results) {
                 userList.clear();
+                combinedList.clear(); // Reset the combined list
 
-                // Process results from "CurrentUser"
                 QuerySnapshot currentUserSnapshot = (QuerySnapshot) results.get(0);
                 for (DocumentSnapshot snapshot : currentUserSnapshot.getDocuments()) {
                     UserModel user = snapshot.toObject(UserModel.class);
+                    Log.d(TAG, "Retrieved User: " + user.getUsername()); // Log user data
                     if (user != null && idList.contains(user.getId())) {
-                        combinedList.addAll(userList); // Add UserModel objects
-                        combinedList.addAll(sellerList);
+                        userList.add(user);
+                        combinedList.add(user);
                     }
                 }
 
-                // Process results from "seller"
                 QuerySnapshot sellerSnapshot = (QuerySnapshot) results.get(1);
                 for (DocumentSnapshot snapshot : sellerSnapshot.getDocuments()) {
                     SellerModel seller = snapshot.toObject(SellerModel.class);
+                    Log.d(TAG, "Retrieved Seller: " + seller.getShopName());
                     if (seller != null && idList.contains(seller.getSellerID())) {
-                        combinedList.addAll(userList); // Add UserModel objects
-                        combinedList.addAll(sellerList);
+                        sellerList.add(seller);
+                        combinedList.add(seller);
                     }
                 }
 
-                // Create an adapter with combinedList and set it to the RecyclerView
+                // Update the RecyclerView with the combined list
                 IdentifableAdapter adapter = new IdentifableAdapter(combinedList);
-                recyclerView.setAdapter(adapter); // Set the adapter to display combined data
-
+                recyclerView.setAdapter(adapter); // Set the adapter to display the combined data
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                // Handle failure case
-                Log.e(TAG, "Error getting users: ", e);
+                Log.e(TAG, "Error retrieving users or sellers: ", e);
             }
         });
     }
+
 
 }

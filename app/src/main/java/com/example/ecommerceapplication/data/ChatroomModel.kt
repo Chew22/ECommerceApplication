@@ -1,4 +1,4 @@
-package com.example.shoplo.data
+package com.example.ecommerceapplication.data
 
 import com.google.firebase.Timestamp
 

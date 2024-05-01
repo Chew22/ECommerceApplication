@@ -1,4 +1,4 @@
-package com.example.shoplo.fragment.Settings
+package com.example.ecommerceapplication.fragment.Settings
 
 
 
@@ -19,11 +19,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.ecommerceapplication.databinding.FragmentUserAccountBinding
-import com.example.shoplo.data.Seller
+import com.example.ecommerceapplication.data.Seller
 
-import com.example.shoplo.util.Resource
+import com.example.ecommerceapplication.util.Resource
 
-import com.example.shoplo.viewmodel.UserAccountViewModel
+import com.example.ecommerceapplication.viewmodel.UserAccountViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint

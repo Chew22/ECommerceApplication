@@ -42,8 +42,9 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Set address text
-        holder.address.setText(addressModelList.get(position).getUserAddress());
-        // Set click listener for radio button
+        holder.address.setText(addressModelList.get(position).getFullAddress());
+        holder.phoneTextView.setText("Phone: " + addressModelList.get(position).getPhoneNumber());
+
         holder.radioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,7 +63,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
                 selectedRadioBtn = (RadioButton) v;
                 selectedRadioBtn.setChecked(true);
                 // Notify activity of selected address
-                selectAddress.setAddress(addressModelList.get(position).getUserAddress());
+                selectAddress.setAddress(addressModelList.get(position).getFullAddress());
             }
         });
 
@@ -79,12 +80,14 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
         TextView address;
         RadioButton radioButton;
+        TextView phoneTextView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             // Initialize views
             address = itemView.findViewById(R.id.address_add);
             radioButton = itemView.findViewById(R.id.select_address);
+            phoneTextView = itemView.findViewById(R.id.phone_add);
 
         }
     }

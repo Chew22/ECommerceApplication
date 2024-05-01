@@ -1,4 +1,4 @@
-package com.example.shoplo.adapters
+package com.example.ecommerceapplication.adapters
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.ecommerceapplication.R
 import com.example.ecommerceapplication.databinding.OrderItemBinding
-import com.example.shoplo.data.Order
-import com.example.shoplo.data.getOrderStatus
-import com.example.shoplo.data.OrderStatus
+import com.example.ecommerceapplication.data.Order
+import com.example.ecommerceapplication.data.getOrderStatus
+import com.example.ecommerceapplication.data.OrderStatus
 class AllOrdersAdapter : Adapter<AllOrdersAdapter.OrdersViewHolder>() {
 
     inner class OrdersViewHolder(private val binding: OrderItemBinding) : ViewHolder(binding.root) {

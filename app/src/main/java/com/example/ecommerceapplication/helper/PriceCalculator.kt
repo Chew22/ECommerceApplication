@@ -1,4 +1,4 @@
-package com.example.shoplo.helper
+package com.example.ecommerceapplication.helper
 
 fun Float?.getProductPrice(price: Float): Float{
     //this --> Percentage

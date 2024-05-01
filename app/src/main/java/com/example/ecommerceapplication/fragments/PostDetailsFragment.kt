@@ -1,4 +1,4 @@
-package com.example.shoplo.fragment.Managing
+package com.example.ecommerceapplication.fragment.Managing
 
 import android.app.Activity
 import android.content.ContentResolver
@@ -15,9 +15,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.ecommerceapplication.R
 import com.example.ecommerceapplication.databinding.FragmentPostdetailsBinding
-import com.example.shoplo.adapters.ViewPager2Images
-import com.example.shoplo.data.Post
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.ecommerceapplication.adapters.ViewPager2Images
+import com.example.ecommerceapplication.data.Post
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage

@@ -1,11 +1,11 @@
-package com.example.shoplo.util
+package com.example.ecommerceapplication.util
 
 
 
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import com.example.shoplo.data.UserModel
+import com.example.ecommerceapplication.data.UserModel
 
 object AndroidUtil {
 

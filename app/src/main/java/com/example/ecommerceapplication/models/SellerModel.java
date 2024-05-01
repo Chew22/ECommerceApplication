@@ -4,6 +4,8 @@ package com.example.ecommerceapplication.models;
 public class SellerModel implements Identifiable{
 
     private String shopName;
+    private String halalCertificatePath;
+    private String businessreg;
     private String address;
     private String email;
     private String imagePath;
@@ -12,8 +14,10 @@ public class SellerModel implements Identifiable{
     public SellerModel() {
     }
 
-    public SellerModel(String shopName, String address, String email, String imagePath, String sellerID) {
+    public SellerModel(String shopName, String halalCertificatePath, String businessreg, String address, String email, String imagePath, String sellerID) {
         this.shopName = shopName;
+        this.halalCertificatePath = halalCertificatePath;
+        this.businessreg = businessreg;
         this.address = address;
         this.email = email;
         this.imagePath = imagePath;
@@ -26,6 +30,22 @@ public class SellerModel implements Identifiable{
 
     public void setShopName(String shopName) {
         this.shopName = shopName;
+    }
+
+    public String getHalalCertificatePath() {
+        return halalCertificatePath;
+    }
+
+    public void setHalalCertificatePath(String halalCertificatePath) {
+        this.halalCertificatePath = halalCertificatePath;
+    }
+
+    public String getBusinessreg() {
+        return businessreg;
+    }
+
+    public void setBusinessreg(String businessreg) {
+        this.businessreg = businessreg;
     }
 
     public String getAddress() {

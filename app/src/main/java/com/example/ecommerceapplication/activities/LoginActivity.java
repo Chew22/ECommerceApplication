@@ -1,11 +1,20 @@
 package com.example.ecommerceapplication.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +45,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText email, password;
     ProgressBar progressBar;
     TextView txtForgotPassword, google;
+    Button buyer_login_button;
+    ImageView togglePassword;
 
     // Firebase
     FirebaseAuth auth;
@@ -48,17 +59,58 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //getSupportActionBar().hide();
 
         // Initialize Firebase instance
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        togglePassword = findViewById(R.id.toggle_password);
 
         google = findViewById(R.id.google);
+        buyer_login_button = findViewById(R.id.buyer_login_button);
+        buyer_login_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navigate to the seller login activity
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Reference EditText fields from layout file
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
+        password.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_RIGHT = 2;  // Index for the right drawable
+
+                // Check if the touch event is in the drawable region
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (event.getRawX() >= (password.getRight() - password.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        // Toggle password visibility
+                        int originalType = password.getInputType();
+                        Typeface typeface = password.getTypeface();
+                        float textSize = password.getTextSize();
+
+                        if (originalType == (InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT)) {
+                            password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            togglePassword.setImageResource(R.drawable.eye_open);
+                        } else {
+                            password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
+                            togglePassword.setImageResource(R.drawable.ic_eye_closed);
+                        }
+
+                        password.setTypeface(typeface);  // Restore typeface
+                        password.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);  // Restore text size
+                        password.setSelection(password.getText().length());  // Place cursor at the end
+
+                        return true;  // Indicate that the touch event is handled
+                    }
+                }
+
+                return false;  // Allow touch events to propagate if not in the drawable area
+            }
+        });
 
         // Progress Bar
         progressBar = findViewById(R.id.progressbar);
@@ -67,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
         // Progress Dialog
         progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setTitle("Logging In");
-        progressDialog.setMessage("We are logging you in ");
+        progressDialog.setMessage("We are logging you in");
 
         // Forgot Password
         txtForgotPassword = findViewById(R.id.txtForgotPassword);
@@ -88,7 +140,11 @@ public class LoginActivity extends AppCompatActivity {
         google.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signin();
+                if (isNetworkAvailable()) {
+                    signin();
+                } else {
+                    showNoInternetError();
+                }
             }
         });
     }
@@ -96,40 +152,50 @@ public class LoginActivity extends AppCompatActivity {
     int RC_SIGN_IN = 40;
 
     private void signin() {
-        // Sign In with google
         Intent intent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(intent, RC_SIGN_IN);
-
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SIGN_IN){
-
-            Task<GoogleSignInAccount>  task = GoogleSignIn.getSignedInAccountFromIntent(data);
-
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuth(account.getIdToken());
-
-            }catch (ApiException e){
-                throw new RuntimeException(e);
+                if (isNetworkAvailable()) {
+                    firebaseAuth(account.getIdToken());
+                } else {
+                    showNoInternetError();
+                }
+            } catch (ApiException e) {
+                Toast.makeText(this, "Google Sign-In Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    // Method to check if the device has internet connection
+    private boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnected();
+    }
 
-    // Method is invoke to handle sign-in process when user taps on the sign in button
+    private void showNoInternetError() {
+        Toast.makeText(LoginActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+    }
+
     public void signin(View view) {
-
         // Retrieve user-entered email and password
+        if (!isNetworkAvailable()) {
+            showNoInternetError();
+            return;
+        }
+
         String userEmail = email.getText().toString().trim();
         String userPassword = password.getText().toString().trim();
 
-        // Validate email and password fields
         if (TextUtils.isEmpty(userEmail)) {
             Toast.makeText(this, "Enter Email", Toast.LENGTH_SHORT).show();
             return;
@@ -143,41 +209,35 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Sign in user with Firebase Authentication
         auth.signInWithEmailAndPassword(userEmail, userPassword)
-                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        // Check if sign-in was successful
                         if (task.isSuccessful()) {
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(LoginActivity.this, "Login Successfully", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
-
                         } else {
-                            // Display error message if sign-in fails
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(LoginActivity.this, "Error: " + task.getException(), Toast.LENGTH_SHORT).show();
-
                         }
                     }
                 });
-        // auth.signInWithEmailLink()
     }
 
-
-
     private void firebaseAuth(String idToken) {
-
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+
+        if (!isNetworkAvailable()) {
+            showNoInternetError();
+            return;
+        }
 
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-
+                        if (task.isSuccessful()) {
                             FirebaseUser user = auth.getCurrentUser();
 
                             UserModel userModel = new UserModel();
@@ -191,16 +251,15 @@ public class LoginActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
-                        }else {
-                            Toast.makeText(LoginActivity.this, "error", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Connection Error, Unable to Sign In", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
-    // Method to handle user registration
+    // Method to navigate to the login activity
     public void signup(View view) {
-        // Start registration activity when the user taps on the "sign up" button
         startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
     }
 }

@@ -1,4 +1,4 @@
-package com.example.shoplo.fragment.Managing
+package com.example.ecommerceapplication.fragment.Managing
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -8,26 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ecommerceapplication.databinding.FragmentProductdetailviewBinding
-import com.example.shoplo.activities.ManagingActivity
-import com.example.shoplo.adapters.ColorsAdapter
-import com.example.shoplo.adapters.SizesAdapter
-import com.example.shoplo.adapters.ViewPager2Images
+import com.example.ecommerceapplication.adapters.ColorsAdapter
+import com.example.ecommerceapplication.adapters.SizesAdapter
+import com.example.ecommerceapplication.adapters.ViewPager2Images
 
-import com.example.shoplo.data.Product
-import com.example.shoplo.util.Resource
-
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class ProductDetailViewFragment : Fragment() {

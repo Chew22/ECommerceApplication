@@ -1,4 +1,4 @@
-package com.example.shoplo.fragments.Register
+package com.example.ecommerceapplication.fragments.Register
 
 import android.os.Bundle
 import android.view.LayoutInflater

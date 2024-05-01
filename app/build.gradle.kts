@@ -3,8 +3,11 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("kotlin-parcelize")
+    id("kotlin-kapt")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.dagger.hilt.android")
 }
+
 
 android {
     namespace = "com.example.ecommerceapplication"
@@ -155,7 +158,7 @@ dependencies {
 
     // Dagger hilt
     implementation("com.google.dagger:hilt-android:2.48.1")
-    // kapt("com.google.dagger:hilt-compiler:2.48.1")
+    kapt("com.google.dagger:hilt-compiler:2.48.1")
 
     // Firebase
     implementation("com.google.firebase:firebase-auth:22.3.1")

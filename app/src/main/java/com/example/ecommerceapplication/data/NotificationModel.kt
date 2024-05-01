@@ -1,4 +1,4 @@
-package com.example.shoplo.data
+package com.example.ecommerceapplication.data
 
 class NotificationModel {
     var userId: String? = null

@@ -1,11 +1,9 @@
 package com.example.ecommerceapplication.models;
 
-import java.util.ArrayList;
-
 public class ItemsModel {
     private String itemId;
     private String productName;
-    private ArrayList<String> productImage;
+    private String productImage;
     private String productPrice;
     private String totalQuantity;
     private double totalPrice;
@@ -17,7 +15,7 @@ public class ItemsModel {
     public ItemsModel() {
     }
 
-    public ItemsModel(String itemId, String productName, ArrayList<String> productImage, String productPrice, String totalQuantity, double totalPrice) {
+    public ItemsModel(String itemId, String productName, String productImage, String productPrice, String totalQuantity, double totalPrice) {
         this.itemId = itemId;
         this.productName = productName;
         this.productImage = productImage;
@@ -26,7 +24,7 @@ public class ItemsModel {
         this.totalPrice = totalPrice;
     }
 
-    public ItemsModel(String itemId, String productName, ArrayList<String> productImage, String productPrice, String totalQuantity, double totalPrice, String selectedColor, String selectedSize, String rating, Double offerPercentage) {
+    public ItemsModel(String itemId, String productName, String productImage, String productPrice, String totalQuantity, double totalPrice, String selectedColor, String selectedSize, String rating, Double offerPercentage) {
         this.itemId = itemId;
         this.productName = productName;
         this.productImage = productImage;
@@ -74,18 +72,15 @@ public class ItemsModel {
 
     // Method to get the first image URL
     public String getFirstProductImage() {
-        if (productImage != null && !productImage.isEmpty()) {
-            return productImage.get(0); // Return the first image URL
-        } else {
-            return null; // Or handle the case when there are no images
-        }
+            return productImage; // Return the first image URL
+
     }
 
-    public ArrayList<String> getProductImage() {
+    public String getProductImage() {
         return productImage;
     }
 
-    public void setProductImage(ArrayList<String> productImage) {
+    public void setProductImage(String productImage) {
         this.productImage = productImage;
     }
 

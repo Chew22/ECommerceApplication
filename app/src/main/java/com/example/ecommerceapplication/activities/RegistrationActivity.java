@@ -3,11 +3,14 @@ package com.example.ecommerceapplication.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,7 +35,7 @@ public class RegistrationActivity extends AppCompatActivity {
     Button signUp;
     SharedPreferences sharedPreferences;
     ProgressBar progressBar;
-
+    TextView passwordError;
     // Firebase authentication and Firestore instance
     FirebaseAuth auth;
     FirebaseFirestore firestore;
@@ -67,6 +70,31 @@ public class RegistrationActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         reenterpassword = findViewById(R.id.reenterpassword);
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String pwd = editable.toString();
+
+                if (pwd.length() < 6) {
+                    password.setError("Password must be at least 6 characters long.");
+                } else if (!pwd.matches(".*[A-Z].*")) {
+                    password.setError("Must contain at least one uppercase letter.");
+                } else if (!pwd.matches(".*[a-z].*")) {
+                    password.setError("Must contain at least one lowercase letter.");
+                } else if (!pwd.matches(".*\\d.*")) {
+                    password.setError("Must contain at least one digit.");
+                } else {
+                    password.setError(null);  // Clear error when valid
+                }
+            }
+        });
+
 
         // Initialize SharedPreferences for onboarding screen
         sharedPreferences = getSharedPreferences("onBoardingScreen", MODE_PRIVATE);

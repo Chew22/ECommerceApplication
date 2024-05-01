@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -86,11 +87,6 @@ public class CartActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 saveOrderToFirestore();
-                // Start PaymentActivity with the updated total amount
-                Intent intent = new Intent(CartActivity.this, PaymentActivity.class);
-                intent.putExtra("totalAmount", totalAmount);
-                startActivity(intent);
-
 
             }
         });
@@ -251,6 +247,12 @@ public class CartActivity extends AppCompatActivity {
                                         public void onSuccess(Void aVoid) {
                                             Log.d(TAG, "Order ID added to order details: " + orderId);
 
+                                            // Pass orderId to AddressActivity
+                                            Intent addressIntent = new Intent(CartActivity.this, AddressActivity.class);
+                                            addressIntent.putExtra("orderId", orderId); // Pass orderId to AddressActivity
+                                            addressIntent.putExtra("totalAmount", totalAmount); // Pass totalAmount as well
+                                            startActivity(addressIntent);
+
                                             // Create a HashSet to keep track of unique seller IDs
                                             HashSet<String> sellersToNotify = new HashSet<>();
 
@@ -288,7 +290,7 @@ public class CartActivity extends AppCompatActivity {
                                                         });
                                             }
                                             for (String sellerID : sellersToNotify) {
-                                                sendNotificationToSeller(sellerID, orderId); // Custom method to send a notification
+                                                createNotificationForSeller(sellerID, orderId, totalAmount);
                                             }
 
                                         }
@@ -308,7 +310,26 @@ public class CartActivity extends AppCompatActivity {
                 });
     }
 
+    // Method to create a notification in Firestore
+    private void createNotificationForSeller(String sellerID, String orderId, double orderTotal) {
+        // Create a HashMap to store notification data
+        HashMap<String, Object> notificationData = new HashMap<>();
+        notificationData.put("orderId", orderId);
+        notificationData.put("orderTotal", orderTotal);
+        notificationData.put("timestamp", FieldValue.serverTimestamp());
+        notificationData.put("message", "You have a new order from a buyer");
 
+        // Save the notification in the seller's Notifications collection
+        firestore.collection("seller")
+                .document(sellerID)
+                .collection("Notifications")
+                .add(notificationData)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Notification created for seller: " + sellerID))
+                .addOnFailureListener(e -> Log.e(TAG, "Error creating notification for seller: " + e.getMessage()));
+    }
+
+
+    // Push Notifications
     private void sendNotificationToSeller(String sellerID, String orderId) {
         // This method sends a notification to the seller with a given ID
         firestore.collection("seller").document(sellerID).get().addOnCompleteListener(task -> {

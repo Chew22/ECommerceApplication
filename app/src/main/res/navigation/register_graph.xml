@@ -6,9 +6,11 @@
     android:id="@+id/register_graph"
     app:startDestination="@id/introductionFragment">
 
+
+
     <fragment
         android:id="@+id/introductionFragment"
-        android:name="com.example.shoplo.fragments.Register.IntroductionFragment"
+        android:name="com.example.ecommerceapplication.fragments.Register.IntroductionFragment"
         android:label="IntroductionFragment"
         tools:layout="@layout/fragment_introduction">
         <action
@@ -21,7 +23,7 @@
 
     <fragment
         android:id="@+id/registeraFragment"
-        android:name="com.example.shoplo.fragments.Register.RegisteraFragment"
+        android:name="com.example.ecommerceapplication.fragments.Register.RegisteraFragment"
         android:label="RegisteraFragment"
         tools:layout="@layout/fragment_registera">
 
@@ -40,7 +42,7 @@
 
     <fragment
         android:id="@+id/registerbFragment"
-        android:name="com.example.shoplo.fragments.Register.RegisterbFragment"
+        android:name="com.example.ecommerceapplication.fragments.Register.RegisterbFragment"
         android:label="RegisterbFragment"
         tools:layout="@layout/fragment_registerb">
         <action
@@ -49,7 +51,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.shoplo.fragments.Register.LoginFragment"
+        android:name="com.example.ecommerceapplication.fragments.Register.LoginFragment"
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login">
         <action

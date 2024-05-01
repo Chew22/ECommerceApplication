@@ -1,4 +1,4 @@
-package com.example.shoplo.adapters
+package com.example.ecommerceapplication.adapters
 
 
 
@@ -10,8 +10,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ecommerceapplication.R
-import com.example.shoplo.data.ChatMessageModel
-import com.example.shoplo.util.FirebaseUtil
+import com.example.ecommerceapplication.data.ChatMessageModel
+import com.example.ecommerceapplication.util.FirebaseUtil
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 

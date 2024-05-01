@@ -1,19 +1,18 @@
-package com.example.shoplo.fragment.Managing
+package com.example.ecommerceapplication.fragment.Managing
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ecommerceapplication.R
 import com.example.ecommerceapplication.databinding.FragmentFaqBinding
-import com.example.shoplo.adapters.FaqAdapter
-import com.example.shoplo.data.Faq
+import com.example.ecommerceapplication.adapters.FaqAdapter
+import com.example.ecommerceapplication.data.Faq
 import java.util.*
 
 class FaqFragment : Fragment(R.layout.fragment_faq) {

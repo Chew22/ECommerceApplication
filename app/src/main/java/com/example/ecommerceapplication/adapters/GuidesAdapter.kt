@@ -1,4 +1,4 @@
-package com.example.shoplo.adapters
+package com.example.ecommerceapplication.adapters
 
 import android.content.Context
 import android.os.Bundle
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ecommerceapplication.R
-import com.example.shoplo.data.DataClass
+import com.example.ecommerceapplication.data.DataClass
 
 class GuidesAdapter(private val context: Context, private var dataList: List<DataClass>) :
     RecyclerView.Adapter<MyViewHolder>() {

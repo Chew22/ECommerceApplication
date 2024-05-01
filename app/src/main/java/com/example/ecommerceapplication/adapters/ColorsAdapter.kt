@@ -1,4 +1,4 @@
-package com.example.shoplo.adapters
+package com.example.ecommerceapplication.adapters
 
 
 

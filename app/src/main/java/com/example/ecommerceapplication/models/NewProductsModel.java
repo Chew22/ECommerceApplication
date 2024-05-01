@@ -3,7 +3,7 @@ package com.example.ecommerceapplication.models;
 import java.io.Serializable;
 import java.util.List;
 
-public class NewProductsModel implements Serializable {
+public class NewProductsModel implements ProductModel, Serializable {
 
     List<Integer> colors;
     Double offerPercentage;

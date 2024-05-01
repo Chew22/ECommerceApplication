@@ -33,6 +33,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.ActionCodeSettings;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -44,7 +46,9 @@ public class OptionsActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     FirebaseAuth auth;
     GoogleSignInClient mGoogleSignInClient;
-
+    // Inside onCreate method
+    TextView changePasswordBtn;
+    TextView loginAsSeller;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,6 +70,9 @@ public class OptionsActivity extends AppCompatActivity {
         TextView logout = findViewById(R.id.logout);
         TextView updateEmailBtn = findViewById(R.id.updateEmailMenu);
         TextView deleteAccountBtn = findViewById(R.id.delete_account_menu);
+        changePasswordBtn = findViewById(R.id.resetPassword);
+        loginAsSeller = findViewById(R.id.loginAsSeller);
+
 
         // Initialize day/night switch
         dayNightSwitch = findViewById(R.id.dayNightSwitch);
@@ -79,6 +86,13 @@ public class OptionsActivity extends AppCompatActivity {
                 .requestEmail().build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        changePasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showChangePasswordDialog(); // Show the dialog to change password
+            }
+        });
 
         dayNightSwitch.setChecked(savedTheme == AppCompatDelegate.MODE_NIGHT_YES);
 
@@ -97,14 +111,47 @@ public class OptionsActivity extends AppCompatActivity {
             }
         });
 
+        loginAsSeller.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Show a confirmation dialog before logging out
+                new AlertDialog.Builder(OptionsActivity.this)
+                        .setTitle("Logout to Login As Seller")
+                        .setMessage("Are you sure you want to log out?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Navigate to the seller login activity
+                                Intent intent = new Intent(OptionsActivity.this, RegisterActivity.class);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("No", null) // Dismiss the dialog if user cancels
+                        .show();
+            }
+        });
 
-        // Set click listener for logout option
+
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logout();
+                // Show a confirmation dialog before logging out
+                new AlertDialog.Builder(OptionsActivity.this)
+                        .setTitle("Confirm Logout")
+                        .setMessage("To login as seller, you need to logout first. Are you sure you want to log out?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // If user confirms, proceed with logout
+                                performLogout();
+                            }
+                        })
+                        .setNegativeButton("No", null) // Dismiss the dialog if user cancels
+                        .show();
             }
         });
+
+
 
         // Set click listener for updating email option
         updateEmailBtn.setOnClickListener(new View.OnClickListener() {
@@ -125,7 +172,65 @@ public class OptionsActivity extends AppCompatActivity {
         });
     }
 
-    private void logout() {
+    private void showChangePasswordDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.change_password_pop, null); // Create a custom layout for the dialog
+
+        final EditText currentPasswordEditText = view.findViewById(R.id.current_password);
+        final EditText newPasswordEditText = view.findViewById(R.id.new_password);
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setView(view)
+                .setTitle("Change Password")
+                .setPositiveButton("Change", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        changePassword(currentPasswordEditText, newPasswordEditText); // Call the function to change password
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void changePassword(EditText currentPasswordEditText, EditText newPasswordEditText) {
+        String currentPassword = currentPasswordEditText.getText().toString().trim();
+        String newPassword = newPasswordEditText.getText().toString().trim();
+
+        if (currentPassword.isEmpty() || newPassword.isEmpty()) {
+            Toast.makeText(this, "Both fields are required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) {
+            // Reauthenticate the user
+            AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPassword);
+
+            user.reauthenticate(credential)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                // If reauthentication is successful, change the password
+                                user.updatePassword(newPassword)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Toast.makeText(OptionsActivity.this, "Password changed successfully", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Toast.makeText(OptionsActivity.this, "Failed to change password: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                            } else {
+                                Toast.makeText(OptionsActivity.this, "Reauthentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void performLogout() {
         // Sign out from Firebase Authentication
         auth.signOut();
 

@@ -1,4 +1,4 @@
-package com.example.shoplo.adapters
+package com.example.ecommerceapplication.adapters
 
 import android.content.Context
 import android.os.Bundle
@@ -8,14 +8,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ecommerceapplication.R
-import com.example.shoplo.data.DataClass
-import com.example.shoplo.fragment.Managing.GuideDetailsFragment
+import com.example.ecommerceapplication.data.DataClass
 
 
 class GuideAdapter(private val context: Context, private val fragmentManager: FragmentManager, private var dataList: List<DataClass>) :

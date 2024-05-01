@@ -1,6 +1,5 @@
-package com.example.shoplo.adapters
+package com.example.ecommerceapplication.adapters
 
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

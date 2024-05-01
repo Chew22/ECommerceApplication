@@ -1,4 +1,4 @@
-package com.example.shoplo.fragment.Managing
+package com.example.ecommerceapplication.fragment.Managing
 
 import ProductAdapter
 import android.content.ContentValues.TAG
@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ecommerceapplication.R
-import com.example.shoplo.data.Product
+import com.example.ecommerceapplication.data.Product
 import com.google.android.material.card.MaterialCardView
 import com.google.firebase.firestore.FirebaseFirestore
 

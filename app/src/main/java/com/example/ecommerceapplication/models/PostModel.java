@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostModel implements Serializable {
+public class PostModel implements ProductModel, Serializable {
 
     List<Integer> colors;
     List<String> sizes;

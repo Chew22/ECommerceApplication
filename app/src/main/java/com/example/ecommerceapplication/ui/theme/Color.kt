@@ -1,4 +1,4 @@
-package com.example.shoplo.ui.theme
+package com.example.ecommerceapplication.ui.theme
 
 /*import androidx.compose.ui.graphics.Color
 

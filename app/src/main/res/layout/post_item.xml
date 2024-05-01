@@ -57,7 +57,7 @@
                 android:layout_width="20dp"
                 android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/ellipsis_v_icon"
+                android:src="@drawable/ellipsis"
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="12dp"
                 android:id="@+id/options"/>

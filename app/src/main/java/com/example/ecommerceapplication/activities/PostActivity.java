@@ -64,16 +64,14 @@ public class PostActivity extends AppCompatActivity {
         recyclerView_post.setAdapter(showAllAdapter);
 
 
-        // Retrieve productCategory from intent extra
-        String productCategory = getIntent().getStringExtra("productCategory");
 
         // Safe retrieval of intent extras
         Intent intent = getIntent();
         if (intent != null) {
-            boolean isNewProducts = intent.getBooleanExtra("isNewProducts", false);  // Provide default value
+            boolean isNewProducts = intent.getBooleanExtra("isNewProducts", true);
 
             if (isNewProducts) {
-                firestore.collection("NewProduct")  // Target the specific collection
+                firestore.collection("NewProduct")
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -92,9 +90,11 @@ public class PostActivity extends AppCompatActivity {
         } else {
             // Handle the case when there's no intent or required extras
             Log.e("PostActivity", "Intent is null or missing expected extras");
-            finish();  // Close the activity if it's critical to have these extras
+            finish();
         }
 
+        // Retrieve productCategory from intent extra
+        String productCategory = getIntent().getStringExtra("productCategory");
 
 
         // Fetch data based on the selected productCategory

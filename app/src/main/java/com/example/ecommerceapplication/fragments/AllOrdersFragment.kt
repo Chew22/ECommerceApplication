@@ -1,4 +1,4 @@
-package com.example.shoplo.fragment.Managing
+package com.example.ecommerceapplication.fragment.Managing
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +11,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ecommerceapplication.databinding.FragmentOrdersBinding
-import com.example.shoplo.adapters.AllOrdersAdapter
-import com.example.shoplo.util.Resource
+import com.example.ecommerceapplication.adapters.AllOrdersAdapter
+import com.example.ecommerceapplication.util.Resource
 //import com.example..util.hideBottomNavigationView
-import com.example.shoplo.viewmodel.AllOrdersViewModel
+import com.example.ecommerceapplication.viewmodel.AllOrdersViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 

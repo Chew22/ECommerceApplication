@@ -1,4 +1,4 @@
-package com.example.shoplo.data
+package com.example.ecommerceapplication.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

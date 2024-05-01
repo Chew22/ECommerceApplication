@@ -70,21 +70,15 @@ public class OrderStatusActivity extends AppCompatActivity {
         TextView orderIdTextView = findViewById(R.id.order_id);
         TextView orderStatusTextView = findViewById(R.id.order_status);
         TextView orderPlacedDateTextView = findViewById(R.id.order_placed_date);
+        TextView orderPlacedTimeTextView = findViewById(R.id.order_placed_time);
         TextView totalAmountTextView = findViewById(R.id.total_amount);
-
-
-        // Log the order details
-        Log.d("OrderStatusActivity", "Order ID: " + order.getOrderId());
-        Log.d("OrderStatusActivity", "Order Status: " + order.getOrderStatus());
-        Log.d("OrderStatusActivity", "Order Placed Date: " + order.getOrderDate());
-        Log.d("OrderStatusActivity", "Total Amount: RM " + order.getOrderTotal());
-
 
         // Set order details in TextViews
         orderIdTextView.setText("Order ID: " + order.getOrderId());
         orderStatusTextView.setText("Order Status: " + order.getOrderStatus());
         orderPlacedDateTextView.setText("Order Placed Date: " + order.getOrderDate());
-        totalAmountTextView.setText("Total Amount: RM " + order.getOrderTotal());
+        orderPlacedTimeTextView.setText("Order Placed Time: " + order.getOrderTime());
+        totalAmountTextView.setText("Total Amount: RM " + String.format("%.2f", order.getOrderTotal()));
 
         // Initialize the adapter
         adapter = new OrderAdapter(this, new ArrayList<>(), order.getOrderId()); // Pass orderId here
@@ -113,9 +107,6 @@ public class OrderStatusActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // Convert the document to ItemsModel
                                 ItemsModel orderItem = document.toObject(ItemsModel.class);
-                                String firstImage = orderItem.getFirstProductImage();
-                                Log.d("OrderStatusActivity", "First image URL: " + firstImage);
-
                                 orderItemList.add(orderItem); // Add the item to the list
                             }
 

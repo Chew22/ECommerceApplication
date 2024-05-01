@@ -5,6 +5,7 @@ This adapter is responsible for populating the RecyclerView with popular product
 package com.example.ecommerceapplication.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,11 +13,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -91,6 +96,21 @@ public class Chew_PostAdapter extends RecyclerView.Adapter<Chew_PostAdapter.View
         holder.product_name.setText(post.getProductName());
         holder.description.setText(post.getProductDescription());
         holder.price.setText(String.format("%.2f", post.getPrice()));
+
+        holder.options.setOnClickListener(view -> {
+            PopupMenu popupMenu = new PopupMenu(context, holder.options);
+            popupMenu.inflate(R.menu.report_menu);
+
+            popupMenu.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.report_product) {
+                    showReportDialog(post.getProductId()); // Show the dialog to get user input
+                    return true;
+                }
+                return false;
+            });
+
+            popupMenu.show();
+        });
 
         if (post.getProductDescription().equals("")) {
             holder.description.setVisibility(View.GONE);
@@ -210,9 +230,11 @@ public class Chew_PostAdapter extends RecyclerView.Adapter<Chew_PostAdapter.View
         TextView shopName, likes, product_name, description, comments, price;
         ImageSlider imageSlider;
         Button post_follow_button;
+        ImageButton options;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            options = itemView.findViewById(R.id.options);
             image_profile = itemView.findViewById(R.id.image_profile);
             like = itemView.findViewById(R.id.like);
             comment = itemView.findViewById(R.id.comment);
@@ -227,6 +249,55 @@ public class Chew_PostAdapter extends RecyclerView.Adapter<Chew_PostAdapter.View
             post_follow_button = itemView.findViewById(R.id.post_follow_button);
 
         }
+    }
+
+
+    private void showReportDialog(String productId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Report Product");
+
+        // Create an EditText to get user input
+        final EditText input = new EditText(context);
+        input.setHint("Reason for reporting"); // Provide a hint for the user
+        builder.setView(input); // Set the EditText in the dialog
+
+        // Add "Report" and "Cancel" buttons to the dialog
+        builder.setPositiveButton("Report", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String reason = input.getText().toString().trim();
+                if (!reason.isEmpty()) {
+                    reportProduct(productId, reason); // Pass the user input to the reporting function
+                } else {
+                    Toast.makeText(context, "Please provide a reason", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss(); // Dismiss the dialog
+            }
+        });
+
+        builder.show(); // Show the dialog
+    }
+    private void reportProduct(String productId, String reason) {
+        Map<String, Object> reportData = new HashMap<>();
+        reportData.put("reportedBy", firebaseUser.getUid());
+        reportData.put("timestamp", FieldValue.serverTimestamp());
+        reportData.put("reason", reason); // Use the reason provided by the user
+
+        db.collection("Reports").document(productId).collection("ReportedBy")
+                .add(reportData)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Product reported successfully", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Product reported successfully");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error reporting product: " + e.getMessage());
+                });
     }
 
     // Check if the user is following the seller

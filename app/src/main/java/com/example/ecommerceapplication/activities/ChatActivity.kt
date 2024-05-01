@@ -1,4 +1,4 @@
-package com.example.shoplo.activities
+package com.example.ecommerceapplication.activities
 
 
 
@@ -10,16 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ecommerceapplication.R
-import com.example.shoplo.adapters.ChatRecyclerAdapter
-import com.example.shoplo.data.ChatMessageModel
-import com.example.shoplo.data.ChatroomModel
-import com.example.shoplo.data.UserModel
-import com.example.shoplo.util.AndroidUtil
-import com.example.shoplo.util.FirebaseUtil
+import com.example.ecommerceapplication.adapters.ChatRecyclerAdapter
+import com.example.ecommerceapplication.data.ChatMessageModel
+import com.example.ecommerceapplication.data.ChatroomModel
+import com.example.ecommerceapplication.data.UserModel
+import com.example.ecommerceapplication.util.AndroidUtil
+import com.example.ecommerceapplication.util.FirebaseUtil
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Query
-import java.util.*
 
 class ChatActivity : AppCompatActivity() {
 

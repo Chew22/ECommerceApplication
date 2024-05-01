@@ -1,13 +1,8 @@
-package com.example.shoplo.data
+package com.example.ecommerceapplication.data
 
 import android.os.Parcelable
-import com.google.firebase.firestore.auth.User
 
 import kotlinx.parcelize.Parcelize
-import kotlinx.parcelize.RawValue
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.random.Random.Default.nextLong
 
 @Parcelize
 data class Order(

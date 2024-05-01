@@ -1,4 +1,4 @@
-package com.example.shoplo.dialog
+package com.example.ecommerceapplication.dialog
 
 import android.widget.Button
 import android.widget.EditText

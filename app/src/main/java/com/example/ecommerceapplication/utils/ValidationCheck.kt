@@ -1,4 +1,4 @@
-package com.example.shoplo.util
+package com.example.ecommerceapplication.util
 
 import android.util.Patterns
 

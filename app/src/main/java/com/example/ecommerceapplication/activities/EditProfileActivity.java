@@ -116,7 +116,7 @@ public class EditProfileActivity extends AppCompatActivity {
             if (documentSnapshot.exists()) {
                 AddressModel address = documentSnapshot.toObject(AddressModel.class);
                 if (address != null) {
-                    profile_address.setText(address.getUserAddress());
+                    profile_address.setText(address.getFullAddress());
                 }
             }
         }).addOnFailureListener(e -> {
@@ -171,7 +171,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         // Update address data in Firestore
-        DocumentReference addressRef = docRef.collection("Addresses").document("Primary");
+        DocumentReference addressRef = docRef.collection("Profile Address").document("Primary");
         Map<String, Object> addressData = new HashMap<>();
         addressData.put("userAddress", address);
         addressRef.set(addressData, SetOptions.merge()).addOnSuccessListener(aVoid -> {

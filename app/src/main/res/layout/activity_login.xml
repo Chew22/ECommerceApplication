@@ -10,16 +10,18 @@
     tools:context=".activities.LoginActivity"
     android:background="@color/theme_orange" >
 
+
     <ImageView
         android:id="@+id/logoImageView"
-        android:layout_width="350dp"
-        android:layout_height="350dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/chew_logo"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.35" />
 
 
     <!--Displays the text "Sign In" at the top bias 0.2 of the layout-->
@@ -30,13 +32,13 @@
         android:fontFamily="sans-serif"
         android:text="Sign In"
         android:textColor="@color/black"
-        android:textSize="40sp"
+        android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintVertical_bias="0.35"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--Allows users to input their email address-->
     <EditText
@@ -56,6 +58,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintWidth_percent=".8" />
+
+    <ImageView
+        android:id="@+id/toggle_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:contentDescription="Toggle password visibility"
+        android:padding="10dp"
+        android:src="@drawable/ic_eye_closed"
+        app:layout_constraintBottom_toBottomOf="@+id/password"
+        app:layout_constraintEnd_toEndOf="@+id/password" />
 
     <!--Allows users to input their password-->
     <EditText
@@ -77,17 +90,23 @@
         app:layout_constraintTop_toBottomOf="@+id/email"
         app:layout_constraintWidth_percent=".8" />
 
+
+
+
     <!-- Buyer login fields and login button -->
     <Button
         android:id="@+id/buyer_login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/green"
-        android:text="Login as Buyer"
-        android:textSize="9sp"
+        android:text="Login as Seller"
+        android:textSize="10sp"
+        android:drawableLeft="@drawable/store"
+        android:drawableTint="@color/white"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="6dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressbar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 
@@ -136,7 +155,7 @@
         app:layout_constraintHorizontal_bias=".3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button2"
-        app:layout_constraintVertical_bias="0.1" />
+        app:layout_constraintVertical_bias="0.09" />
 
     <TextView
         android:id="@+id/google"
@@ -145,7 +164,7 @@
         android:background="@drawable/edit_text_bg"
         android:padding="10dp"
         android:elevation="3dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
@@ -185,7 +204,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        app:layout_constraintVertical_bias=".5"/>
+        app:layout_constraintTop_toBottomOf="@+id/google"
+        app:layout_constraintVertical_bias=".5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

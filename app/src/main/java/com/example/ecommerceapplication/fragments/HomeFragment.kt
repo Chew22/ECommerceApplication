@@ -1,4 +1,4 @@
-package com.example.shoplo.fragment.Managing
+package com.example.ecommerceapplication.fragment.Managing
 
 import android.os.Bundle
 import android.view.View
@@ -9,11 +9,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.ecommerceapplication.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
-import com.google.firebase.storage.storage
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
     private lateinit var hiMsg: TextView

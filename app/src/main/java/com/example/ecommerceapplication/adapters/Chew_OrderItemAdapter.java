@@ -40,13 +40,13 @@ public class Chew_OrderItemAdapter extends RecyclerView.Adapter<Chew_OrderItemAd
         holder.product_name.setText(item.getProductName());
         holder.product_size.setText(item.getSelectedSize());
         holder.product_color.setText(item.getSelectedColor());
-        holder.product_price.setText(item.getProductPrice());
+        holder.product_price.setText("RM " + item.getProductPrice());
         holder.total_quantity.setText(item.getTotalQuantity());
-        holder.total_price.setText(String.valueOf(item.getTotalPrice()));
+        holder.total_price.setText("RM " + String.format("%.2f", item.getTotalPrice()));
 
         // Load the first image using Glide
         if (item.getProductImage() != null && !item.getProductImage().isEmpty()) {
-            String firstImageUrl = item.getProductImage().get(0); // Get the first image URL
+            String firstImageUrl = item.getProductImage(); // Get the first image URL
             Glide.with(context)
                     .load(firstImageUrl)
                     .placeholder(R.drawable.placeholder)

@@ -1,4 +1,4 @@
-package com.example.shoplo.fragment.Managing
+package com.example.ecommerceapplication.fragment.Managing
 
 
 
@@ -12,10 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ecommerceapplication.R
-import com.example.shoplo.activities.SearchUserActivity
-import com.example.shoplo.adapters.RecentChatRecyclerAdapter
-import com.example.shoplo.data.ChatroomModel
-import com.example.shoplo.util.FirebaseUtil
+import com.example.ecommerceapplication.activities.SearchUserActivity
+import com.example.ecommerceapplication.adapters.RecentChatRecyclerAdapter
+import com.example.ecommerceapplication.data.ChatroomModel
+import com.example.ecommerceapplication.util.FirebaseUtil
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 

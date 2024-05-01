@@ -1,4 +1,4 @@
-package com.example.shoplo.fragment.Managing
+package com.example.ecommerceapplication.fragment.Managing
 
 
 
@@ -20,10 +20,10 @@ import com.denzcoskun.imageslider.BuildConfig
 import com.example.ecommerceapplication.R
 import com.example.ecommerceapplication.databinding.FragmentProfileBinding
 
-import com.example.shoplo.activities.RegisterActivity
-import com.example.shoplo.util.Resource
+import com.example.ecommerceapplication.activities.RegisterActivity
+import com.example.ecommerceapplication.util.Resource
 //import com.example.kelineyt.util.showBottomNavigationView
-import com.example.shoplo.viewmodel.ProfileViewModel
+import com.example.ecommerceapplication.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 

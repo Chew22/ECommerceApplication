@@ -1,11 +1,8 @@
-package com.example.shoplo.data
+package com.example.ecommerceapplication.data
 
 import android.os.Parcelable
 
 import kotlinx.parcelize.Parcelize
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.random.Random.Default.nextLong
 
 @Parcelize
 data class Item(

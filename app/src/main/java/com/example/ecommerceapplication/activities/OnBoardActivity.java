@@ -76,18 +76,20 @@ public class OnBoardActivity extends AppCompatActivity {
         });
     }
 
-    // Method to add dots
-    private void addDots(int position){
+    private void addDots(int position) {
         dots = new TextView[3];
         dotsLayout.removeAllViews();
-        for (int i =0; i < dots.length; i++){
+        for (int i = 0; i < dots.length; i++) {
             dots[i] = new TextView(this);
-            dots[i].setText(Html.fromHtml("&#8226"));
+            dots[i].setText(Html.fromHtml("&#8226")); // Dot character
             dots[i].setTextSize(35);
+            dots[i].setTextColor(getResources().getColor(R.color.black)); // Default color
             dotsLayout.addView(dots[i]);
         }
-        if(dots.length > 0){
-            dots[position].setTextColor(getResources().getColor(R.color.green));
+
+        // Set the active dot color to orange
+        if (dots.length > 0) {
+            dots[position].setTextColor(getResources().getColor(R.color.theme_orange)); // Change to orange
         }
     }
 
@@ -102,6 +104,11 @@ public class OnBoardActivity extends AppCompatActivity {
         public void onPageSelected(int position) {
             // Update dots
             addDots(position);
+            if (position == 2) { // Third page
+                nextBtn.setVisibility(View.INVISIBLE); // Hide the arrow
+            } else {
+                nextBtn.setVisibility(View.VISIBLE); // Show the arrow
+            }
             // Hide or show button based on position
             if (position == 0 || position == 1) {
                 btn.setVisibility(View.INVISIBLE);

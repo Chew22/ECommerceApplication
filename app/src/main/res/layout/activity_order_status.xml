@@ -76,6 +76,15 @@
                     android:textStyle="bold"
                     tools:text="Order Placed Date: 22-10-2002" />
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/order_placed_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="true"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Order Placed Time: 10:30am" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

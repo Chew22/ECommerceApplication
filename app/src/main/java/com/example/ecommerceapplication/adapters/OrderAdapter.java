@@ -57,20 +57,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         // Bind new data to views
         OrderModel order = list.get(position);
 
-            holder.order_id.setText(order.getOrderId());
-        holder.order_placed_date.setText(order.getOrderTime());
-        holder.order_placed_time.setText(order.getOrderDate());
-            holder.order_status.setText(order.getOrderStatus());
-            holder.total_amount.setText("RM " + order.getOrderTotal());
+        holder.order_id.setText(order.getOrderId());
+        holder.order_placed_date.setText(order.getOrderDate());
+        holder.order_placed_time.setText(order.getOrderTime());
+        holder.order_status.setText(order.getOrderStatus());
+        holder.total_amount.setText("RM " + String.format("%.2f", order.getOrderTotal()));
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (clickListener != null) {
-                        clickListener.onOrderItemClick(order);
-                    }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (clickListener != null) {
+                    clickListener.onOrderItemClick(order);
                 }
-            });
+            }
+        });
 
     }
 

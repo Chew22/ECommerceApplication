@@ -1,5 +1,7 @@
 package com.example.ecommerceapplication.activities;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -17,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,14 +32,18 @@ import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.models.NewProductsModel;
 import com.example.ecommerceapplication.models.PostModel;
+import com.example.ecommerceapplication.models.ProductModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -132,13 +137,16 @@ public class DetailedActivity extends AppCompatActivity {
             newProductsModel = (NewProductsModel) obj;
             imageUrls = newProductsModel.getProductImages();
             displaySellerInfo(newProductsModel.getSellerID());
+            // Update layout with colors and sizes for PostModel
+            // This initializes the colors and sizes UI
+            updateLayout(newProductsModel);
+
         } else if (obj instanceof PostModel) {
             postModel = (PostModel) obj;
             imageUrls = postModel.getProductImages();
             displaySellerInfo(postModel.getSellerID());
 
-            // Update layout with colors and sizes for PostModel
-            updateLayout(postModel); // This initializes the colors and sizes UI
+            updateLayout(postModel);
         }
 
         // Create SlideModel list
@@ -196,29 +204,25 @@ public class DetailedActivity extends AppCompatActivity {
             }
         });
 
-        // Set up click listeners for buy now buttons
+        // Set up click listener for "Buy Now" button
         buyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                saveOrderToFirestore();
+                // Initialize product price and product ID variables
+                double productPrice = 0.0;
 
-                // Start PaymentActivity with the updated total amount
-                Intent intent = new Intent(DetailedActivity.this, PaymentActivity.class);
-                double productPrice = 0.0; // Initialize product price variable
+                // Get the product price and ID depending on the type of product
                 if (newProductsModel != null) {
-                    // Get the price of the current product
                     productPrice = newProductsModel.getPrice();
-                }
-                if (postModel != null) {
-                    // Get the price of the current product
+                } else if (postModel != null) {
                     productPrice = postModel.getPrice();
                 }
-                // Pass the price to PaymentActivity
-                intent.putExtra("totalAmount", productPrice);
-                startActivity(intent);
 
 
             }
         });
+
 
         message.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -296,6 +300,141 @@ public class DetailedActivity extends AppCompatActivity {
         });
     }
 
+    private void sendNotificationToSeller(String sellerID, String orderId) {
+        // This method sends a notification to the seller with a given ID
+        firestore.collection("seller").document(sellerID).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot sellerDoc = task.getResult();
+                if (sellerDoc.exists()) {
+                    // Extract contact information for notification
+                    String sellerEmail = sellerDoc.getString("email");
+                    String sellerFCMToken = sellerDoc.getString("fcmToken");
+
+                    if (sellerEmail != null) {
+                        sendEmailNotification(sellerEmail, orderId);
+                    }
+
+                    // Or send a push notification via FCM
+                    if (sellerFCMToken != null) {
+                        sendPushNotification(sellerFCMToken, orderId);
+                    }
+                }
+            }
+        });
+    }
+
+
+    private void sendEmailNotification(String sellerEmail, String orderId) {
+        // Code to send an email to the seller
+        // You could use a service like SendGrid, Mailgun, etc.
+    }
+
+    private void sendPushNotification(String sellerFCMToken, String orderId) {
+        // Code to send a push notification via FCM
+        // This could involve a Firebase Cloud Function or a server-side script
+    }
+
+    private void saveOrderToFirestore() {
+        // Get the current user ID
+        final String userId = auth.getCurrentUser().getUid();
+
+        // Get the current date and time
+        Calendar calForDate = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
+        final String saveCurrentDate = currentDate.format(calForDate.getTime());
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
+        final String saveCurrentTime = currentTime.format(calForDate.getTime());
+
+
+
+        // Product-related variables
+        final String selectedProductId;
+        final String productName;
+        final double productPrice;
+        final List<String> productImages;
+
+        if (newProductsModel != null) {
+            selectedProductId = newProductsModel.getProductId();
+            productName = newProductsModel.getProductName();
+            productPrice = newProductsModel.getPrice();
+            productImages = new ArrayList<>(newProductsModel.getProductImages()); // Copying the list to ensure immutability
+        } else if (postModel != null) {
+            selectedProductId = postModel.getProductId();
+            productName = postModel.getProductName();
+            productPrice = postModel.getPrice();
+            productImages = new ArrayList<>(postModel.getProductImages());
+        } else {
+            throw new IllegalStateException("Neither newProductsModel nor postModel is initialized.");
+        }
+
+        // Prepare the order details
+        final Map<String, Object> orderDetails = new HashMap<>();
+        orderDetails.put("orderStatus", "Order Placed");
+        orderDetails.put("orderDate", saveCurrentDate);
+        orderDetails.put("orderTime", saveCurrentTime);
+        orderDetails.put("orderTotal", totalPrice);
+
+        firestore.collection("Order")
+                .document(userId)
+                .collection("Orders")
+                .add(orderDetails)
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        if (task.isSuccessful()) {
+                            // Get the ID of the newly created order document
+                            String orderId = task.getResult().getId();
+                            // Add the orderId to the order details HashMap
+                            orderDetails.put("orderId", orderId);
+                            task.getResult().update("orderId", orderId);
+
+                            // Navigate to AddressActivity with additional information
+                            Intent addressIntent = new Intent(DetailedActivity.this, AddressActivity.class);
+                            addressIntent.putExtra("totalAmount", productPrice);
+                            addressIntent.putExtra("orderId", orderId);
+                            startActivity(addressIntent);
+
+                            // Create the order item
+                            final Map<String, Object> orderItem = new HashMap<>();
+                            orderItem.put("productId", selectedProductId);
+                            orderItem.put("productName", productName);
+                            orderItem.put("productImage", productImages.get(0));
+                            orderItem.put("productPrice", productPrice);
+                            orderItem.put("totalQuantity", totalQuantity);
+                            orderItem.put("totalPrice", totalPrice);
+                            orderItem.put("sellerID", getSellerId());
+                            orderItem.put("selectedColor", getSelectedColor());
+                            orderItem.put("selectedSize", getSelectedSize());
+
+                            firestore.collection("Order")
+                                    .document(userId)
+                                    .collection("Orders")
+                                    .document(orderId)
+                                    .collection("Items")
+                                    .add(orderItem)
+                                    .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentReference> itemTask) {
+                                            if (itemTask.isSuccessful()) {
+                                                Toast.makeText(DetailedActivity.this, "Order saved successfully.", Toast.LENGTH_SHORT).show();
+                                                createNotificationForSeller(getSellerId(), orderId, totalPrice);
+
+                                            } else {
+                                                Log.d(TAG, "Error saving order item: ", itemTask.getException());
+                                            }
+                                        }
+                                    });
+
+                            sendNotificationToSeller(getSellerId(), orderId);
+                        } else {
+                            Log.e(TAG, "Error creating order: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+
+
     // Method to fetch and display seller info
     private void displaySellerInfo(String sellerId) {
         Log.d("DetailedActivity", "Fetching seller information for seller ID: " + sellerId);
@@ -320,17 +459,16 @@ public class DetailedActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    public void updateLayout(PostModel postModel) {
+    public void updateLayout(ProductModel productModel) {
         // Handling nullable sizes
-        if (postModel.getSizes() == null || postModel.getSizes().isEmpty()) {
+        if (productModel.getSizes() == null || productModel.getSizes().isEmpty()) {
             radioGroupSizes.setVisibility(View.GONE);
-            tvSizesTitle.setVisibility(View.GONE); // Hide the title
+            tvSizesTitle.setVisibility(View.GONE);
         } else {
             radioGroupSizes.setVisibility(View.VISIBLE);
-            tvSizesTitle.setVisibility(View.VISIBLE); // Show the title
-            radioGroupSizes.removeAllViews(); // Clear existing radio buttons
-            for (String size : postModel.getSizes()) {
+            tvSizesTitle.setVisibility(View.VISIBLE);
+            radioGroupSizes.removeAllViews();
+            for (String size : productModel.getSizes()) {
                 RadioButton radioButton = new RadioButton(this);
                 radioButton.setText(size);
                 radioGroupSizes.addView(radioButton);
@@ -338,33 +476,31 @@ public class DetailedActivity extends AppCompatActivity {
         }
 
         // Handling nullable colors
-        if (postModel.getColors() == null || postModel.getColors().isEmpty()) {
+        if (productModel.getColors() == null || productModel.getColors().isEmpty()) {
             layoutSelectedColors.setVisibility(View.GONE);
-            tvColorsTitle.setVisibility(View.GONE); // Hide the title
+            tvColorsTitle.setVisibility(View.GONE);
         } else {
+            boolean hasValidColor = false;
             layoutSelectedColors.setVisibility(View.VISIBLE);
-            tvColorsTitle.setVisibility(View.VISIBLE); // Show the title
-            Log.d("ColorLayout", "tvColorsTitle visibility: " + tvColorsTitle.getVisibility());
+            tvColorsTitle.setVisibility(View.VISIBLE);
+            layoutSelectedColors.removeAllViews();
 
-            layoutSelectedColors.removeAllViews(); // Clear existing views
-            for (Integer color : postModel.getColors()) {
-                if (color != null) { // Check if color is not null
+            // Check if there are valid colors (i.e., not -1)
+            for (Integer color : productModel.getColors()) {
+                if (color != null && color != -1) {
+                    hasValidColor = true;
                     Button colorButton = new Button(this);
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(40, 40);
-                    colorButton.setLayoutParams(params);
-                    colorButton.setBackgroundColor(color); // Assuming color is an integer color value
-                    colorButton.setTag(color); // Set tag to the integer color value
-                    colorButton.setOnClickListener(view -> {
-                        // Handle color selection
-                        onColorOptionSelected(view);
-                    });
+                    colorButton.setBackgroundColor(color);
+                    colorButton.setOnClickListener(this::onColorOptionSelected);
                     layoutSelectedColors.addView(colorButton);
-                } else {
-                    Log.w("DetailedActivity", "Encountered a null color in postModel.getColors()");
                 }
             }
 
-
+            // If no valid colors, hide the layout and the title
+            if (!hasValidColor) {
+                layoutSelectedColors.setVisibility(View.GONE);
+                tvColorsTitle.setVisibility(View.GONE);
+            }
         }
 
     }
@@ -482,6 +618,23 @@ public class DetailedActivity extends AppCompatActivity {
     }
 
 
+    // Method to create a notification in Firestore
+    private void createNotificationForSeller(String sellerID, String orderId, double orderTotal) {
+        // Create a HashMap to store notification data
+        HashMap<String, Object> notificationData = new HashMap<>();
+        notificationData.put("orderId", orderId);
+        notificationData.put("orderTotal", orderTotal);
+        notificationData.put("timestamp", FieldValue.serverTimestamp());
+        notificationData.put("message", "You have a new order from a buyer");
+
+        // Save the notification in the seller's Notifications collection
+        firestore.collection("seller")
+                .document(sellerID)
+                .collection("Notifications")
+                .add(notificationData)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Notification created for seller: " + sellerID))
+                .addOnFailureListener(e -> Log.e(TAG, "Error creating notification for seller: " + e.getMessage()));
+    }
 
 
     // Variable to store the original background color

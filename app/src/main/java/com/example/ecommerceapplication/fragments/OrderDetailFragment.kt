@@ -1,4 +1,4 @@
-package com.example.shoplo.fragment.Managing
+package com.example.ecommerceapplication.fragment.Managing
 
 import android.os.Bundle
 import android.util.Log
@@ -10,10 +10,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ecommerceapplication.databinding.FragmentOrderDetailBinding
-import com.example.shoplo.adapters.OrderItemAdapter
-import com.example.shoplo.data.OrderStatus
-import com.example.shoplo.data.getOrderStatus
-import com.example.shoplo.util.VerticalItemDecoration
+import com.example.ecommerceapplication.adapters.OrderItemAdapter
+import com.example.ecommerceapplication.data.OrderStatus
+import com.example.ecommerceapplication.data.getOrderStatus
+import com.example.ecommerceapplication.util.VerticalItemDecoration
 
 class OrderDetailFragment : Fragment() {
     private lateinit var binding: FragmentOrderDetailBinding

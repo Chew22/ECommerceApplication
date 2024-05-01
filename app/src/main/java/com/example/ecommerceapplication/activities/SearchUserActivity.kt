@@ -1,4 +1,4 @@
-package com.example.shoplo.activities
+package com.example.ecommerceapplication.activities
 
 
 
@@ -6,9 +6,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.shoplo.adapters.SearchUserRecyclerAdapter
-import com.example.shoplo.data.UserModel
-import com.example.shoplo.util.FirebaseUtil
+import com.example.ecommerceapplication.adapters.SearchUserRecyclerAdapter
+import com.example.ecommerceapplication.data.UserModel
+import com.example.ecommerceapplication.util.FirebaseUtil
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import android.widget.EditText
 import android.widget.ImageButton

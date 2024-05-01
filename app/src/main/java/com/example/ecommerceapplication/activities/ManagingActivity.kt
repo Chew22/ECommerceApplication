@@ -1,12 +1,10 @@
-package com.example.shoplo.activities
+package com.example.ecommerceapplication.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.navigation.findNavController
-import androidx.appcompat.widget.Toolbar
 import androidx.navigation.ui.setupWithNavController
 import com.example.ecommerceapplication.R
 import com.google.android.material.appbar.MaterialToolbar

@@ -1,10 +1,10 @@
-package com.example.shoplo.activities
+package com.example.ecommerceapplication.activities
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ecommerceapplication.R
-import com.example.shoplo.viewmodel.RegisterSharedViewModel
+import com.example.ecommerceapplication.viewmodel.RegisterSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

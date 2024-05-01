@@ -10,7 +10,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.shoplo.fragment.Managing.HomeFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
 
@@ -45,21 +45,23 @@
 
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.shoplo.fragment.Managing.SearchFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.SearchFragment"
         android:label="SearchFragment"
         tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_productDetailViewFragment"
             app:destination="@id/productDetailViewFragment" />
     </fragment>
+
+
     <fragment
         android:id="@+id/messageFragment"
-        android:name="com.example.shoplo.fragment.Managing.MessageFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.MessageFragment"
         android:label="MessageFragment"
         tools:layout="@layout/fragment_message"/>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.shoplo.fragment.Managing.ProfileFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.ProfileFragment"
         android:label="ProfileFragment"
         tools:layout="@layout/fragment_profile">
         <action
@@ -74,7 +76,7 @@
     </fragment>
     <fragment
         android:id="@+id/productFragment"
-        android:name="com.example.shoplo.fragment.Managing.ProductFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.ProductFragment"
         android:label="ProductFragment"
         tools:layout="@layout/fragment_productdetails"/>
 
@@ -82,7 +84,7 @@
 
     <fragment
         android:id="@+id/productdisplayFragment"
-        android:name="com.example.shoplo.fragment.Managing.ProductDisplayFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.ProductDisplayFragment"
         android:label="ProductDisplayFragment"
         tools:layout="@layout/fragment_product">
     <action
@@ -94,14 +96,14 @@
     </fragment>
     <fragment
         android:id="@+id/productDetailViewFragment"
-        android:name="com.example.shoplo.fragment.Managing.ProductDetailViewFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.ProductDetailViewFragment"
         android:label="ProductDetailViewFragment"
         tools:layout="@layout/fragment_productdetailview">
 
         <!-- Argument for the ProductDetailViewFragment -->
         <argument
             android:name="product"
-            app:argType="com.example.shoplo.data.Product" />
+            app:argType="com.example.ecommerceapplication.data.Product" />
         <action
             android:id="@+id/action_productDetailViewFragment_to_editProductFragment"
             app:destination="@id/editProductFragment" />
@@ -112,21 +114,21 @@
 
     <fragment
         android:id="@+id/addressFragment"
-        android:name="com.example.shoplo.fragment.Managing.AddressFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.AddressFragment"
         android:label="AddressFragment"
         tools:layout="@layout/fragment_address"/>
     <fragment
         android:id="@+id/userAccountFragment"
-        android:name="com.example.shoplo.fragment.Settings.UserAccountFragment"
+        android:name="com.example.ecommerceapplication.fragment.Settings.UserAccountFragment"
         android:label="UserAccountFragment"
         tools:layout="@layout/fragment_user_account"/>
     <fragment
         android:id="@+id/faqFragment"
-        android:name="com.example.shoplo.fragment.Managing.FaqFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.FaqFragment"
         android:label="FaqFragment" />
     <fragment
         android:id="@+id/postFragment"
-        android:name="com.example.shoplo.fragment.Managing.PostFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.PostFragment"
         android:label="PostFragment" >
         <action
             android:id="@+id/action_postFragment_to_postDetailsFragment"
@@ -134,7 +136,7 @@
             <!--suppress NavigationFile -->
             <argument
                 android:name="selectedPost"
-                app:argType="com.example.shoplo.data.Post"
+                app:argType="com.example.ecommerceapplication.data.Post"
                 />
         </action>
         <action
@@ -145,7 +147,7 @@
 
     <fragment
         android:id="@+id/postDetailsFragment"
-        android:name="com.example.shoplo.fragment.Managing.PostDetailsFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.PostDetailsFragment"
         android:label="PostDetailsFragment" >
         <action
             android:id="@+id/action_postDetailsFragment_to_postFragment"
@@ -153,7 +155,7 @@
     </fragment>
     <fragment
         android:id="@+id/guideFragment"
-        android:name="com.example.shoplo.fragment.Managing.GuideFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.GuideFragment"
         android:label="GuideFragment" >
         <action
             android:id="@+id/action_guideFragment_to_guideDetailsFragment"
@@ -161,11 +163,11 @@
     </fragment>
     <fragment
         android:id="@+id/guideDetailsFragment"
-        android:name="com.example.shoplo.fragment.Managing.GuideDetailsFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.GuideDetailsFragment"
         android:label="GuideDetailsFragment" />
     <fragment
         android:id="@+id/allOrdersFragment"
-        android:name="com.example.shoplo.fragment.Managing.AllOrdersFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.AllOrdersFragment"
         android:label="AllOrdersFragment" >
         <action
             android:id="@+id/action_allOrdersFragment_to_orderDetailFragment"
@@ -173,21 +175,21 @@
     </fragment>
     <fragment
         android:id="@+id/orderDetailFragment"
-        android:name="com.example.shoplo.fragment.Managing.OrderDetailFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.OrderDetailFragment"
         android:label="OrderDetailFragment" >
         <!--suppress NavigationFile -->
         <argument
             android:name="order"
-            app:argType="com.example.shoplo.data.Order" />
+            app:argType="com.example.ecommerceapplication.data.Order" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
-        android:name="com.example.shoplo.fragment.Managing.ChatFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.ChatFragment"
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" />
     <fragment
         android:id="@+id/editProductFragment"
-        android:name="com.example.shoplo.fragment.Managing.EditProductFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.EditProductFragment"
         android:label="EditProductFragment" >
         <argument
             android:name="productId"
@@ -195,11 +197,11 @@
     </fragment>
     <fragment
         android:id="@+id/postDetailViewFragment"
-        android:name="com.example.shoplo.fragment.Managing.PostDetailViewFragment"
+        android:name="com.example.ecommerceapplication.fragment.Managing.PostDetailViewFragment"
         android:label="PostDetailViewFragment" >
         <argument
             android:name="selectedPost"
-            app:argType="com.example.shoplo.data.Post" />
+            app:argType="com.example.ecommerceapplication.data.Post" />
     </fragment>
 
 </navigation>

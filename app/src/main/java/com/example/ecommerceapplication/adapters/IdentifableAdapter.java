@@ -64,22 +64,27 @@ public class IdentifableAdapter extends RecyclerView.Adapter<IdentifableAdapter.
         Identifiable item = items.get(position);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        // Cast the Identifiable to a specific type if needed
         if (item instanceof UserModel) {
             UserModel user = (UserModel) item;
 
             holder.username.setText(user.getUsername());
             holder.fullname.setText(user.getUsername()); // Can replace with other attribute
-            Glide.with(mcontext).load(user.getProfileImg()).into(holder.image_profile);
+            Glide.with(holder.itemView) // Use the ViewHolder's itemView context
+                    .load(user.getProfileImg())
+                    .into(holder.image_profile); // Glide loading into ImageView
             isFollowing(user.getId(), holder.btn_follow);
 
         } else if (item instanceof SellerModel) {
             SellerModel seller = (SellerModel) item;
+
             holder.username.setText(seller.getShopName());
             holder.fullname.setText(seller.getAddress()); // Can replace with other attribute
-            Glide.with(mcontext).load(seller.getImagePath()).into(holder.image_profile);
-            isFollowing(seller.getId(), holder.btn_follow);
+            Glide.with(holder.itemView) // Using itemView's context
+                    .load(seller.getImagePath())
+                    .into(holder.image_profile); // Glide loading into ImageView
+            isFollowing(seller.getSellerID(), holder.btn_follow);
         }
+
     }
 
     private void isFollowing(String userid, Button button) {

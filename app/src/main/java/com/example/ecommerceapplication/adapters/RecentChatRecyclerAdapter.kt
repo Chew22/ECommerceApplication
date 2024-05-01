@@ -1,4 +1,4 @@
-package com.example.shoplo.adapters
+package com.example.ecommerceapplication.adapters
 
 
 
@@ -13,11 +13,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.ecommerceapplication.R
-import com.example.shoplo.activities.ChatActivity
-import com.example.shoplo.data.ChatroomModel
-import com.example.shoplo.data.UserModel
-import com.example.shoplo.util.AndroidUtil
-import com.example.shoplo.util.FirebaseUtil
+import com.example.ecommerceapplication.activities.ChatActivity
+import com.example.ecommerceapplication.data.ChatroomModel
+import com.example.ecommerceapplication.data.UserModel
+import com.example.ecommerceapplication.util.AndroidUtil
+import com.example.ecommerceapplication.util.FirebaseUtil
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 

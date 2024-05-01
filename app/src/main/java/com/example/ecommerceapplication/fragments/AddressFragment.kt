@@ -1,4 +1,4 @@
-package com.example.shoplo.fragment.Managing
+package com.example.ecommerceapplication.fragment.Managing
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,11 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.ecommerceapplication.databinding.FragmentAddressBinding
-import com.example.shoplo.data.Address
-import com.example.shoplo.util.Resource
-import com.example.shoplo.viewmodel.AddressViewModel
+import com.example.ecommerceapplication.data.Address
+import com.example.ecommerceapplication.util.Resource
+import com.example.ecommerceapplication.viewmodel.AddressViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 

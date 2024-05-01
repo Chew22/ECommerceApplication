@@ -1,4 +1,4 @@
-package com.example.shoplo.adapters
+package com.example.ecommerceapplication.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ecommerceapplication.R
-import com.example.shoplo.data.Faq
+import com.example.ecommerceapplication.data.Faq
 
 class FaqAdapter(private var mList: List<Faq>) :
     RecyclerView.Adapter<FaqAdapter.LanguageViewHolder>() {

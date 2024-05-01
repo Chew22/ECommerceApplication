@@ -1,4 +1,4 @@
-package com.example.shoplo.fragments.Register
+package com.example.ecommerceapplication.fragments.Register
 
 import android.os.Bundle
 import android.util.Log
@@ -7,14 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.ecommerceapplication.R
 import com.example.ecommerceapplication.databinding.FragmentRegisteraBinding
-import com.example.shoplo.data.Seller
-import com.example.shoplo.data.Shop
-import com.example.shoplo.viewmodel.RegisterSharedViewModel
-import java.util.UUID
+import com.example.ecommerceapplication.data.Shop
+import com.example.ecommerceapplication.viewmodel.RegisterSharedViewModel
 
 class RegisteraFragment : Fragment(R.layout.fragment_registera) {
     private lateinit var binding: FragmentRegisteraBinding

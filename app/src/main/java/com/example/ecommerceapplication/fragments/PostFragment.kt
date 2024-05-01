@@ -1,7 +1,7 @@
-package com.example.shoplo.fragment.Managing
+package com.example.ecommerceapplication.fragment.Managing
 
-import com.example.shoplo.data.Post
-import com.example.shoplo.adapters.PostAdapter
+import com.example.ecommerceapplication.data.Post
+import com.example.ecommerceapplication.adapters.PostAdapter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater

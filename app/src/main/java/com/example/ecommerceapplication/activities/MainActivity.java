@@ -1,5 +1,6 @@
 package com.example.ecommerceapplication.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -17,9 +19,9 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.ecommerceapplication.R;
 import com.example.ecommerceapplication.fragments.Chew_ChatFragment;
 import com.example.ecommerceapplication.fragments.Chew_HomeFragment;
+import com.example.ecommerceapplication.fragments.Chew_ProfileFragment;
 import com.example.ecommerceapplication.fragments.Chew_SearchFragment;
 import com.example.ecommerceapplication.fragments.NotificationFragment;
-import com.example.ecommerceapplication.fragments.Chew_ProfileFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -157,19 +159,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_logout){
-            // Signing out the user and redirecting to the registration activity
-            auth.signOut();
-            logout();
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            finish();
+
+        if (id == R.id.menu_logout) {
+            // Show a confirmation dialog before logging out
+            new AlertDialog.Builder(this)
+                    .setTitle("Logout")
+                    .setMessage("Are you sure you want to log out?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // If the user confirms, sign out and redirect to the login activity
+                            logout();
+                            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("No", null) // Dismiss the dialog if the user chooses "No"
+                    .show();
+
+            return true;
         } else if (id == R.id.menu_my_cart) {
             // Redirecting to the cart activity
             startActivity(new Intent(MainActivity.this, CartActivity.class));
+            return true;
         }
-        return true;
-    }
 
+        return super.onOptionsItemSelected(item);
+    }
 
     private void logout() {
         // Sign out from Firebase Authentication
@@ -180,14 +196,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(MainActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-
-                // Redirect to login screen after logging out
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish(); // Finish the current activity to prevent back navigation
             }
         });
     }
-
 
 
 

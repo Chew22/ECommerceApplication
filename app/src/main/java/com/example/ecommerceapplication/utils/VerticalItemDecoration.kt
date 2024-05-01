@@ -1,4 +1,4 @@
-package com.example.shoplo.util
+package com.example.ecommerceapplication.util
 
 import android.graphics.Rect
 import android.view.View

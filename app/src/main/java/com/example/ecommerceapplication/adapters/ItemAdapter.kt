@@ -1,4 +1,4 @@
-package com.example.shoplo.adapters
+package com.example.ecommerceapplication.adapters
 
 
 import android.content.Context
@@ -10,8 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.ecommerceapplication.R
-import com.example.shoplo.data.Item
-import java.lang.String
+import com.example.ecommerceapplication.data.Item
 import kotlin.Int
 
 

@@ -1,4 +1,4 @@
-package com.example.shoplo.fragments.Register
+package com.example.ecommerceapplication.fragments.Register
 
 import android.content.Intent
 import android.net.Uri
@@ -16,18 +16,16 @@ import androidx.lifecycle.withStarted
 import androidx.navigation.fragment.findNavController
 import com.example.ecommerceapplication.R
 import com.example.ecommerceapplication.databinding.FragmentRegisterbBinding
-import com.example.shoplo.activities.ManagingActivity
-import com.example.shoplo.data.Seller
-import com.example.shoplo.util.RegisterValidation
-import com.example.shoplo.util.Resource
-import com.example.shoplo.viewmodel.RegisterSharedViewModel
-import com.example.shoplo.viewmodel.RegisterViewModel
+import com.example.ecommerceapplication.activities.ManagingActivity
+import com.example.ecommerceapplication.data.Seller
+import com.example.ecommerceapplication.util.RegisterValidation
+import com.example.ecommerceapplication.util.Resource
+import com.example.ecommerceapplication.viewmodel.RegisterSharedViewModel
+import com.example.ecommerceapplication.viewmodel.RegisterViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.UUID
 
 private const val TAG = "RegisterFragment"
 
